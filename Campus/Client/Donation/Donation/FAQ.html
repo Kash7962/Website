@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ Section</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #FFF7ED; /* Pale orange background */
+      padding: 2rem;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .faq-question {
+      background-color: #ffe6cc; /* Light orange for questions */
+      cursor: pointer;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      color: #5a3921;
+      transition: background-color 0.3s ease;
+    }
+
+    .faq-question:hover {
+      background-color: #ffd1a3;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 1.5rem;
+      background-color: #ffe6cc;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      color: #444;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      padding: 1rem 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .faq-question {
+        font-size: 1rem;
+      }
+
+      .faq-answer {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>FAQ's</h2>
+
+  <div class="faq-container">
+    <div class="faq-item">
+      <div class="faq-question">1. What is Section 80G of the Income Tax Act?</div>
+      <div class="faq-answer">
+        Section 80G of the Income Tax Act, 1961, allows you to claim deductions on donations made to eligible charitable organizations like Smile Foundation. This means you can reduce your taxable income by the amount you donate.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">2. Is there an 80G Tax Deduction Limit on Donations?</div>
+      <div class="faq-answer">
+        You can claim deductions of varying percentages on your donation amount with a minimum donation amount of INR 500. The limit depends on the charity and the donor's category (individual or business).
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">3. Why Donate under Section 80G?</div>
+      <div class="faq-answer">
+        Double Impact: Your donation under Section 80G not only supports a noble cause but also provides you with a valuable income tax exemption, making your tax planning better. You can enjoy the satisfaction of making a difference in the lives of those in need while reducing your income tax liability.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">4. Can Non-Resident Indians (NRIs) avail tax benefits?</div>
+      <div class="faq-answer">
+        Yes, NRIs can also avail tax benefits by making donations to Smile Foundation. Section 80G of the Income Tax Act allows NRIs to claim deductions on their Indian income for charitable contributions made to eligible organizations like Smile Foundation. It’s advised to consult with financial advisors and keep records of donations.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">5. How to claim 80G deduction tax benefits?</div>
+      <div class="faq-answer">
+        SOLID NGO will e-mail your tax-exempt certification (10BE) of all the donations you have made in a year by 31st May of the next year. For example, if you make 5 donations of Rs. 500 each in the financial year of 2023-24, we will send you the tax-exempt certification of all your donations by 31st May 2024.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const items = document.querySelectorAll(".faq-item");
+
+    items.forEach(item => {
+      item.querySelector(".faq-question").addEventListener("click", () => {
+        item.classList.toggle("active");
+        items.forEach(i => {
+          if (i !== item) i.classList.remove("active");
+        });
+      });
+    });
+  </script>
+</body>
+</html>

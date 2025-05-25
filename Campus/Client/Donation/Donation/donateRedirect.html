@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .confirmation-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+        .confirmation-card h2 {
+            margin-top: 0;
+            color: #28a745;
+        }
+        .donation-details {
+            margin-top: 20px;
+        }
+        .donation-details p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="confirmation-card">
+    <h2>Thank You for Your Donation!</h2>
+    <div class="donation-details" id="donationDetails">
+        <!-- Populated by JavaScript -->
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    const currency = params.get('currency') || 'N/A';
+    const amount = params.get('amount') || 'N/A';
+    const mobile = params.get('mobile') || 'N/A';
+    const email = params.get('email') || 'N/A';
+    const name = params.get('name') || 'N/A';
+    const pan = params.get('pan') || 'N/A';
+    const address = params.get('address') || 'N/A';
+    const pincode = params.get('pincode') || 'N/A';
+
+    const detailsDiv = document.getElementById('donationDetails');
+    detailsDiv.innerHTML = `
+        <p><strong>Donor Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Mobile Number:</strong> ${mobile}</p>
+        <p><strong>Amount:</strong> ${amount} ${currency}</p>
+        <p><strong>PAN:</strong> ${pan}</p>
+        <p><strong>Address:</strong> ${address}</p>
+        <p><strong>PIN Code:</strong> ${pincode}</p>
+    `;
+</script>
+
+</body>
+</html>
