@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KASH Teaching Staff</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #2c3e50, #3498db);
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 2em 1em;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+        }
+
+        header h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .profile-card {
+            background-color: #fff;
+            max-width: 1000px;
+            margin: 2em auto;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2em;
+        }
+
+        .profile-card img {
+            width: 250px;
+            height: auto;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .info h3 {
+            color: #0b3c6d;
+            font-size: 1.2em;
+            margin-bottom: 0.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .info h3::before {
+            content: "📘";
+            margin-right: 0.5em;
+        }
+
+        .info p {
+            font-size: 1.1em;
+            margin-bottom: 1.2em;
+            color: #333;
+        }
+
+        .subheading {
+            max-width: 1000px;
+            margin: 2em auto 1em auto;
+            padding: 0 1em;
+        }
+
+        .subheading h2 {
+            color: white;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-card img {
+                width: 200px;
+            }
+
+            .info {
+                width: 100%;
+            }
+
+            .subheading h2 {
+                font-size: 1.4em;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            header h2 {
+                font-size: 1.2em;
+            }
+
+            .info p {
+                font-size: 1em;
+            }
+
+            .subheading h2 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>KASH TEAM</h1>
+        <h2>KASH TEACHING STAFF</h2>
+    </header>
+
+    <!-- Teaching Staff Profiles -->
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/250x300.png?text=Profile+Image" alt="Profile Photo">
+        <div class="info">
+            <h3>NAME</h3>
+            <p>Mr. Sudhansu Sekhar Panda</p>
+            <h3>Designation</h3>
+            <p>Principal</p>
+        </div>
+    </div>
+
+    <!-- Repeat the above block for each teaching staff member -->
+    <!-- Example: -->
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/250x300.png?text=Profile+Image" alt="Profile Photo">
+        <div class="info">
+            <h3>NAME</h3>
+            <p>Mrs. Example Name</p>
+            <h3>Designation</h3>
+            <p>Lecturer</p>
+        </div>
+    </div>
+
+    <!-- Subheading Section -->
+    <section class="subheading">
+        <h2>KASH ADMINISTRATION AND SUPPORT STAFF</h2>
+    </section>
+
+    <!-- Administration Profiles -->
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/250x300.png?text=Profile+Image" alt="Profile Photo">
+        <div class="info">
+            <h3>NAME</h3>
+            <p>Mr. John Doe</p>
+            <h3>Designation</h3>
+            <p>Admin Head</p>
+        </div>
+    </div>
+
+    <!-- Repeat as needed -->
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/250x300.png?text=Profile+Image" alt="Profile Photo">
+        <div class="info">
+            <h3>NAME</h3>
+            <p>Ms. Jane Doe</p>
+            <h3>Designation</h3>
+            <p>Office Assistant</p>
+        </div>
+    </div>
+
+</body>
+</html>

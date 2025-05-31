@@ -1,0 +1,44 @@
+.donation-container {
+    border: 6px solid orange;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    background-color: white;
+    max-width: 900px;
+    width: 100%;
+}
+
+.img-thumbnail {
+    width: 100%;
+    height: auto;
+    border: 4px solid orange;
+    display: block;
+}
+
+.donate-btn,
+button {
+    background-color: orange;
+    color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid black;
+}
