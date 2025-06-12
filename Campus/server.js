@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.get('/', (req, res) => {
-  res.send("");
+  res.render('Home/Home');
 })
 app.get('/Academic/Achievements', (req, res) => {
   res.render('Academic/Achievements');
