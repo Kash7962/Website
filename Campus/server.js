@@ -5,6 +5,7 @@ require('dotenv').config();
 const path = require('path');
 const Academic = require('./Routes/AcademicRoutes.js');
 const WhoWeAre = require('./Routes/WhoWeAreRoutes.js');
+const Form = require('./Routes/FormRoutes.js');
 
 mongoose.connect(process.env.DB_URL,{});
 const db = mongoose.connection;
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 
 app.use('/Academic',Academic);
 app.use('/WhoWeAre',WhoWeAre);
+app.use('/Form',Form);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server started on port ${process.env.PORT}`);
