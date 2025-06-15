@@ -5,7 +5,7 @@ require('dotenv').config();
 const path = require('path');
 const Academic = require('./Routes/AcademicRoutes.js');
 const WhoWeAre = require('./Routes/WhoWeAreRoutes.js');
-const Form = require('./Routes/FormRoutes.js');
+const Form = require('./Routes/AdmissionFormRoutes.js');
 
 mongoose.connect(process.env.DB_URL,{});
 const db = mongoose.connection;
