@@ -8,7 +8,7 @@ const admissionValidator = [
   body('lastName').trim().notEmpty().isLength({ max: 100 }),
   body('gender').isIn(['male', 'female']),
   body('dob').isISO8601().toDate(),
-
+  // body('studentCountryCode').notEmpty().isLength({ min: 2, max: 5 }),
   body('studentPhone').notEmpty().isMobilePhone('any').withMessage('Invalid student phone number'),
 
   body('guardian1Name').notEmpty(),
