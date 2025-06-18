@@ -1,11 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KASH NGO - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+    body {
+      line-height: 1.6;
+      background-color: #ffefc7;
+      color: #333;
+      font-family: 'Droid Serif', serif;
+      font-size: 16px;
+    }
+    h1 {
+      font-family: 'bernoru-heading-50', sans-serif;
+    }
+    h2, h3, h4 {
+      font-family: 'nourd-subheading-22', sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #0a0a23;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+    nav a {
+      text-decoration: none;
+      color: white;
+      padding: 0.5rem;
+      transition: background 0.3s ease;
+    }
+    nav a:hover {
+      background: #44a857;
+      border-radius: 5px;
+    }
+    .btn {
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .btn:hover {
+      background: white;
+      color: #0a0a23;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    section {
+      padding: 4rem 2rem;
+    }
+    .hero {
+      background: linear-gradient(135deg, #930000, #ff6f61);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: stretch;
+    }
+    .column {
+      flex: 1;
+    }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .card {
+      flex: 1;
+      min-width: 280px;
+      border: 1px solid #eee;
+      padding: 1rem;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      max-height: 100px;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      max-height: none;
+    }
+    .card p {
+      display: none;
+    }
+    .card:hover p {
+      display: block;
+    }
+    footer {
+      background: #0a0a23;
+      color: #eee;
+      padding: 2rem;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      nav { display: none; flex-direction: column; gap: 0; background: #0a0a23; position: absolute; top: 60px; left: 0; right: 0; }
+      nav.active { display: flex; }
+      .menu-toggle { display: block; color: white; }
+      .row { flex-direction: column; }
+      .review-map-section { flex-direction: column; }
+    }
+
+    .testimonial-container {
+      max-width: 600px;
+      margin: auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonial-slide {
+      display: none;
+      text-align: center;
+      font-style: italic;
+      padding: 1rem;
+    }
+    .testimonial-slide.active {
+      display: block;
+      animation: fade 1s ease-in-out;
+    }
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    /* New layout for reviews + map */
+    .review-map-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 4rem 2rem;
+      background-color: #f5f5f5;
+    }
+
+    .review-map-section .left, .review-map-section .right {
+      flex: 1;
+      min-width: 300px;
+      padding: 1rem;
+    }
+
+    .contact-details {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .map-box {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 500px;
+      height: 250px;
+    }
+     @media (max-width: 768px) {
+      footer div[style*="display: flex"] {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Home Page Sir, Please make it</h1>
+  <header>
+    <h1>KASH</h1>
+    <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">☰</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#programs">Programs</a>
+      <a href="#impact">Impact</a>
+      <a href="#donate">Donate</a>
+      <a href="#contact" class="btn">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="home" data-aos="fade-in">
+    <h1>KASH Residential Campus for +2 Science</h1>
+    <p>Empowering the marginalized, one student at a time<br>Vocation Training & Diploma Programs</p>
+  </section>
+
+  <section id="about" data-aos="fade-up">
+    <h2>Vision, Mission, and Mandate</h2>
+    <div class="row">
+      <div class="card">
+        <h4>Our Vision</h4>
+        <p>To be a global presence that cultivates academic excellence, human values, and social commitment through skill development and research-driven innovation.</p>
+      </div>
+      <div class="card">
+        <h4>Our Mission</h4>
+        <p>To enable each underprivileged child to access a high-quality residential program and grow into a self-sufficient, moral, and socially responsible adult.</p>
+      </div>
+      <div class="card">
+        <h4>Our Mandate</h4>
+        <p>To offer inclusive, affordable, and transformative education for the marginalized sections of society.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="achievement" style="background:#f5f5f5" data-aos="fade-right">
+    <h2>Our Achievement – CHSE Result 2024</h2>
+    <img src="" alt="KASH CHSE Result 2024 Board Display" style="width:100%;max-width:700px;margin:auto;display:block">
+    <p style="text-align:center;margin-top:1rem;">Congratulations to all our meritorious students!</p>
+  </section>
+
+  <section id="donate" data-aos="fade-up">
+    <div class="row">
+      <div class="column">
+        <h2>Student Donation Information</h2>
+        <p>KASH student sponsorship programs provide financial and educational support to students from economically weaker backgrounds. Each contribution helps cover tuition, food, lodging, and academic materials.</p>
+      </div>
+      <div class="column">
+        <img src="" alt="Student Profile Photo">
+      </div>
+    </div>
+  </section>
+
+  <section id="impact" data-aos="zoom-in">
+    <h2>Our Impact</h2>
+    <div class="cards">
+      <div class="card">
+        <h4>15,000+</h4>
+        <p>Educated</p>
+      </div>
+      <div class="card">
+        <h4>35,000+</h4>
+        <p>Primary and Secondary</p>
+      </div>
+      <div class="card">
+        <h4>10,000+</h4>
+        <p>School dropouts</p>
+      </div>
+      <div class="card">
+        <h4>45,000+</h4>
+        <p>Nutrition and Anganwadis</p>
+      </div>
+      <div class="card">
+        <h4>5,000+</h4>
+        <p>Professional coaching</p>
+      </div>
+      <div class="card">
+        <h4>300+</h4>
+        <p>Vocational training</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="events" data-aos="fade-up">
+    <h2>Notices & Events</h2>
+    <div class="cards">
+      <div class="card">
+        <h4>Notice</h4>
+        <p>May 2025 - CHSE XII</p>
+      </div>
+      <div class="card">
+        <h4>New Programs</h4>
+        <p>Bridge & Skill Education</p>
+      </div>
+      <div class="card">
+        <h4>Upcoming Events</h4>
+        <p>New registration open for XI science batch</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="campus" data-aos="zoom-in-up">
+    <h2>About Campus</h2>
+    <p>A constituent unit of 'Academy for Developing Communities (ADC)' KASH is a non-profit residential educational center located in Odisha. We serve students from marginalized communities through academic programs, training, and support.</p>
+    <div class="cards">
+      <div class="card"><img src="" alt="Campus Front View" style="width:100%"></div>
+      <div class="card"><img src="" alt="Campus Building" style="width:100%"></div>
+    </div>
+  </section>
+
+  <section id="review" data-aos="fade-left">
+    <h2>Review</h2>
+    <blockquote style="text-align:center; font-style: italic;">“kashcampus” – Smita Nayak</blockquote>
+  </section>
+
+  <section id="sponsorship" data-aos="fade-in">
+    <h2>What is Student Sponsorship?</h2>
+    <p>Student sponsorship provides students from marginalized backgrounds access to a holistic education and personal development. Sponsors help meet essential needs such as tuition, accommodation, and materials. Join us to empower lives.</p>
+    <div style="text-align:center;margin:2rem 0">
+      <button class="btn">Donate Now</button>
+    </div>
+  </section>
+
+
+
+<section class="review-map-section" id="contact" data-aos="fade-up">
+    <div class="left">
+      <h2 style="margin-bottom: 1.5rem;">What Our Students Say</h2>
+      <div class="testimonial-container">
+        <div class="testimonial-slide active">
+          <p>"KASH changed my life – from a village student to a future engineer!"</p>
+          <h4>- Ramesh S., 2nd Year B.Tech</h4>
+        </div>
+        <div class="testimonial-slide">
+          <p>"I received full residential scholarship and now preparing for NEET."</p>
+          <h4>- Priya M., +2 Science Student</h4>
+        </div>
+        <div class="testimonial-slide">
+          <p>"The skill training program helped me get a job in just 6 months."</p>
+          <h4>- Anil Kumar, Diploma Holder</h4>
+        </div>
+      </div>
+    </div>
+    
+      <div class="map-box">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3821.960683408502!2d84.7276312!3d19.216281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3d447d6c2e04bf%3A0x11fa5caf0bdf312d!2sKarunashanti%20Science%20Residential%20College!5e0!3m2!1sen!2sin!4v1718690939234!5m2!1sen!2sin"
+          width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top: 3px solid #930000; background: #0a0a23; color: #eee; padding: 2rem 1rem;">
+  <div style="
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: auto;
+    gap: 2rem;
+  ">
+    <!-- Left: Socials + Copyright -->
+    <div style="flex: 1; min-width: 280px;">
+      <p style="margin-bottom: 1rem;">&copy; All rights reserved by kashcampus | Developed by Browsium</p>
+      <div>
+        <a href="https://wa.me/919000000000" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="https://facebook.com/kashcampus" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
+          <i class="fab fa-facebook"></i> Facebook
+        </a>
+        <a href="mailto:info@kashcampus.org" style="color: #eee; text-decoration: none;">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: Contact Info -->
+    <div style="flex: 1; min-width: 280px;">
+      <h2 style="margin-bottom: 0.5rem;">Contact Information</h2>
+      <div style="font-size: 0.95rem; line-height: 1.8;">
+        <strong>PHONE:</strong> +91 457835625<br>
+        <strong>EMAIL:</strong> contact@kash.org<br>
+        <strong>ADDRESS:</strong><br>
+        Golanthara, Govindapur,<br>
+        Chikiti, Berhampur,<br>
+        District - Ganjam, Odisha
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll(".testimonial-slide");
+    setInterval(() => {
+      slides[current].classList.remove("active");
+      current = (current + 1) % slides.length;
+      slides[current].classList.add("active");
+    }, 4000);
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
 </body>
 </html>
+

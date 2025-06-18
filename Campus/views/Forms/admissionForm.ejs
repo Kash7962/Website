@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>College Admission Form</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -73,18 +72,6 @@
       margin-top: 6px;
     }
 
-    .intl-tel-input {
-      width: 100%;
-    }
-
-    .intl-tel-input .selected-flag {
-      margin-right: 8px;
-    }
-
-    .phone-input-wrapper {
-      position: relative;
-    }
-
     .error {
       color: red;
       font-size: 0.9rem;
@@ -129,6 +116,7 @@
 
 <div class="container">
   <h2>College Admission Form</h2>
+  
   <form id="admissionForm" action="/Form/admissionForm" method="POST">
 
     <!-- Course Info -->
@@ -170,7 +158,7 @@
     </div>
     <div class="form-group">
       <label>Contact Number *</label>
-      <input type="tel" id="studentPhone" name="studentPhone" required>
+      <input type="tel" id="studentPhone" name="studentPhone" required placeholder="Enter 10-digit number">
       <span class="error" id="studentPhoneError"></span>
     </div>
 
@@ -197,7 +185,7 @@
     </div>
     <div class="form-group">
       <label>First Guardian Contact Number *</label>
-      <input type="tel" id="guardianPhone" name="guardian1Phone" required>
+      <input type="tel" id="guardianPhone" name="guardian1Phone" required placeholder="Enter 10-digit number">
       <span class="error" id="guardianPhoneError"></span>
     </div>
     <div class="form-group">
@@ -246,28 +234,6 @@
     <button type="submit">Submit Application</button>
   </form>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js"></script>
-<script>
-  const studentInput = document.getElementById("studentPhone");
-  const guardianInput = document.getElementById("guardianPhone");
-
-  const studentIti = intlTelInput(studentInput, {
-    initialCountry: "auto",
-    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js",
-    separateDialCode: true,
-    nationalMode: false
-  });
-
-  const guardianIti = intlTelInput(guardianInput, {
-    initialCountry: "auto",
-    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js",
-    separateDialCode: true,
-    nationalMode: false
-  });
-
-</script>
 
 </body>
 </html>
