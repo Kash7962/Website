@@ -27,4 +27,71 @@ const admissionValidator = [
   body('country').notEmpty()
 ];
 
-module.exports = { admissionValidator };
+const validateRegister = [
+  // Username: required, trimmed, escaped
+  body('username')
+    .trim()
+    .escape()
+    .notEmpty().withMessage('Username is required')
+    .isLength({ min: 2, max: 100 }).withMessage('Username must be between 2 and 100 characters'),
+
+  // Email: required, valid format
+  body('email')
+    .trim()
+    .normalizeEmail({
+      gmail_remove_subaddress: false, // keep subaddressing for Gmail
+      gmail_remove_dots: false, // keep dots in Gmail addresses
+    })
+    .notEmpty().withMessage('Email is required')
+    .isEmail().withMessage('Invalid email address'),
+
+  // Phone: required, must match E.164 format
+  body('phone')
+    .trim()
+    .matches(/^\+[1-9]\d{6,14}$/).withMessage('Phone number must be in E.164 format (e.g., +919876543210)'),
+
+  // isGoogle: optional boolean
+  body('isGoogle')
+    .optional()
+    .isBoolean().withMessage('isGoogle must be a boolean'),
+
+  // isAuthorized: optional boolean
+  body('isAuthorized')
+    .optional()
+    .isBoolean().withMessage('isAuthorized must be a boolean'),
+
+  // Password: conditionally required
+  body('password')
+    .if((value, { req }) => !req.body.isGoogle || req.body.isGoogle === 'false') // not using Google
+    .notEmpty().withMessage('Password is required for email/password signup')
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+
+  // Always trim and escape password if it exists
+  body('password')
+    .optional()
+    .trim()
+    .escape(),
+
+  // Confirm password: should match password (optional but recommended)
+  body('confirmPassword')
+    .optional()
+    .trim()
+    .custom((value, { req }) => {
+      if (req.body.password && value !== req.body.password) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
+];
+
+const validateLogin = [
+  body('identifier')
+    .trim()
+    .notEmpty().withMessage('Email or phone is required.'),
+
+  body('password')
+    .notEmpty().withMessage('Password is required.')
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
+];
+
+module.exports = { admissionValidator, validateRegister, validateLogin };

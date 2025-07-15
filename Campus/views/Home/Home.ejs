@@ -20,6 +20,41 @@
       font-family: 'Droid Serif', serif;
       font-size: 16px;
     }
+    .dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #1c1c35;
+  min-width: 160px;
+  z-index: 1;
+  flex-direction: column;
+  top: 100%;
+  left: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  padding: 0.5rem 1rem;
+  display: block;
+  text-align: left;
+  color: white;
+  background-color: #1c1c35;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #44a857;
+}
+
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
     h1 {
       font-family: 'bernoru-heading-50', sans-serif;
     }
@@ -31,7 +66,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      background: #0a0a23;
+      background: #000080;
       color: white;
       position: sticky;
       top: 0;
@@ -78,7 +113,9 @@
       padding: 4rem 2rem;
     }
     .hero {
-      background: linear-gradient(135deg, #930000, #ff6f61);
+     background: linear-gradient(135deg, #F97316, #FDBA74);
+
+
       color: white;
       padding: 6rem 2rem;
       text-align: center;
@@ -202,16 +239,81 @@
 </head>
 <body>
   <header>
-    <h1>KASH</h1>
+   <div style="display: flex; align-items: center; gap: 10px;">
+  <img src="images/kashnewlogo-removebg-preview.png" alt="KASH Logo" style="height: 100px; width: auto;">
+  <h1 style="margin: 0;">KASH</h1>
+</div>
+
+
     <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">☰</div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#programs">Programs</a>
-      <a href="#impact">Impact</a>
-      <a href="#donate">Donate</a>
-      <a href="#contact" class="btn">Contact</a>
-    </nav>
+   <nav>
+  <div class="dropdown">
+    <a href="#home">Home</a>
+  </div>
+  
+  <div class="dropdown">
+    <a href="#about">About us</a>
+    <div class="dropdown-content">
+      <a href="#">Who we are?</a>
+      <a href="#">Vision and Mission</a>
+      <a href="#">About SOLID - KASH society</a>
+      <a href="#">About KASH Logo</a>
+      <a href="#">Principal's Desk</a>
+      <a href="#">Faculty</a>
+      <a href="#">Management Board Members</a>
+      <a href="#">Governing Body Member</a>
+
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <a href="#programs">Academic</a>
+    <div class="dropdown-content">
+      <a href="#">Courses</a>
+      <a href="#">Examination</a>
+      <a href="#">Convocation</a>
+      <a href="#">Academic Calender</a>
+      <a href="#">Campus Life</a>
+      <a href="#">Achievements</a>
+
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <a href="#impact">Facilities</a>
+    <div class="dropdown-content">
+      <a href="#">Hostel</a>
+      <a href="#">Library</a>
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <a href="#events">Events</a>
+    <div class="dropdown-content">
+      <a href="#">Gallery</a>
+      <a href="#">Video Gallery</a>
+            <a href="#"></a>
+
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <a href="#contact">Contact</a>
+  </div>
+
+  <div class="dropdown">
+    <a href="#donate">Donate</a>
+  </div>
+
+  <div class="dropdown">
+    <a href="#legal">Legal Documents</a>
+    <div class="dropdown-content">
+      <a href="#">RTI</a>
+      <a href="#">Annual Reports</a>
+    </div>
+  </div>
+</nav>
+
   </header>
 
   <section class="hero" id="home" data-aos="fade-in">
@@ -253,9 +355,9 @@
         <img src="" alt="Student Profile Photo">
       </div>
     </div>
-  </section>
+  </section> 
 
-  <section id="impact" data-aos="zoom-in">
+  <section id="impact" data-aos="zoom-in"> 
     <h2>Our Impact</h2>
     <div class="cards">
       <div class="card">
@@ -303,14 +405,23 @@
     </div>
   </section>
 
-  <section id="campus" data-aos="zoom-in-up">
-    <h2>About Campus</h2>
-    <p>A constituent unit of 'Academy for Developing Communities (ADC)' KASH is a non-profit residential educational center located in Odisha. We serve students from marginalized communities through academic programs, training, and support.</p>
-    <div class="cards">
-      <div class="card"><img src="" alt="Campus Front View" style="width:100%"></div>
-      <div class="card"><img src="" alt="Campus Building" style="width:100%"></div>
+  <section id="campus" data-aos="zoom-in-up" style="padding: 4rem 2rem;">
+  <h2 style="text-align: center; margin-bottom: 2rem;">About Campus</h2>
+  <p style="text-align: center; max-width: 900px; margin: 0 auto 3rem;">
+    A constituent unit of 'Academy for Developing Communities (ADC)', KASH is a non-profit residential educational center located in Odisha. We serve students from marginalized communities through academic programs, training, and support.
+  </p>
+  
+  <!-- Two side-by-side images -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+    <div style="flex: 1 1 45%; max-width: 500px;">
+      <img src="images/dummy.jpg" alt="Campus Front View" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
     </div>
-  </section>
+    <div style="flex: 1 1 45%; max-width: 500px;">
+      <img src="images/dummy.jpg" alt="Campus Building" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+    </div>
+  </div>
+</section>
+
 
   <section id="review" data-aos="fade-left">
     <h2>Review</h2>
@@ -340,7 +451,7 @@
           <h4>- Priya M., +2 Science Student</h4>
         </div>
         <div class="testimonial-slide">
-          <p>"The skill training program helped me get a job in just 6 months."</p>
+          <p>"The skill training program helped me get a job in just 6 months."</p>r
           <h4>- Anil Kumar, Diploma Holder</h4>
         </div>
       </div>
@@ -355,24 +466,26 @@
     </div>
   </section>
 
+  
   <footer style="border-top: 3px solid #930000; background: #0a0a23; color: #eee; padding: 2rem 1rem;">
   <div style="
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
-    max-width: 1200px;
+    max-width: 1200px;      
+     
     margin: auto;
     gap: 2rem;
   ">
-    <!-- Left: Socials + Copyright -->
+    <!-- Left: Socials + Copyright -->        
     <div style="flex: 1; min-width: 280px;">
-      <p style="margin-bottom: 1rem;">&copy; All rights reserved by kashcampus | Developed by Browsium</p>
+      <p style="margin-bottom: 1rem;">&copy; All rights reserved by kashcampus | Developed by kashCampus</p>
       <div>
         <a href="https://wa.me/919000000000" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </a>
-        <a href="https://facebook.com/kashcampus" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
+        <a href="https://www.facebook.com/profile.php?id=61563575766094" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
           <i class="fab fa-facebook"></i> Facebook
         </a>
         <a href="mailto:info@kashcampus.org" style="color: #eee; text-decoration: none;">
@@ -381,12 +494,13 @@
       </div>
     </div>
 
+
     <!-- Right: Contact Info -->
     <div style="flex: 1; min-width: 280px;">
       <h2 style="margin-bottom: 0.5rem;">Contact Information</h2>
       <div style="font-size: 0.95rem; line-height: 1.8;">
         <strong>PHONE:</strong> +91 457835625<br>
-        <strong>EMAIL:</strong> contact@kash.org<br>
+        <strong>EMAIL:</strong>solidngo5@gmail.com<br>
         <strong>ADDRESS:</strong><br>
         Golanthara, Govindapur,<br>
         Chikiti, Berhampur,<br>
@@ -396,8 +510,8 @@
   </div>
 </footer>
 
-
   <script>
+
     let current = 0;
     const slides = document.querySelectorAll(".testimonial-slide");
     setInterval(() => {
@@ -411,4 +525,3 @@
   <script>AOS.init();</script>
 </body>
 </html>
-

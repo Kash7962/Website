@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      margin: 0;
+      padding: 0;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1e3c72;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      height: 42px;
+      line-height: 1;
+    }
+
+    .phone-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .phone-group select {
+      flex: 0 0 28%;
+      font-size: 0.75rem;
+      padding: 4px 6px;
+      height: 36px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      background-color: white;
+      appearance: none;
+    }
+
+    .phone-group input[type="tel"] {
+      flex: 1;
+      height: 36px;
+      padding: 8px;
+      font-size: 0.95rem;
+    }
+
+    button {
+      background-color: #1e88e5;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      input, button, select {
+        font-size: 1rem;
+      }
+
+      .phone-group select {
+        flex-basis: 30%;
+        font-size: 0.7rem;
+        height: 34px;
+        padding: 4px 4px;
+      }
+
+      .phone-group input[type="tel"] {
+        height: 34px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Sign Up</h2>
+
+  <form id="registerForm" action="/User/register" method="POST">
+    <div class="form-group">
+      <label for="username">Username (Full Name) *</label>
+      <input type="text" id="username" name="username" required placeholder="Enter your username">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" required placeholder="Enter your email">
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Mobile Number *</label>
+      <div class="phone-group">
+        <select id="countryCode" required>
+          <option value="+91" selected>🇮🇳 +91 (India)</option>
+          <option value="+855">🇰🇭 +855 (Cambodia)</option>
+          <option value="+1">🇺🇸 +1 (USA)</option>
+          <option value="+44">🇬🇧 +44 (UK)</option>
+          <option value="+61">🇦🇺 +61 (Australia)</option>
+          <option value="+81">🇯🇵 +81 (Japan)</option>
+          <option value="+971">🇦🇪 +971 (UAE)</option>
+        </select>
+        <input type="tel" id="phone" required placeholder="10-digit number" pattern="[0-9]{6,15}">
+      </div>
+      <input type="hidden" name="phone" id="fullPhone">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password *</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password">
+    </div>
+
+    <button type="submit">Sign Up</button>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('registerForm');
+  const rawPhone = document.getElementById('phone');
+  const countryCode = document.getElementById('countryCode');
+  const fullPhoneInput = document.getElementById('fullPhone');
+
+  form.addEventListener('submit', function (e) {
+    const raw = rawPhone.value.replace(/\D/g, '');
+    const code = countryCode.value;
+
+    if (raw.length < 6 || raw.length > 15) {
+      alert("Please enter a valid phone number (6-15 digits).");
+      e.preventDefault();
+      return;
+    }
+
+    fullPhoneInput.value = code + raw;
+  });
+</script>
+
+</body>
+</html>
