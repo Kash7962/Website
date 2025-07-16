@@ -1,65 +1,219 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    background: #1b3a57;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-radius: 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo img {
+    height: 60px;
+  }
+
+  .logo h1 {
+    color: white;
+    font-size: 24px;
+  }
+
+  .menu-toggle {
+    display: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+  }
+
+  nav#navMenu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  nav#navMenu a,
+  .dropdown > button {
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    text-align: left;
+    text-decoration: none;
+    border-radius: 8px; /* Green hover curve */
+  }
+
+  nav#navMenu a:hover,
+  .dropdown > button:hover {
+    background-color: rgba(0, 255, 0, 0.2);
+  }
+
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background-color: #2f5f85;
+    min-width: 220px;
+    z-index: 999;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .dropdown-content a {
+    display: block;
+    padding: 12px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .dropdown-content a:hover {
+    background-color: rgba(0, 255, 0, 0.2);
+  }
+
+  @media (min-width: 769px) {
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    nav#navMenu {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #1b3a57;
+      padding: 12px;
+    }
+
+    nav#navMenu.active {
+      display: flex !important;
+    }
+
+    .dropdown-content {
+      position: static;
+      border-radius: 0;
+    }
+
+    .dropdown.active .dropdown-content {
+      display: block;
+    }
+
+    nav#navMenu a,
+    .dropdown > button {
+      width: 100%;
+      text-align: left;
+    }
+  }
+</style>
+
 <header>
   <div class="logo">
-    <img src="/Images/kashnewlogo-removebg-preview.png" alt="KASH Logo">
+    <img src="/Images/kashnewlogo-removebg-preview.png" alt="Logo" />
     <h1>KASH</h1>
   </div>
 
   <div class="menu-toggle" id="menu-toggle">☰</div>
 
   <nav id="navMenu">
-    <div class="dropdown"><a href="/#home" class="nav-link">Home</a></div>
+    <div class="dropdown"><a href="/#home">Home</a></div>
 
     <div class="dropdown">
-      <button class="dropdown-toggle">About us</button>
+      <button class="dropdown-toggle">About Us</button>
       <div class="dropdown-content">
-        <a href="/WhoWeAre/AboutUs" class="nav-link">Who we are?</a>
-        <a href="/#about" class="nav-link">Vision and Mission</a>
-        <a href="/#about" class="nav-link">About SOLID - KASH society</a>
-        <a href="/#about" class="nav-link">About KASH Logo</a>
-        <a href="/#about" class="nav-link">Principal's Desk</a>
-        <a href="/#about" class="nav-link">Faculty</a>
-        <a href="/#about" class="nav-link">Management Board Members</a>
-        <a href="/#about" class="nav-link">Governing Body Member</a>
+        <a href="/WhoWeAre/AboutUs">Who we are?</a>
+        <a href="/#about">Vision and Mission</a>
+        <a href="/#about">About SOLID</a>
+        <a href="/#about">Principal's Desk</a>
+        <a href="/#about">Faculty</a>
+        <a href="/#about">Board Members</a>
       </div>
     </div>
 
     <div class="dropdown">
       <button class="dropdown-toggle">Academic</button>
       <div class="dropdown-content">
-        <a href="/#programs" class="nav-link">Courses</a>
-        <a href="/#programs" class="nav-link">Examination</a>
-        <a href="/#programs" class="nav-link">Convocation</a>
-        <a href="/#programs" class="nav-link">Academic Calendar</a>
-        <a href="/#campus" class="nav-link">Campus Life</a>
-        <a href="/#achievement" class="nav-link">Achievements</a>
+        <a href="/#programs">Courses</a>
+        <a href="/#programs">Examination</a>
+        <a href="/#programs">Academic Calendar</a>
+        <a href="/#campus">Campus Life</a>
       </div>
     </div>
 
     <div class="dropdown">
       <button class="dropdown-toggle">Facilities</button>
       <div class="dropdown-content">
-        <a href="/#impact" class="nav-link">Hostel</a>
-        <a href="/#impact" class="nav-link">Library</a>
+        <a href="/#impact">Hostel</a>
+        <a href="/#impact">Library</a>
       </div>
     </div>
 
     <div class="dropdown">
       <button class="dropdown-toggle">Events</button>
       <div class="dropdown-content">
-        <a href="/#events" class="nav-link">Gallery</a>
-        <a href="/#events" class="nav-link">Video Gallery</a>
+        <a href="/#events">Gallery</a>
+        <a href="/#events">Videos</a>
       </div>
     </div>
 
-    <div class="dropdown"><a href="/#contact" class="nav-link">Contact</a></div>
-    <div class="dropdown"><a href="/#donate" class="nav-link">Donate</a></div>
+    <div class="dropdown"><a href="/#contact">Contact</a></div>
+    <div class="dropdown"><a href="/#donate">Donate</a></div>
 
     <div class="dropdown">
-      <button class="dropdown-toggle">Legal Documents</button>
+      <button class="dropdown-toggle">Legal</button>
       <div class="dropdown-content">
-        <a href="/#legal" class="nav-link">RTI</a>
-        <a href="/#legal" class="nav-link">Annual Reports</a>
+        <a href="/#legal">RTI</a>
+        <a href="/#legal">Annual Reports</a>
       </div>
     </div>
   </nav>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("menu-toggle");
+    const navMenu = document.getElementById("navMenu");
+    const dropdowns = document.querySelectorAll(".dropdown-toggle");
+
+    toggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+
+    dropdowns.forEach(btn => {
+      btn.addEventListener("click", e => {
+        if (window.innerWidth <= 768) {
+          e.preventDefault();
+          btn.parentElement.classList.toggle("active");
+        }
+      });
+    });
+  });
+</script>
