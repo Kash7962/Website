@@ -22,7 +22,47 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Helmet configuration for strict protection
-app.use(helmet());
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://unpkg.com",
+        "https://cdnjs.cloudflare.com",
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://fonts.googleapis.com",
+        "https://unpkg.com",
+        "https://cdnjs.cloudflare.com",
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com",
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://maps.gstatic.com",
+        "https://www.google.com",
+      ],
+      frameSrc: [
+        "'self'",
+        "https://www.google.com",
+        "https://www.google.com/maps",
+      ],
+      connectSrc: ["'self'", "https://unpkg.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
+
 
 
 
