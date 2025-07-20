@@ -135,7 +135,7 @@
 <div class="container">
   <h2>Sign Up</h2>
 
-  <form id="registerForm" action="/User/register" method="POST">
+  <form id="registerForm">
     <div class="form-group">
       <label for="username">Username (Full Name) *</label>
       <input type="text" id="username" name="username" required placeholder="Enter your username">
@@ -174,6 +174,15 @@
     </div>
 
     <button type="submit">Sign Up</button>
+
+    <div style="text-align: center; margin-top: 10px;">
+      <p style="font-size: 0.9rem;">
+        Already have an account?
+        <a href="/Staff/login" style="color: #1e88e5; text-decoration: none; font-weight: bold;">
+          Log in
+        </a>
+      </p>
+    </div>
   </form>
 </div>
 
@@ -183,17 +192,55 @@
   const countryCode = document.getElementById('countryCode');
   const fullPhoneInput = document.getElementById('fullPhone');
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
     const raw = rawPhone.value.replace(/\D/g, '');
     const code = countryCode.value;
+    const fullPhone = code + raw;
 
     if (raw.length < 6 || raw.length > 15) {
       alert("Please enter a valid phone number (6-15 digits).");
-      e.preventDefault();
       return;
     }
 
-    fullPhoneInput.value = code + raw;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const data = {
+      username: document.getElementById('username').value,
+      email: document.getElementById('email').value,
+      phone: fullPhone,
+      password,
+      confirmPassword
+    };
+
+    try {
+      const response = await fetch("/Staff/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert("Registration successful!");
+        alert("Get authorization from admin to login.!!");
+        window.location.href = "/";
+      } else {
+        const result = await response.json();
+        alert(result.message || "Registration failed. Please try again.");
+      }
+    } catch (err) {
+      alert("An error occurred. Please try again.");
+      console.error(err);
+    }
   });
 </script>
 

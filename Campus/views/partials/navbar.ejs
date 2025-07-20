@@ -1,139 +1,157 @@
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  header {
-    background: #1b3a57;
-    padding: 12px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-radius: 0;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo img {
-    height: 60px;
-  }
-
-  .logo h1 {
-    color: white;
-    font-size: 24px;
-  }
-
-  .menu-toggle {
-    display: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: white;
-  }
-
-  nav#navMenu {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  nav#navMenu a,
-  .dropdown > button {
-    background: none;
-    border: none;
-    padding: 10px 16px;
-    color: #ffffff;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    text-align: left;
-    text-decoration: none;
-    border-radius: 8px; /* Green hover curve */
-  }
-
-  nav#navMenu a:hover,
-  .dropdown > button:hover {
-    background-color: rgba(0, 255, 0, 0.2);
-  }
-
-  .dropdown {
-    position: relative;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 110%;
-    left: 0;
-    background-color: #2f5f85;
-    min-width: 220px;
-    z-index: 999;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .dropdown-content a {
-    display: block;
-    padding: 12px 16px;
-    color: #ffffff;
-    text-decoration: none;
-    transition: background 0.3s ease;
-    border-radius: 8px;
-  }
-
-  .dropdown-content a:hover {
-    background-color: rgba(0, 255, 0, 0.2);
-  }
-
-  @media (min-width: 769px) {
-    .dropdown:hover .dropdown-content {
-      display: block;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Navbar</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  @media (max-width: 768px) {
+    header {
+      background: #1b3a57;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img {
+      height: 60px;
+    }
+
+    .logo h1 {
+      color: white;
+      font-size: 24px;
+    }
+
     .menu-toggle {
-      display: block;
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
     }
 
     nav#navMenu {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      background-color: #1b3a57;
-      padding: 12px;
-    }
-
-    nav#navMenu.active {
-      display: flex !important;
-    }
-
-    .dropdown-content {
-      position: static;
-      border-radius: 0;
-    }
-
-    .dropdown.active .dropdown-content {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
 
     nav#navMenu a,
     .dropdown > button {
-      width: 100%;
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
       text-align: left;
+      text-decoration: none;
+      border-radius: 8px;
     }
-  }
-</style>
+
+    nav#navMenu a:hover,
+    .dropdown > button:hover {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      position: absolute;
+      top: 110%;
+      left: 0;
+      background-color: #2f5f85;
+      min-width: 220px;
+      z-index: 999;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-direction: column;
+      pointer-events: none;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+      color: #ffffff;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+
+    @media (min-width: 769px) {
+      .dropdown:hover .dropdown-content {
+        display: flex;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      nav#navMenu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #1b3a57;
+        padding: 12px;
+      }
+
+      nav#navMenu.active {
+        display: flex;
+      }
+
+      .dropdown-content {
+        position: static;
+        border-radius: 0;
+        padding-left: 10px;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition: none;
+      }
+
+      .dropdown:not(.active) .dropdown-content {
+        display: none;
+      }
+
+      nav#navMenu a,
+      .dropdown > button {
+        width: 100%;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
 
 <header>
   <div class="logo">
@@ -149,22 +167,27 @@
     <div class="dropdown">
       <button class="dropdown-toggle">About Us</button>
       <div class="dropdown-content">
+        <a href="/WhoWeAre/AboutKASH_LOGO">About KASH Logo</a>
         <a href="/WhoWeAre/AboutUs">Who we are?</a>
-        <a href="/#about">Vision and Mission</a>
-        <a href="/#about">About SOLID</a>
-        <a href="/#about">Principal's Desk</a>
-        <a href="/#about">Faculty</a>
-        <a href="/#about">Board Members</a>
+        <a href="/WhoWeAre/Vision_Mission">Vision and Mission</a>
+        <a href="/WhoWeAre/AboutSOLID_KASH">About SOLID</a>
+        <a href="/WhoWeAre/PrincipalsDesk">Principal's Desk</a>
+        <a href="/WhoWeAre/Faculty">Faculty</a>
+        <a href="/WhoWeAre/Government">Board Members</a>
+        <a href="/WhoWeAre/KASH_EXECUTIVE">KASH Executive</a>
       </div>
     </div>
 
     <div class="dropdown">
       <button class="dropdown-toggle">Academic</button>
       <div class="dropdown-content">
-        <a href="/#programs">Courses</a>
-        <a href="/#programs">Examination</a>
-        <a href="/#programs">Academic Calendar</a>
-        <a href="/#campus">Campus Life</a>
+        <a href="/Academic/Courses">Courses</a>
+        <a href="/Academic/Examination">Examination</a>
+        <a href="/Academic/FACILITIES">Facilities</a>
+        <a href="/Academic/Convocation">Convocation</a>
+        <a href="/Academic/Achievements">Achievements</a>
+        <a href="/">Academic Calendar</a>
+        <a href="/Academic/CampusLife">Campus Life</a>
       </div>
     </div>
 
@@ -184,6 +207,7 @@
       </div>
     </div>
 
+    <div class="dropdown"><a href="/Staff/register">Staff</a></div>
     <div class="dropdown"><a href="/#contact">Contact</a></div>
     <div class="dropdown"><a href="/#donate">Donate</a></div>
 
@@ -211,9 +235,19 @@
       btn.addEventListener("click", e => {
         if (window.innerWidth <= 768) {
           e.preventDefault();
-          btn.parentElement.classList.toggle("active");
+          const parentDropdown = btn.parentElement;
+          parentDropdown.classList.toggle("active");
+
+          document.querySelectorAll(".dropdown").forEach(drop => {
+            if (drop !== parentDropdown) {
+              drop.classList.remove("active");
+            }
+          });
         }
       });
     });
   });
 </script>
+
+</body>
+</html>

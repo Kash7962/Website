@@ -50,24 +50,48 @@
       border-radius: 5px;
     }
     button {
-      background-color: #1e88e5;
-      color: white;
+      width: 100%;
       padding: 12px;
+      font-size: 1rem;
       border: none;
       border-radius: 6px;
-      font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    button:hover {
+    button[type="submit"] {
+      background-color: #1e88e5;
+      color: white;
+    }
+    button[type="submit"]:hover {
       background-color: #1565c0;
     }
+
+    .google-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    #g_id_signin {
+      width: 100%;
+    }
+
     .footer-text {
       text-align: center;
       margin-top: 20px;
       font-size: 0.9rem;
       color: #666;
     }
+
+    .footer-text a {
+      color: #1e88e5;
+      text-decoration: none;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 500px) {
       .container {
         margin: 20px;
@@ -81,6 +105,9 @@
       }
     }
   </style>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -99,12 +126,18 @@
     <button type="submit">Login</button>
   </form>
 
+  <!-- Google Sign-In Button -->
+  <div class="google-wrapper">
+    <div id="g_id_signin"></div>
+  </div>
+
   <div class="footer-text">
-    Don't have an account? <a href="/register">Register here</a>
+    Don't have an account? <a href="/Staff/register">Register here</a>
   </div>
 </div>
 
 <script>
+  // Handle Email/Password Login
   const loginForm = document.getElementById('loginForm');
 
   loginForm.addEventListener('submit', async function (e) {
@@ -114,7 +147,7 @@
     const password = document.getElementById('password').value.trim();
 
     try {
-      const res = await fetch('/User/login', {
+      const res = await fetch('/Staff/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,19 +157,70 @@
 
       const data = await res.json();
 
+      if (data.user?.isAuthorized) {
+        alert('Login successful!');
+      } else {
+        alert('You are not authorized to access this page.');
+        return;
+      }
+
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/';
+        window.location.href = '/Staff/dashboard';
       } else {
         alert(data.message || 'Login failed.');
-        window.location.href = '/login';
+        window.location.href = '/Staff/login';
       }
     } catch (err) {
       console.error('Login error:', err);
       alert('Something went wrong. Try again.');
     }
   });
+
+  // Google Sign-In
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: '386508050197-iluerjae4ua3i4jgd4k4taio51mav3bt.apps.googleusercontent.com', // 🔁 Replace this
+      callback: handleGoogleResponse,
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("g_id_signin"),
+      {
+        theme: "outline",
+        size: "large",
+        width: "100%",
+      }
+    );
+  };
+
+  async function handleGoogleResponse(response) {
+    try {
+      const res = await fetch('/Staff/google-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tokenId: response.credential }),
+      });
+
+      const data = await res.json();
+
+      if (data.user?.isAuthorized) {
+        alert('Google login successful!');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/Staff/dashboard';
+      } else {
+        alert('You are not authorized to access this page.');
+      }
+
+    } catch (err) {
+      console.error('Google login failed:', err);
+      alert('Google login failed. Please try again.');
+    }
+  }
 </script>
 
 </body>

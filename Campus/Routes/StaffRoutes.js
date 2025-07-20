@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser } = require('../Controllers/UserController');
+const { registerUser, loginUser, logout, googleLogin } = require('../Controllers/StaffController');
 const { validateLogin, validateRegister } = require('../schema');
 const { validationResult } = require('express-validator');
 
@@ -31,5 +31,13 @@ router.get('/login', (req, res) => {
   res.render('Register_Login/loginForm', { title: 'Login' });
 });
 
+router.get('/dashboard', (req, res) => {
+  // Assuming you have a dashboard view
+  res.render('Dashboards/d', { title: 'Dashboard Staff' });
+});
 
+router.post('/google-login', googleLogin);
+
+router.post('/logout', logout)
+  // Clear session or token logic here
 module.exports = router;
