@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, logout, googleLogin } = require('../Controllers/StaffController');
+const { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword } = require('../Controllers/StaffController');
 const { validateLogin, validateRegister } = require('../schema');
 const { validationResult } = require('express-validator');
 
@@ -37,6 +37,20 @@ router.get('/dashboard', (req, res) => {
 });
 
 router.post('/google-login', googleLogin);
+
+router.get('/forgot-password', (req, res) => {
+  res.render('Register_Login/forgotPassword', { title: 'Forgot Password' });
+});
+
+router.get('/reset-password', (req, res) => {
+  res.render('Register_Login/resetPassword', { title: 'Reset Password' });
+});
+
+// Send reset link to email
+router.post('/forgot-password', forgotPassword);
+
+// Handle password reset using token
+router.post('/reset-password', resetPassword);
 
 router.post('/logout', logout)
   // Clear session or token logic here

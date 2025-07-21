@@ -49,6 +49,18 @@
       border: 1px solid #aaa;
       border-radius: 5px;
     }
+    .forgot-password {
+      text-align: right;
+      margin-top: 5px;
+      font-size: 0.9rem;
+    }
+    .forgot-password a {
+      color: #1e88e5;
+      text-decoration: none;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
     button {
       width: 100%;
       padding: 12px;
@@ -65,33 +77,27 @@
     button[type="submit"]:hover {
       background-color: #1565c0;
     }
-
     .google-wrapper {
       display: flex;
       justify-content: center;
       margin-top: 10px;
     }
-
     #g_id_signin {
       width: 100%;
     }
-
     .footer-text {
       text-align: center;
       margin-top: 20px;
       font-size: 0.9rem;
       color: #666;
     }
-
     .footer-text a {
       color: #1e88e5;
       text-decoration: none;
     }
-
     .footer-text a:hover {
       text-decoration: underline;
     }
-
     @media (max-width: 500px) {
       .container {
         margin: 20px;
@@ -122,6 +128,9 @@
     <div class="form-group">
       <label for="password">Password *</label>
       <input type="password" id="password" name="password" required placeholder="Enter your password" />
+      <div class="forgot-password">
+        <a href="/Staff/forgot-password">Forgot Password?</a>
+      </div>
     </div>
     <button type="submit">Login</button>
   </form>

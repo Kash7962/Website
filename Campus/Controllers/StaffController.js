@@ -4,9 +4,12 @@ const Staff = require('../models/staff'); // Adjust path if needed
 const Session = require('../models/session'); // Adjust path if needed
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const nodemailer = require('nodemailer');
 dotenv.config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret';
+const CLIENT_URL = process.env.CLIENT_URL 
 
 const registerUser = async (req, res) => {
   try {
@@ -110,6 +113,7 @@ const loginUser = async (req, res) => {
 
     await Session.create({
     userId: user._id,
+    name: user.username,
     email: user.email,
     loginTime: new Date(),
     method: 'email', // or 'email'
@@ -204,6 +208,7 @@ const googleLogin = async (req, res) => {
     // Save session
     await Session.create({
       userId: user._id,
+      name: user.username,
       email: user.email,
       loginTime: new Date(),
       method: 'google',
@@ -231,4 +236,96 @@ const googleLogin = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logout, googleLogin };
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await Staff.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with that email.' });
+    }
+
+    // Create JWT token valid for 15 minutes
+    const token = jwt.sign(
+      { id: user._id },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    // Create reset URL
+    const resetUrl = `${CLIENT_URL}/Staff/reset-password?token=${token}`;
+
+    // Email content
+    const html = `
+      <h2>Password Reset Request</h2>
+      <p>Click the link below to reset your password. This link is valid for 15 minutes.</p>
+      <a href="${resetUrl}" target="_blank">${resetUrl}</a>
+      <p>If you didn't request this, you can ignore this email.</p>
+    `;
+
+    // Nodemailer config
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,      // your email
+        pass: process.env.EMAIL_PASS       // app password or email password
+      }
+    });
+
+    // Send email
+    await transporter.sendMail({
+      to: user.email,
+      from: `"Support Team" <${process.env.EMAIL_USER}>`,
+      subject: 'Reset Your Password',
+      html
+    });
+
+    res.status(200).json({ message: 'Password reset link sent to your email.' });
+
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ message: 'Server error. Try again later.' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: 'Missing reset token.' });
+  }
+
+  try {
+    // Verify token and extract user ID
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userId = decoded.id;
+
+    // Find user
+    const user = await Staff.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful. Please login with your new password.' });
+
+  } catch (err) {
+    console.error('Reset password error:', err);
+
+    if (err.name === 'TokenExpiredError') {
+      return res.status(400).json({ message: 'Reset token has expired. Please request a new one.' });
+    }
+
+    res.status(400).json({ message: 'Invalid or expired token.' });
+  }
+};
+
+module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword };
