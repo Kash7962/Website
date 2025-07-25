@@ -1,161 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Responsive Navbar</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    header {
-      background: #1b3a57;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
+html, body {
+  overflow-x: hidden;
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+header {
+  background: #1e40af; /* Rich blue */
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  overflow-x: clip;
+}
 
-    .logo img {
-      height: 60px;
-    }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    .logo h1 {
-      color: white;
-      font-size: 24px;
-    }
+.logo img {
+  height: 60px;
+}
 
-    .menu-toggle {
-      display: none;
-      font-size: 28px;
-      cursor: pointer;
-      color: white;
-    }
+.logo h1 {
+  color: white;
+  font-size: 24px;
+}
 
-    nav#navMenu {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
 
-    nav#navMenu a,
-    .dropdown > button {
-      background: none;
-      border: none;
-      padding: 10px 16px;
-      color: #ffffff;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
-      text-align: left;
-      text-decoration: none;
-      border-radius: 8px;
-    }
+nav#navMenu {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1;
+  flex-wrap: wrap;
+  gap: 16px;
+}
 
-    nav#navMenu a:hover,
-    .dropdown > button:hover {
-      background-color: rgba(0, 255, 0, 0.2);
-    }
+nav#navMenu a,
+.dropdown > button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  border-radius: 8px;
+}
 
-    .dropdown {
-      position: relative;
-    }
+nav#navMenu a:hover,
+.dropdown > button:hover {
+  background-color: rgba(0, 255, 0, 0.2);
+}
 
-    .dropdown-content {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      position: absolute;
-      top: 110%;
-      left: 0;
-      background-color: #2f5f85;
-      min-width: 220px;
-      z-index: 999;
-      border-radius: 8px;
-      overflow: hidden;
-      flex-direction: column;
-      pointer-events: none;
-    }
+.dropdown {
+  position: relative;
+}
 
-    .dropdown-content a {
-      display: block;
-      padding: 12px 16px;
-      color: #ffffff;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    }
+.dropdown-content {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #2f5f85;
+  min-width: 220px;
+  z-index: 999;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-direction: column;
+  pointer-events: none;
+}
 
-    .dropdown-content a:hover {
-      background-color: rgba(0, 255, 0, 0.2);
-    }
+.dropdown-content a {
+  display: block;
+  padding: 12px 16px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
 
-    @media (min-width: 769px) {
-      .dropdown:hover .dropdown-content {
-        display: flex;
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-      }
-    }
+.dropdown-content a:hover {
+  background-color: rgba(0, 255, 0, 0.2);
+}
 
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: block;
-      }
+@media (min-width: 769px) {
+  .dropdown:hover .dropdown-content {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
 
-      nav#navMenu {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #1b3a57;
-        padding: 12px;
-      }
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
 
-      nav#navMenu.active {
-        display: flex;
-      }
+  nav#navMenu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #1e40af;
+    padding: 12px;
+  }
 
-      .dropdown-content {
-        position: static;
-        border-radius: 0;
-        padding-left: 10px;
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transition: none;
-      }
+  nav#navMenu.active {
+    display: flex;
+  }
 
-      .dropdown:not(.active) .dropdown-content {
-        display: none;
-      }
+  .dropdown-content {
+    position: static;
+    border-radius: 0;
+    padding-left: 10px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: none;
+  }
 
-      nav#navMenu a,
-      .dropdown > button {
-        width: 100%;
-        text-align: left;
-      }
-    }
-  </style>
+  .dropdown:not(.active) .dropdown-content {
+    display: none;
+  }
+
+  nav#navMenu a,
+  .dropdown > button {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+
+
+</style>
+
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <img src="/Images/kashnewlogo-removebg-preview.png" alt="Logo" />
+    <img src="/img/kashnewlogo-removebg-preview.png" alt="Logo" />
     <h1>KASH</h1>
   </div>
 
@@ -163,20 +172,7 @@
 
   <nav id="navMenu">
     <div class="dropdown"><a href="/#home">Home</a></div>
-
-    <div class="dropdown">
-      <button class="dropdown-toggle">About Us</button>
-      <div class="dropdown-content">
-        <a href="/WhoWeAre/AboutKASH_LOGO">About KASH Logo</a>
-        <a href="/WhoWeAre/AboutUs">Who we are?</a>
-        <a href="/WhoWeAre/Vision_Mission">Vision and Mission</a>
-        <a href="/WhoWeAre/AboutSOLID_KASH">About SOLID</a>
-        <a href="/WhoWeAre/PrincipalsDesk">Principal's Desk</a>
-        <a href="/WhoWeAre/Faculty">Faculty</a>
-        <a href="/WhoWeAre/Government">Board Members</a>
-        <a href="/WhoWeAre/KASH_EXECUTIVE">KASH Executive</a>
-      </div>
-    </div>
+    <div class="dropdown"><a href="/#campus">About</a></div>
 
     <div class="dropdown">
       <button class="dropdown-toggle">Academic</button>
@@ -250,4 +246,4 @@
 </script>
 
 </body>
-</html>
+

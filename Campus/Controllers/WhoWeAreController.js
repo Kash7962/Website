@@ -23,3 +23,7 @@ module.exports.principals_desk = (req,res) => {
 module.exports.vision_mission = (req,res) => {
     res.render('WhoWeAre/Vision&Mission');
 }
+
+module.exports.aboutCampus = (req,res) => {
+    res.render('WhoWeAre/AboutCampus');
+}

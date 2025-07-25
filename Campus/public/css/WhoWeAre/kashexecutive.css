@@ -1,111 +1,109 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #2c3e50, #3498db);
-        }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+}
 
-        header {
-            text-align: center;
-            color: white;
-            padding: 2em 1em;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-        header h1 {
-            font-size: 2em;
-            margin-bottom: 0.5em;
-        }
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+}
 
-        header h2 {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #fff;
-        }
+.page-header h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.5rem;
+}
 
-        .profile-card {
-            background-color: #fff;
-            max-width: 1000px;
-            margin: 2em auto;
-            padding: 2em;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 2em;
-        }
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin: 0;
+    color: white;
+}
 
-        .profile-card img {
-            width: 250px;
-            height: auto;
-            border-radius: 5px;
-            object-fit: cover;
-        }
+/* Main Content */
+.main-content {
+    padding: 4rem 0;
+}
 
-        .info {
-            flex: 1;
-        }
+/* Executive Grid Layout */
+.executive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
 
-        .info h3 {
-            color: #0b3c6d;
-            font-size: 1.2em;
-            margin-bottom: 0.3em;
-            display: flex;
-            align-items: center;
-        }
+/* Individual Executive Card Styling */
+.executive-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .info h3::before {
-            content: "📘";
-            margin-right: 0.5em;
-        }
+.executive-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
 
-        .info p {
-            font-size: 1.1em;
-            margin-bottom: 1.2em;
-            color: #333;
-        }
+.executive-card img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    object-position: top; /* Ensures the top of the image is prioritized */
+}
 
-        @media (max-width: 768px) {
-            .profile-card {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
+.card-body {
+    padding: 1.5rem;
+}
 
-            .profile-card img {
-                width: 200px;
-            }
+.name {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.4rem;
+    color: #334155;
+    margin: 0 0 0.5rem 0;
+}
 
-            .info {
-                width: 100%;
-            }
+.designation {
+    font-size: 1rem;
+    color: #f97316; /* Orange accent */
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
 
-            .subheading h2 {
-                font-size: 1.4em;
-                text-align: left;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.5em;
-            }
-
-            header h2 {
-                font-size: 1.2em;
-            }
-
-            .info p {
-                font-size: 1em;
-            }
-
-            .subheading h2 {
-                font-size: 1.2em;
-            }
-        }
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    .main-content {
+        padding: 3rem 0;
+    }
+}

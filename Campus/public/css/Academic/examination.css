@@ -1,91 +1,183 @@
- 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            color: #fff;
-            padding: 20px;
-        }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        header {
-            text-align: center;
-            color: white;
-            padding: 2em 1em;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-            margin-bottom: 30px;
-        }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+    font-size: 16px;
+}
 
-        header h1 {
-            font-size: 2em;
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-        p {
-            font-size: 1.2em;
-            margin-bottom: 1em;
-        }
+/* Typography */
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
 
-        .table-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            overflow-x: auto;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1em;
-        }
+h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #1e40af;
+    margin-bottom: 1rem;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #fff;
-        }
+p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-        }
+strong {
+    color: #1e40af;
+    font-weight: 600;
+}
 
-        th {
-            background-color: rgba(0, 0, 0, 0.4);
-            font-weight: bold;
-        }
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 3rem;
+}
 
-        tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+.page-header h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
 
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+}
 
-        .download-btn {
-            background-color: #1abc9c;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
+/* Main Content */
+.main-content {
+    padding-bottom: 4rem;
+}
 
-        .download-btn:hover {
-            background-color: #16a085;
-        }
+/* Section Styles */
+.content-section {
+    margin: 3rem 0;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #f97316;
+}
 
-        @media (max-width: 600px) {
-            p {
-                font-size: 1em;
-            }
+.content-section p,
+.content-section li {
+    color: #374151;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
 
-            th, td {
-                font-size: 0.95em;
-            }
+.content-section ul {
+    list-style-position: inside;
+    padding-left: 1rem;
+}
 
-            header h1 {
-                font-size: 1.5em;
-            }
-        }
+/* Table Styles */
+.table-section {
+    margin-top: 3rem;
+}
+
+.table-section h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+}
+
+.data-table th {
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.data-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 1rem;
+    color: #334155;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Download Button */
+.download-btn {
+    background-color: #059669;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.download-btn:hover {
+    background-color: #047857;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+    .page-header {
+        padding: 3rem 0;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+}

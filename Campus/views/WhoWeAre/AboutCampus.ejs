@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About KASH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Import fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
+
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            line-height: 1.6;
+            background-color: #fef7ed;
+            color: #333;
+            font-family: 'Droid Serif', serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Typography */
+        h1, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #4b5563;
+        }
+
+        /* Header Styles */
+        .page-header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin: 0;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-bottom: 4rem;
+        }
+
+        /* Card Grid Layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Individual Card Styling */
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: #f97316; /* Orange icon */
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            font-size: 1.4rem;
+            color: #1e40af;
+            margin-bottom: 0.75rem;
+        }
+        
+        .card p {
+            flex-grow: 1; /* Pushes the button to the bottom */
+            margin-bottom: 1.5rem;
+        }
+
+        .card a {
+            display: inline-block;
+            background-color: #1e40af;
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            align-self: flex-start; /* Align button to the left */
+        }
+
+        .card a:hover {
+            background-color: #1c3d90;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            .page-header {
+                padding: 3rem 0;
+                margin-bottom: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <div class="container">
+            <h1>About KASH</h1>
+            <p>Learn more about our organization, our people, and our principles.</p>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card-grid">
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-gem"></i></div>
+                    <h3>About KASH Logo</h3>
+                    <p>Discover the story and symbolism behind the KASH logo and its meaning.</p>
+                    <a href="/WhoWeAre/AboutKASH_Logo">Read More</a>
+                </div>
+              
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-info-circle"></i></div>
+                    <h3>Who We Are</h3>
+                    <p>Explore the journey, history, and impact of the KASH organization.</p>
+                    <a href="/WhoWeAre/AboutUs">Read More</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-bullseye"></i></div>
+                    <h3>Vision & Mission</h3>
+                    <p>Understand the core vision and mission that drives the KASH initiative.</p>
+                    <a href="/WhoWeAre/Vision_Mission">Read More</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-handshake-angle"></i></div>
+                    <h3>About SOLID</h3>
+                    <p>Learn about our parent organization, Solidarity for Developing Communities.</p>
+                    <a href="/WhoWeAre/AboutSOLID_KASH">Read More</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-user-tie"></i></div>
+                    <h3>Principal's Desk</h3>
+                    <p>A message from the Principal highlighting our goals, achievements, and vision.</p>
+                    <a href="/WhoWeAre/PrincipalsDesk">Read More</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>Faculty</h3>
+                    <p>Meet our dedicated and experienced faculty members behind our success.</p>
+                    <a href="/WhoWeAre/Faculty">Read More</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-landmark"></i></div>
+                    <h3>Board Members</h3>
+                    <p>Get to know the guiding members of our Executive Management Board.</p>
+                    <a href="/WhoWeAre/Government">Read More</a>
+                </div>
+        
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-users-cog"></i></div>
+                    <h3>KASH Executive</h3>
+                    <p>Get introduced to the KASH executive team and their leadership roles.</p>
+                    <a href="/WhoWeAre/KASH_Executive">Read More</a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>

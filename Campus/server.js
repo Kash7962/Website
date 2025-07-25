@@ -56,7 +56,8 @@ app.use(
         "https://www.google.com",
         "https://via.placeholder.com",  // ✅ Added here
         'https://www.gstatic.com',
-        "https://upload.wikimedia.org"
+        "https://upload.wikimedia.org",
+        'https://images.pexels.com'
       ],
       frameSrc: [
         "'self'",
@@ -72,9 +73,6 @@ app.use(
     },
   })
 );
-
-
-
 
 
 

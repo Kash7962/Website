@@ -1,235 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #2c3e50, #3498db);
-      margin: 0;
-      padding: 0;
-      color: #333;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      width: 100%;
-      max-width: 400px;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    }
-    h2 {
-      text-align: center;
-      color: #1e3c72;
-      margin-bottom: 30px;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-    label {
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-    input {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #aaa;
-      border-radius: 5px;
-    }
-    .forgot-password {
-      text-align: right;
-      margin-top: 5px;
-      font-size: 0.9rem;
-    }
-    .forgot-password a {
-      color: #1e88e5;
-      text-decoration: none;
-    }
-    .forgot-password a:hover {
-      text-decoration: underline;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button[type="submit"] {
-      background-color: #1e88e5;
-      color: white;
-    }
-    button[type="submit"]:hover {
-      background-color: #1565c0;
-    }
-    .google-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    #g_id_signin {
-      width: 100%;
-    }
-    .footer-text {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #666;
-    }
-    .footer-text a {
-      color: #1e88e5;
-      text-decoration: none;
-    }
-    .footer-text a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 500px) {
-      .container {
-        margin: 20px;
-        padding: 20px;
-      }
-      h2 {
-        font-size: 1.4rem;
-      }
-      input, button {
-        font-size: 1rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * { 
+            box-sizing: border-box; 
+        }
 
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+        body {
+            font-family: 'Droid Serif', serif;
+            background-color: #fef7ed; /* Light background from your main site */
+            margin: 0;
+            padding: 1rem;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #1e40af; /* Blue accent color for Login */
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e40af; /* Blue from your theme */
+            margin-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.75rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+
+        input {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-family: 'Droid Serif', serif;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+
+        button[type="submit"] {
+            background-color: #1e40af; /* Blue button for Login */
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1c3d90;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a, .forgot-password a {
+            color: #1e40af; /* Blue link */
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover, .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .google-wrapper {
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 0;
+            }
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+                box-shadow: none;
+                padding: 2rem 1.5rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Login to Your Account</h2>
+    <h2>Login to Your Account</h2>
 
-  <form id="loginForm">
-    <div class="form-group">
-      <label for="identifier">Email *</label>
-      <input type="email" id="identifier" name="identifier" required placeholder="Enter your email" />
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="identifier">Email *</label>
+            <input type="email" id="identifier" name="identifier" required placeholder="Enter your email" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password" />
+            <div class="forgot-password">
+                <a href="/Staff/forgot-password">Forgot Password?</a>
+            </div>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="google-wrapper">
+        <div id="g_id_signin"></div>
     </div>
-    <div class="form-group">
-      <label for="password">Password *</label>
-      <input type="password" id="password" name="password" required placeholder="Enter your password" />
-      <div class="forgot-password">
-        <a href="/Staff/forgot-password">Forgot Password?</a>
-      </div>
+
+    <div class="form-footer">
+        Don't have an account? <a href="/Staff/register">Register here</a>
     </div>
-    <button type="submit">Login</button>
-  </form>
-
-  <!-- Google Sign-In Button -->
-  <div class="google-wrapper">
-    <div id="g_id_signin"></div>
-  </div>
-
-  <div class="footer-text">
-    Don't have an account? <a href="/Staff/register">Register here</a>
-  </div>
 </div>
 
 <script>
-  // Handle Email/Password Login
-  const loginForm = document.getElementById('loginForm');
-
-  loginForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const identifier = document.getElementById('identifier').value.trim();
-    const password = document.getElementById('password').value.trim();
-
-    try {
-      const res = await fetch('/Staff/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ identifier, password })
-      });
-
-      const data = await res.json();
-
-      if (data.user?.isAuthorized) {
-        alert('Login successful!');
-      } else {
-        alert('You are not authorized to access this page.');
-        return;
-      }
-
-      if (res.ok && data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/Staff/dashboard';
-      } else {
-        alert(data.message || 'Login failed.');
-        window.location.href = '/Staff/login';
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      alert('Something went wrong. Try again.');
-    }
-  });
-
-  // Google Sign-In
-  window.onload = function () {
-    google.accounts.id.initialize({
-      client_id: '386508050197-iluerjae4ua3i4jgd4k4taio51mav3bt.apps.googleusercontent.com', // 🔁 Replace this
-      callback: handleGoogleResponse,
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const identifier = document.getElementById('identifier').value.trim();
+        const password = document.getElementById('password').value.trim();
+        try {
+            const res = await fetch('/Staff/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, password })
+            });
+            const data = await res.json();
+            if (res.ok && data.token) {
+                if(data.user?.isAuthorized) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/Staff/dashboard';
+                } else {
+                    alert('You are not authorized to access this page.');
+                }
+            } else {
+                alert(data.message || 'Login failed.');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            alert('Something went wrong. Try again.');
+        }
     });
 
-    google.accounts.id.renderButton(
-      document.getElementById("g_id_signin"),
-      {
-        theme: "outline",
-        size: "large",
-        width: "100%",
-      }
-    );
-  };
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: '386508050197-iluerjae4ua3i4jgd4k4taio51mav3bt.apps.googleusercontent.com', // 🔁 Make sure this is your actual Client ID
+            callback: handleGoogleResponse,
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("g_id_signin"),
+            { theme: "outline", size: "large", width: "358" }
+        );
+    };
 
-  async function handleGoogleResponse(response) {
-    try {
-      const res = await fetch('/Staff/google-login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tokenId: response.credential }),
-      });
-
-      const data = await res.json();
-
-      if (data.user?.isAuthorized) {
-        alert('Google login successful!');
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/Staff/dashboard';
-      } else {
-        alert('You are not authorized to access this page.');
-      }
-
-    } catch (err) {
-      console.error('Google login failed:', err);
-      alert('Google login failed. Please try again.');
+    async function handleGoogleResponse(response) {
+        try {
+            const res = await fetch('/Staff/google-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tokenId: response.credential }),
+            });
+            const data = await res.json();
+            if (res.ok && data.token) {
+                if (data.user?.isAuthorized) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/Staff/dashboard';
+                } else {
+                    alert('You are not authorized to access this page.');
+                }
+            } else {
+                alert(data.message || 'Google login failed.');
+            }
+        } catch (err) {
+            console.error('Google login failed:', err);
+            alert('Google login failed. Please try again.');
+        }
     }
-  }
 </script>
 
 </body>

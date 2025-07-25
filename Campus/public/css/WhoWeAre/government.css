@@ -1,110 +1,109 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
+
+/* Reset and base styles */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to right, #2c3e50, #3498db);
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
 }
 
-header {
-  text-align: center;
-  color: white;
-  padding: 2em 1em;
-  background: linear-gradient(to right, #1e3c72, #2a5298);
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
-header h1 {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
-
-header h2 {
-  font-size: 1.5em;
-  font-weight: 600;
-  color: #fff;
-}
-
-.profile-card {
-  background-color: #fff;
-  max-width: 1000px;
-  margin: 2em auto;
-  padding: 2em;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2em;
-}
-
-.profile-card img {
-  width: 250px;
-  height: auto;
-  border-radius: 5px;
-  object-fit: cover;
-}
-
-.info {
-  flex: 1;
-}
-
-.info h3 {
-  color: #0b3c6d;
-  font-size: 1.2em;
-  margin-bottom: 0.3em;
-  display: flex;
-  align-items: center;
-}
-
-.info h3::before {
-  content: "📘";
-  margin-right: 0.5em;
-}
-
-.info p {
-  font-size: 1.1em;
-  margin-bottom: 1.2em;
-  color: #333;
-}
-
-@media (max-width: 768px) {
-  .profile-card {
-    flex-direction: column;
-    align-items: center;
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #f97316, #fdba74);
+    color: white;
+    padding: 4rem 0;
     text-align: center;
-  }
+}
 
-  .profile-card img {
-    width: 200px;
-  }
+.page-header h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.5rem;
+}
 
-  .info {
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin: 0;
+    color: white;
+}
+
+/* Main Content */
+.main-content {
+    padding: 4rem 0;
+}
+
+/* Board Grid Layout */
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* Individual Board Member Card Styling */
+.board-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.board-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.board-card img {
     width: 100%;
-  }
-
-  header h2 {
-    font-size: 1.4em;
-    text-align: center;
-  }
+    height: 320px;
+    object-fit: cover;
+    object-position: top; /* Ensures the top of the image is prioritized */
 }
 
-@media (max-width: 480px) {
-  header h1 {
-    font-size: 1.5em;
-  }
+.card-body {
+    padding: 1.5rem;
+}
 
-  header h2 {
-    font-size: 1.2em;
-  }
+.name {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.4rem;
+    color: #334155;
+    margin: 0 0 0.5rem 0;
+}
 
-  .info p {
-    font-size: 1em;
-  }
+.designation {
+    font-size: 1rem;
+    color: #1e40af; /* Blue accent */
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
 
-  header h2 {
-    font-size: 1.2em;
-  }
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    .main-content {
+        padding: 3rem 0;
+    }
 }

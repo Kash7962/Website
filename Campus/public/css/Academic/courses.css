@@ -1,77 +1,232 @@
- 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            color: #fff;
-            padding: 20px;
-        }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
 
-        header {
-            text-align: center;
-            color: white;
-            padding: 2em 1em;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-            margin-bottom: 30px;
-        }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+    font-size: 16px;
+}
 
-        header h1 {
-            font-size: 2em;
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-        p {
-            font-size: 1.2em;
-            margin-bottom: 1em;
-        }
+/* Typography */
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
 
-        .table-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            overflow-x: auto;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1em;
-        }
+p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #fff;
-        }
+strong {
+    color: #1e40af;
+    font-weight: 600;
+}
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-        }
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #f97316, #fdba74);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 3rem;
+}
 
-        th {
-            background-color: rgba(0, 0, 0, 0.4);
-            font-weight: bold;
-        }
+.page-header h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
 
-        tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+}
 
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+/* Main Content */
+.main-content {
+    padding-bottom: 4rem;
+}
 
-        @media (max-width: 600px) {
-            p {
-                font-size: 1em;
-            }
+/* Section Styles */
+.intro-section {
+    margin-bottom: 2rem;
+}
 
-            th, td {
-                font-size: 0.95em;
-            }
+.intro-section p {
+    font-size: 1.2rem;
+    color: #64748b;
+    text-align: center;
+}
 
-            header h1 {
-                font-size: 1.5em;
-            }
-        }
+.content-section {
+    margin: 3rem 0;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #f97316;
+}
+
+.content-section p {
+    color: #374151;
+    line-height: 1.8;
+    margin-bottom: 0;
+}
+
+/* Table Styles */
+.table-section {
+    margin: 3rem 0;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.courses-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.courses-table thead {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+}
+
+.courses-table th {
+    padding: 1.5rem;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.courses-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 1rem;
+    color: #334155;
+}
+
+.courses-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.courses-table tbody tr:hover {
+    background: linear-gradient(90deg, #fef3c7, #fef7ed);
+    transform: translateX(4px);
+}
+
+.courses-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Year column styling */
+.courses-table td:first-child {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #1e40af;
+    white-space: nowrap;
+}
+
+/* Note styling */
+.note {
+    display: inline-block;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    border: 1px solid #fca5a5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .page-header {
+        padding: 3rem 0;
+    }
+
+    .content-section {
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .courses-table th,
+    .courses-table td {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .courses-table tbody tr:hover {
+        transform: none;
+    }
+
+    .note {
+        display: block;
+        margin: 0.5rem 0 0 0;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .content-section {
+        padding: 1.25rem;
+    }
+
+    .courses-table th,
+    .courses-table td {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .courses-table td:first-child {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation enhancements */
+.content-section,
+.table-container {
+    will-change: transform;
+}
+
+/* Focus styles for accessibility */
+.courses-table:focus {
+    outline: 2px solid #f97316;
+    outline-offset: 2px;
+}

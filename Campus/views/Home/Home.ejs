@@ -5,200 +5,355 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KASH NGO - Home</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/Home/home.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+  <link rel="stylesheet" href="/css/Home/home.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-   <%- include('../partials/navbar') %>
+  <%- include('../partials/navbar') %>
+  
   <section class="hero" id="home" data-aos="fade-in">
-    <h1>KASH Residential Campus for +2 Science</h1>
-    <p>Empowering the marginalized, one student at a time<br>Vocation Training & Diploma Programs</p>
-  </section>
-
-  <section id="about" data-aos="fade-up">
-    <h2>Vision, Mission, and Mandate</h2>
-    <div class="row">
-      <div class="card">
-        <h4>Our Vision</h4>
-        <p>To be a global presence that cultivates academic excellence, human values, and social commitment through skill development and research-driven innovation.</p>
-      </div>
-      <div class="card">
-        <h4>Our Mission</h4>
-        <p>To enable each underprivileged child to access a high-quality residential program and grow into a self-sufficient, moral, and socially responsible adult.</p>
-      </div>
-      <div class="card">
-        <h4>Our Mandate</h4>
-        <p>To offer inclusive, affordable, and transformative education for the marginalized sections of society.</p>
+    <div class="hero-content">
+      <h1>KASH Residential Campus for +2 Science</h1>
+      <p>Empowering the marginalized, one student at a time<br>Vocation Training & Diploma Programs</p>
+      <div class="hero-buttons">
+        <a href="#donate" class="btn btn-primary">Support a Student</a>
+        <a href="#about" class="btn btn-secondary">Learn More</a>
       </div>
     </div>
   </section>
 
-  <section id="achievement" style="background:#f5f5f5" data-aos="fade-right">
-    <h2>Our Achievement – CHSE Result 2024</h2>
-    <img src="" alt="KASH CHSE Result 2024 Board Display" style="width:100%;max-width:700px;margin:auto;display:block">
-    <p style="text-align:center;margin-top:1rem;">Congratulations to all our meritorious students!</p>
+  <section id="about" data-aos="fade-up">
+    <div class="container">
+      <h2>Vision, Mission, and Mandate</h2>
+      <div class="row">
+        <div class="card vision-card">
+          <div class="card-icon">
+            <i class="fas fa-eye"></i>
+          </div>
+          <h4>Our Vision</h4>
+          <p>To be a global presence that cultivates academic excellence, human values, and social commitment through skill development and research-driven innovation.</p>
+        </div>
+        <div class="card mission-card">
+          <div class="card-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h4>Our Mission</h4>
+          <p>To enable each underprivileged child to access a high-quality residential program and grow into a self-sufficient, moral, and socially responsible adult.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="achievement" data-aos="fade-right">
+    <div class="container">
+      <h2>Our Achievement – CHSE Result 2024</h2>
+      <div class="achievement-content">
+        <div class="achievement-image">
+          <img src="https://images.pexels.com/photos/5905709/pexels-photo-5905709.jpeg?auto=compress&cs=tinysrgb&w=800" alt="KASH CHSE Result 2024 Board Display">
+        </div>
+        <div class="achievement-text">
+          <h3>Outstanding Academic Performance</h3>
+          <p>Our students have achieved remarkable success in the CHSE examinations, with over 95% pass rate and many securing top positions in their respective streams.</p>
+          <p style="text-align:center;margin-top:1rem;font-weight:bold;color:#f97316;">Congratulations to all our meritorious students!</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="donate" data-aos="fade-up">
-    <div class="row">
-      <div class="column">
-        <h2>Student Donation Information</h2>
-        <p>KASH student sponsorship programs provide financial and educational support to students from economically weaker backgrounds. Each contribution helps cover tuition, food, lodging, and academic materials.</p>
-      </div>
-      <div class="column">
-        <img src="" alt="Student Profile Photo">
+    <div class="container">
+      <div class="row">
+        <div class="column">
+          <h2>Student Donation Information</h2>
+          <p>KASH student sponsorship programs provide financial and educational support to students from economically weaker backgrounds. Each contribution helps cover tuition, food, lodging, and academic materials.</p>
+          <div class="donation-stats">
+            <div class="stat-item">
+              <strong>₹15,000</strong>
+              <span>Annual Education Cost</span>
+            </div>
+            <div class="stat-item">
+              <strong>₹8,000</strong>
+              <span>Accommodation & Food</span>
+            </div>
+            <div class="stat-item">
+              <strong>₹2,000</strong>
+              <span>Books & Materials</span>
+            </div>
+          </div>
+          <a href="#donate" class="btn btn-donate">Sponsor a Student</a>
+        </div>
+        <div class="column">
+          <div class="student-profile">
+            <img src="https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Student Profile Photo">
+            <div class="profile-info">
+              <h4>Meet Our Students</h4>
+              <p>Bright minds from rural communities pursuing their dreams in science and technology.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section> 
 
   <section id="impact" data-aos="zoom-in"> 
-    <h2>Our Impact</h2>
-    <div class="cards">
-      <div class="card">
-        <h4>15,000+</h4>
-        <p>Educated</p>
-      </div>
-      <div class="card">
-        <h4>35,000+</h4>
-        <p>Primary and Secondary</p>
-      </div>
-      <div class="card">
-        <h4>10,000+</h4>
-        <p>School dropouts</p>
-      </div>
-      <div class="card">
-        <h4>45,000+</h4>
-        <p>Nutrition and Anganwadis</p>
-      </div>
-      <div class="card">
-        <h4>5,000+</h4>
-        <p>Professional coaching</p>
-      </div>
-      <div class="card">
-        <h4>300+</h4>
-        <p>Vocational training</p>
+    <div class="container">
+      <h2>Our Impact</h2>
+      <div class="cards impact-cards">
+        <div class="card impact-card">
+          <div class="impact-number">15,000+</div>
+          <p>Students Educated</p>
+        </div>
+        <div class="card impact-card">
+          <div class="impact-number">35,000+</div>
+          <p>Primary and Secondary</p>
+        </div>
+        <div class="card impact-card">
+          <div class="impact-number">10,000+</div>
+          <p>School Dropouts Supported</p>
+        </div>
+        <div class="card impact-card">
+          <div class="impact-number">45,000+</div>
+          <p>Nutrition and Anganwadis</p>
+        </div>
+        <div class="card impact-card">
+          <div class="impact-number">5,000+</div>
+          <p>Professional Coaching</p>
+        </div>
+        <div class="card impact-card">
+          <div class="impact-number">300+</div>
+          <p>Vocational Training</p>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="events" data-aos="fade-up">
-    <h2>Notices & Events</h2>
-    <div class="cards">
-      <div class="card">
-        <h4>Notice</h4>
-        <p>May 2025 - CHSE XII</p>
-      </div>
-      <div class="card">
-        <h4>New Programs</h4>
-        <p>Bridge & Skill Education</p>
-      </div>
-      <div class="card">
-        <h4>Upcoming Events</h4>
-        <p>New registration open for XI science batch</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="campus" data-aos="zoom-in-up" style="padding: 4rem 2rem;">
-    <h2 style="text-align: center; margin-bottom: 2rem;">About Campus</h2>
-    <p style="text-align: center; max-width: 900px; margin: 0 auto 3rem;">
-      A constituent unit of 'Academy for Developing Communities (ADC)', KASH is a non-profit residential educational center located in Odisha. We serve students from marginalized communities through academic programs, training, and support.
-    </p>
-    
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
-      <div style="flex: 1 1 45%; max-width: 500px;">
-        <img src="Images/dummy.jpg" alt="Campus Front View" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-      </div>
-      <div style="flex: 1 1 45%; max-width: 500px;">
-        <img src="Images/dummy.jpg" alt="Campus Building" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+    <div class="container">
+      <h2>Notices & Events</h2>
+      <div class="cards event-cards">
+        <div class="card event-card">
+          <div class="event-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <h4>Notice</h4>
+          <p>May 2025 - CHSE XII Examination Schedule Released</p>
+          <span class="event-date">Updated: Jan 15, 2025</span>
+        </div>
+        <div class="card event-card">
+          <div class="event-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h4>New Programs</h4>
+          <p>Bridge & Skill Education courses starting from February</p>
+          <span class="event-date">Enrollment Open</span>
+        </div>
+        <div class="card event-card">
+          <div class="event-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <h4>Upcoming Events</h4>
+          <p>New registration open for XI science batch 2025-26</p>
+          <span class="event-date">Apply by Mar 31</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="review" data-aos="fade-left">
-    <h2>Review</h2>
-    <blockquote style="text-align:center; font-style: italic;">“kashcampus” – Smita Nayak</blockquote>
+  <section id="campus" data-aos="zoom-in-up">
+    <div class="container">
+      <h2>About Campus</h2>
+      <p class="campus-description">
+        A constituent unit of 'Academy for Developing Communities (ADC)', KASH is a non-profit residential educational center located in Odisha. We serve students from marginalized communities through academic programs, training, and support.
+        <a href="/WhoWeAre/about-campus" class="read-more-style">Read More</a>
+      </p>
+      
+      
+      <div class="campus-gallery">
+        <div class="campus-image">
+          <img src="/WhoWeAre/Images/campus image.png" alt="Campus Front View">
+          <div class="image-overlay">
+            <h4>Academic Block</h4>
+          </div>
+        </div>
+        <div class="campus-image">
+          <img src="https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Campus Building">
+          <div class="image-overlay">
+            <h4>Residential Facilities</h4>
+          </div>
+        </div>
+        <div class="campus-image">
+          <img src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Library">
+          <div class="image-overlay">
+            <h4>Library & Study Hall</h4>
+          </div>
+        </div>
+        <div class="campus-image">
+          <img src="https://images.pexels.com/photos/2182863/pexels-photo-2182863.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Laboratory">
+          <div class="image-overlay">
+            <h4>Science Laboratory</h4>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="sponsorship" data-aos="fade-in">
-    <h2>What is Student Sponsorship?</h2>
-    <p>Student sponsorship provides students from marginalized backgrounds access to a holistic education and personal development. Sponsors help meet essential needs such as tuition, accommodation, and materials. Join us to empower lives.</p>
-    <div style="text-align:center;margin:2rem 0">
-      <button class="btn">Donate Now</button>
+    <div class="container">
+      <div class="sponsorship-content">
+        <h2>What is Student Sponsorship?</h2>
+        <p>Student sponsorship provides students from marginalized backgrounds access to a holistic education and personal development. Sponsors help meet essential needs such as tuition, accommodation, and materials. Join us to empower lives.</p>
+        <div class="sponsorship-benefits">
+          <div class="benefit-item">
+            <i class="fas fa-book-open"></i>
+            <span>Complete Educational Support</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-home"></i>
+            <span>Residential Accommodation</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-utensils"></i>
+            <span>Nutritious Meals</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-user-md"></i>
+            <span>Healthcare & Counseling</span>
+          </div>
+        </div>
+        <div class="donate-section">
+          <button class="btn btn-donate-large">Donate Now</button>
+          <p class="donate-info">Your contribution can transform a life. Every donation counts.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="review-map-section" id="contact" data-aos="fade-up">
-    <div class="left">
-      <h2 style="margin-bottom: 1.5rem;">What Our Students Say</h2>
-      <div class="testimonial-container">
-        <div class="testimonial-slide active">
-          <p>"KASH changed my life – from a village student to a future engineer!"</p>
-          <h4>- Ramesh S., 2nd Year B.Tech</h4>
+    <div class="container">
+      <div class="contact-content">
+        <div class="testimonials-section">
+          <h2>What Our Students Say</h2>
+          <div class="testimonial-container">
+            <div class="testimonial-slide active">
+              <div class="testimonial-content">
+                <p>"KASH changed my life – from a village student to a future engineer!"</p>
+                <div class="testimonial-author">
+                  <strong>Ramesh S.</strong>
+                  <span>2nd Year B.Tech</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-slide">
+              <div class="testimonial-content">
+                <p>"I received full residential scholarship and now preparing for NEET."</p>
+                <div class="testimonial-author">
+                  <strong>Priya M.</strong>
+                  <span>+2 Science Student</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-slide">
+              <div class="testimonial-content">
+                <p>"The skill training program helped me get a job in just 6 months."</p>
+                <div class="testimonial-author">
+                  <strong>Anil Kumar</strong>
+                  <span>Diploma Holder</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-dots">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+          </div>
         </div>
-        <div class="testimonial-slide">
-          <p>"I received full residential scholarship and now preparing for NEET."</p>
-          <h4>- Priya M., +2 Science Student</h4>
-        </div>
-        <div class="testimonial-slide">
-          <p>"The skill training program helped me get a job in just 6 months."</p>
-          <h4>- Anil Kumar, Diploma Holder</h4>
+        
+        <div class="map-section">
+          <h3>Find Us</h3>
+          <div class="map-box">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3821.960683408502!2d84.7276312!3d19.216281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3d447d6c2e04bf%3A0x11fa5caf0bdf312d!2sKarunashanti%20Science%20Residential%20College!5e0!3m2!1sen!2sin!4v1718690939234!5m2!1sen!2sin"
+              width="100%" height="100%" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="map-box">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3821.960683408502!2d84.7276312!3d19.216281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3d447d6c2e04bf%3A0x11fa5caf0bdf312d!2sKarunashanti%20Science%20Residential%20College!5e0!3m2!1sen!2sin!4v1718690939234!5m2!1sen!2sin"
-        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </section>
 
-  <footer style="border-top: 3px solid #930000; background: #0a0a23; color: #eee; padding: 2rem 1rem;">
-    <div style="
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: flex-start;
-      max-width: 1200px;         
-      margin: auto;
-      gap: 2rem;
-    ">
-      <div style="flex: 1; min-width: 280px;">
-        <p style="margin-bottom: 1rem;">© All rights reserved by kashcampus | Developed by kashCampus</p>
-        <div>
-          <a href="https://wa.me/919000000000" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
-            <i class="fab fa-whatsapp"></i> WhatsApp
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>KASH Campus</h3>
+          <p>Empowering marginalized communities through quality education and holistic development.</p>
+          <div class="social-links">
+            <a href="https://wa.me/919000000000" target="_blank" aria-label="WhatsApp">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61563575766094" target="_blank" aria-label="Facebook">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a href="mailto:info@kashcampus.org" aria-label="Email">
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact Information</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>+91 457835625</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>solidngo5@gmail.com</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Golanthara, Govindapur,<br>
+                    Chikiti, Berhampur,<br>
+                    District - Ganjam, Odisha</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="WhoWeAre/about-campus">About Us</a></li>
+            <li><a href="#impact">Our Impact</a></li>
+            <li><a href="#donate">Donate</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="floating-social-bar">
+          <a href="https://wa.me/910000000000" class="social-icon whatsapp" target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
           </a>
-          <a href="https://www.facebook.com/profile.php?id=61563575766094" target="_blank" style="color: #eee; margin-right: 15px; text-decoration: none;">
-            <i class="fab fa-facebook"></i> Facebook
+          <a href="https://www.linkedin.com/your-profile" class="social-icon linkedin" target="_blank" aria-label="Go to LinkedIn Profile">
+            <i class="fab fa-linkedin-in"></i>
           </a>
-          <a href="mailto:info@kashcampus.org" style="color: #eee; text-decoration: none;">
-            <i class="fas fa-envelope"></i> Email
+          <a href="https://www.facebook.com/your-page" class="social-icon facebook" target="_blank" aria-label="Go to Facebook Page">
+            <i class="fab fa-facebook-f"></i>
           </a>
         </div>
       </div>
-
-      <div style="flex: 1; min-width: 280px;">
-        <h2 style="margin-bottom: 0.5rem;">Contact Information</h2>
-        <div style="font-size: 0.95rem; line-height: 1.8;">
-          <strong>PHONE:</strong> +91 457835625<br>
-          <strong>EMAIL:</strong>solidngo5@gmail.com<br>
-          <strong>ADDRESS:</strong><br>
-          Golanthara, Govindapur,<br>
-          Chikiti, Berhampur,<br>
-          District - Ganjam, Odisha
-        </div>
+      
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 All rights reserved by KASH Campus | Developed by KASH Campus</p>
       </div>
     </div>
   </footer>
 
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="/js/Home/home.js"></script> 
-
+  <script src="/js/Home/home.js"></script>
 </body>
-
 </html>

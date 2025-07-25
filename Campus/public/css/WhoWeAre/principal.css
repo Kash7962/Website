@@ -1,67 +1,143 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            color: #000;
-        }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+}
 
-        h2 {
-            text-align: center;
-            color: white;
-            font-size: 2.2em;
-            font-family: 'Georgia', serif;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-            padding: 1.2em 1em;
-        }
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-        .container {
-            background-color: #f8f8f8;
-            max-width: 1000px;
-            margin: 2em auto;
-            padding: 2em;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
+/* Typography */
+h1, h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+}
 
-        p {
-            font-size: 1.1em;
-            margin-bottom: 1.5em;
-            color: #333;
-        }
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
 
-        @media (max-width: 768px) {
-            h2 {
-                font-size: 1.8em;
-                padding: 1em;
-            }
+p {
+    font-size: 1.1rem;
+    color: #374151;
+    line-height: 1.8;
+}
 
-            .container {
-                padding: 1.5em;
-                margin: 1em;
-            }
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+}
 
-            p {
-                font-size: 1em;
-            }
-        }
+.page-header h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        @media (max-width: 480px) {
-            h2 {
-                font-size: 1.5em;
-            }
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin: 0;
+    color: white;
+}
 
-            .container {
-                padding: 1em;
-            }
+/* Main Content */
+.main-content {
+    padding: 4rem 0;
+}
 
-            p {
-                font-size: 0.95em;
-            }
-        }
+/* Principal's Message Layout */
+.principal-message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 3rem;
+    background: white;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.principal-photo {
+    flex: 1 1 300px; /* Flex properties for responsive sizing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.principal-photo img {
+    max-width: 100%;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%; /* Makes the photo circular */
+    object-fit: cover;
+    border: 5px solid #f97316; /* Orange accent border */
+}
+
+.principal-text {
+    flex: 2 1 500px; /* Takes up more space */
+}
+
+.principal-text p {
+    margin-bottom: 1.5rem;
+}
+
+/* Signature Styling */
+.signature {
+    margin-top: 2rem;
+    border-top: 2px solid #f1f5f9;
+    padding-top: 1.5rem;
+}
+
+.signature h3 {
+    font-size: 1.4rem;
+    color: #1e40af;
+    margin: 0;
+}
+
+.signature-title {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .principal-message {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1.5rem;
+    }
+    .main-content {
+        padding: 3rem 0;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+}

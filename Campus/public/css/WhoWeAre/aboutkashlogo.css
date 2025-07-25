@@ -1,58 +1,134 @@
-  
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fff;
-    }
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-    header {
-      background: #1a446b;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-      font-family: 'Courier New', Courier, monospace;
-    }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    .logo-section {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      padding: 40px 20px;
-      gap: 30px;
-    }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+    font-size: 16px;
+}
 
-    .logo-section img {
-      max-width: 300px;
-      height: auto;
-    }
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-    .logo-text {
-      flex: 1;
-      min-width: 280px;
-    }
+/* Typography */
+h1, h2 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+}
 
-    .logo-text h2 {
-      font-size: 26px;
-      margin-bottom: 15px;
-    }
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
 
-    .logo-text p {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
+p {
+    font-size: 1.1rem;
+    color: #374151;
+    line-height: 1.8;
+}
 
-    @media (max-width: 768px) {
-      .logo-section {
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.page-header h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin: 0;
+    color: white;
+}
+
+/* Main Content Layout */
+.main-content {
+    padding-bottom: 4rem;
+}
+
+.logo-explanation-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: center;
+    background: white;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.logo-image-wrapper {
+    flex: 1 1 300px; /* Flex properties for responsive sizing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-image-wrapper img {
+    max-width: 100%;
+    width: 280px;
+    height: auto;
+}
+
+.logo-text-wrapper {
+    flex: 2 1 500px; /* Takes up more space */
+}
+
+.logo-text-wrapper h2 {
+    font-size: 2rem;
+    color: #1e40af;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #f97316;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.logo-text-wrapper p {
+    margin-bottom: 1.5rem;
+}
+
+.logo-text-wrapper p:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .logo-explanation-content {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .logo-text {
-        text-align: left;
-      }
+        padding: 2rem;
     }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.75rem;
+    }
+    .page-header {
+        padding: 3rem 0;
+    }
+}

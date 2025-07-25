@@ -1,29 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Video Gallery</title>
-  <link rel="stylesheet" href="/css/WhoWeAre/aboutsolidkash.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Gallery</title>
+    <link rel="stylesheet" href="/css/WhoWeAre/aboutsolidkash.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <h2>SOME VIDEO'S FOR KASH CAMPUS</h2>
+    <header class="page-header">
+        <div class="container">
+            <h1>Video Gallery</h1>
+            <p>See Our Mission and Campus Life in Action</p>
+        </div>
+    </header>
 
-  <div class="video-grid">
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_1" allowfullscreen></iframe>
-    </div>
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" allowfullscreen></iframe>
-    </div>
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3" allowfullscreen></iframe>
-    </div>
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_4" allowfullscreen></iframe>
-    </div>
-  </div>
+    <main class="main-content">
+        <div class="container">
+            <div class="video-grid">
+                
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h4 class="video-title">KASH Campus Tour</h4>
+                </div>
+
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <h4 class="video-title">A Student's Journey</h4>
+                </div>
+
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- START OF NEW CSS --- */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fef7ed; /* Light background from your main site */
+            color: #333;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #1e40af; /* KASH theme blue */
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .navbar .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+        }
+
+        .navbar nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .navbar nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar .search-logout {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .navbar input {
+            padding: 0.6rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .navbar input::placeholder {
+            color: #6b7280;
+        }
+
+        .navbar button {
+            padding: 0.6rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .navbar button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #f97316; /* Orange accent */
+        }
+        
+        .card p:first-child {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card .amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .status.pending { background-color: #fef3c7; color: #92400e; }
+        .status.submitted { background-color: #d1fae5; color: #065f46; }
+
+        .view-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none; /* For use as a link */
+        }
+
+        /* Responsive table from your original code, kept as is */
+        @media (max-width: 768px) {
+            .navbar .top { flex-direction: column; align-items: stretch; }
+            .navbar nav, .navbar .search-logout { margin-top: 1rem; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { display: none; }
+            tr { border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
+            td { padding-left: 50%; position: relative; border: none; border-bottom: 1px solid #f1f5f9; }
+            td:last-child { border-bottom: none; }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                padding-left: 1rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        }
+        /* --- END OF NEW CSS --- */
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="navbar">
+            <div class="top">
+                <div class="brand">Student Portal</div>
+                <div class="search-logout">
+                    <input type="text" placeholder="Search courses..." />
+                    <button>My Profile</button>
+                    <button>Log Out</button>
+                </div>
+            </div>
+            <nav>
+                <a href="#">Dashboard</a>
+                <a href="#">My Courses</a>
+                <a href="#">Assignments</a>
+                <a href="#">Exams</a>
+                <a href="#">Timetable</a>
+                <a href="#">Results</a>
+            </nav>
+        </div>
+
+        <div class="main">
+            <div class="cards">
+                <div class="card">
+                    <p>Total Courses</p>
+                    <p class="amount">6</p>
+                </div>
+                <div class="card">
+                    <p>Assignments Due</p>
+                    <p class="amount">3</p>
+                </div>
+                <div class="card">
+                    <p>Upcoming Exams</p>
+                    <p class="amount">2</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Assignment Tracker</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Subject">Mathematics</td>
+                            <td data-label="Title">Integration Worksheet</td>
+                            <td data-label="Due Date">July 25, 2025</td>
+                            <td data-label="Status"><span class="status pending">Pending</span></td>
+                            <td><a href="#" class="view-btn">View</a></td>
+                        </tr>
+                        <tr>
+                            <td data-label="Subject">English</td>
+                            <td data-label="Title">Essay on Shakespeare</td>
+                            <td data-label="Due Date">July 24, 2025</td>
+                            <td data-label="Status"><span class="status submitted">Submitted</span></td>
+                            <td><a href="#" class="view-btn">View</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

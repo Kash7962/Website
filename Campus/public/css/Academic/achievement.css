@@ -1,54 +1,117 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap');
 
-    *  {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #2c3e50, #3498db);
-      color: #fff;
-      padding: 20px;
-    }
+body {
+    line-height: 1.6;
+    background-color: #fef7ed;
+    color: #333;
+    font-family: 'Droid Serif', serif;
+    font-size: 16px;
+}
 
-    header {
-      text-align: center;
-      padding: 2em 1em;
-      background: linear-gradient(to right, #1e3c72, #2a5298);
-      margin-bottom: 30px;
-    }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
 
-    header h1 {
-      font-size: 2em;
-    }
+/* Typography */
+h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    .info-box {
-      background-color:#428fc3;
-      color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+p {
+    font-size: 1.1rem;
+    color: #374151;
+}
 
-    .info-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
+/* Header Styles */
+.page-header {
+    background: linear-gradient(135deg, #f97316, #fdba74);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 4rem;
+}
 
-    .info-box p {
-      font-size: 1rem;
-      line-height: 1.5;
-    }
+.page-header h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-    @media (max-width: 768px) {
-      .info-box p {
-        font-size: 0.95rem;
-      }
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin: 0;
+    color: white;
+}
+
+/* Main Content */
+.main-content {
+    padding-bottom: 4rem;
+}
+
+/* Achievements Grid Layout */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+/* Individual Achievement Card Styling */
+.achievement-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 4px solid #f97316; /* Orange accent */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.achievement-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: #1e40af; /* Blue icon color */
+    margin-bottom: 1.5rem;
+}
+
+.achievement-card p {
+    margin: 0;
+    line-height: 1.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
     }
+    h1 {
+        font-size: 2rem;
+    }
+    .page-header {
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+    .achievements-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    }
+}
