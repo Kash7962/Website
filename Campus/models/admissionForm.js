@@ -6,6 +6,7 @@ const admissionSchema = new mongoose.Schema({
   middleName: { type: String },
   lastName: { type: String, required: true },
   gender: { type: String, enum: ['male', 'female'], required: true },
+  studentEmail: { type: String, lowercase: true, trim: true },
   dob: { type: Date, required: true },
   studentPhone: { type: String, required: true },
 

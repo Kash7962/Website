@@ -23,8 +23,13 @@ header {
   flex-wrap: wrap;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 900; /* lowered to allow dropdowns to appear above */
   overflow-x: clip;
+}
+
+nav {
+  position: relative;
+  z-index: 1001; /* ensures dropdowns appear above header */
 }
 
 .logo {
@@ -80,6 +85,38 @@ nav#navMenu a:hover,
   position: relative;
 }
 
+.glow-button-green {
+  display: inline-block;
+  padding: 12px 28px;
+  background-color: #00c851; /* Green background */
+  color: white;
+  font-weight: bold;
+  border-radius: 50px;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px #00c851, 0 0 20px #00c851, 0 0 40px #00c851;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: pulse-green 2s infinite;
+}
+
+.glow-button-green:hover {
+  transform: scale(1.08);
+  background-color: #00b84d; /* Slightly darker on hover */
+  box-shadow: 0 0 15px #00c851, 0 0 30px #33d985, 0 0 60px #66f2ae;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 10px #00c851, 0 0 20px #00c851;
+  }
+  50% {
+    box-shadow: 0 0 20px #33d985, 0 0 40px #33d985;
+  }
+  100% {
+    box-shadow: 0 0 10px #00c851, 0 0 20px #00c851;
+  }
+}
+
 .dropdown-content {
   opacity: 0;
   visibility: hidden;
@@ -89,7 +126,7 @@ nav#navMenu a:hover,
   left: 0;
   background-color: #2f5f85;
   min-width: 220px;
-  z-index: 999;
+  z-index: 2000; /* HIGHER THAN HEADER TO FIX DROPDOWN HIDING */
   border-radius: 8px;
   overflow: hidden;
   flex-direction: column;
@@ -142,6 +179,7 @@ nav#navMenu a:hover,
     visibility: visible;
     pointer-events: auto;
     transition: none;
+    z-index: auto;
   }
 
   .dropdown:not(.active) .dropdown-content {
@@ -154,7 +192,6 @@ nav#navMenu a:hover,
     text-align: left;
   }
 }
-
 
 
 </style>
@@ -171,6 +208,7 @@ nav#navMenu a:hover,
   <div class="menu-toggle" id="menu-toggle">☰</div>
 
   <nav id="navMenu">
+    <div class="dropdown"><a href="/Admission/admissionForm" class="glow-button-green">Apply Now</a></div>
     <div class="dropdown"><a href="/#home">Home</a></div>
     <div class="dropdown"><a href="/#campus">About</a></div>
 

@@ -1,229 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>User Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { 
-            box-sizing: border-box; 
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
 
-        body {
-            font-family: 'Droid Serif', serif;
-            background-color: #fef7ed; /* Light background from your main site */
-            margin: 0;
-            padding: 1rem;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    body {
+      font-family: 'Droid Serif', serif;
+      background-color: #fef7ed;
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
-            background: #ffffff;
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-top: 5px solid #f97316; /* Orange accent color */
-        }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #f97316;
+      position: relative;
+    }
 
-        h2 {
-            text-align: center;
-            color: #1e40af; /* Blue from your theme */
-            margin-bottom: 2rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 1.75rem;
-        }
+    .icon-buttons {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      gap: 0.5rem;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
+    .icon-buttons a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      background-color: #1e40af;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+    .icon-buttons a:hover {
+      background-color: #172554;
+    }
 
-        label {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #4b5563;
-            font-size: 0.9rem;
-        }
+    h2 {
+      text-align: center;
+      color: #1e40af;
+      margin-bottom: 2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.75rem;
+    }
 
-        select,
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="tel"] {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            font-family: 'Droid Serif', serif;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-        }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
 
-        .phone-group {
-            display: flex;
-            gap: 0.5rem;
-        }
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.9rem;
+    }
 
-        .phone-group select {
-            flex: 0 0 120px; /* Fixed width for country code */
-        }
+    select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
 
-        button[type="submit"] {
-            background-color: #f97316; /* Orange button */
-            color: white;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 1rem;
-        }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+    }
 
-        button[type="submit"]:hover {
-            background-color: #ea580c;
-        }
+    .phone-group {
+      display: flex;
+      gap: 0.5rem;
+    }
 
-        .form-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.95rem;
-        }
+    .phone-group select {
+      flex: 0 0 120px;
+    }
 
-        .form-footer a {
-            color: #1e40af; /* Blue link */
-            text-decoration: none;
-            font-weight: 600;
-        }
+    button[type="submit"] {
+      background-color: #f97316;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
 
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
+    button[type="submit"]:hover {
+      background-color: #ea580c;
+    }
 
-        @media (max-width: 500px) {
-            body {
-                padding: 0;
-            }
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-                box-shadow: none;
-                padding: 2rem 1.5rem;
-            }
-            h2 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    .form-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-footer a {
+      color: #1e40af;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 0;
+      }
+      .container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        box-shadow: none;
+        padding: 2rem 1.5rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Create Your Account</h2>
+  <!-- Icon buttons -->
+  <div class="icon-buttons">
+    <a href="/" title="Home"><i class="fas fa-home"></i></a>
+  </div>
 
-    <form id="registerForm">
-        <div class="form-group">
-            <label for="username">Full Name *</label>
-            <input type="text" id="username" name="username" required placeholder="Enter your full name">
-        </div>
+  <h2>Create Your Account</h2>
 
-        <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" id="email" name="email" required placeholder="Enter your email">
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Mobile Number *</label>
-            <div class="phone-group">
-                <select id="countryCode" name="countryCode" required>
-                    <option value="+91" selected>🇮🇳 +91</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                    </select>
-                <input type="tel" id="phone" required placeholder="10-digit number" pattern="[0-9]{10}">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password *</label>
-            <input type="password" id="password" name="password" required placeholder="Enter password">
-        </div>
-
-        <div class="form-group">
-            <label for="confirmPassword">Confirm Password *</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password">
-        </div>
-
-        <button type="submit">Sign Up</button>
-    </form>
-
-    <div class="form-footer">
-        Already have an account? <a href="/Staff/login">Log in</a>
+  <form id="registerForm">
+    <div class="form-group">
+      <label for="username">Full Name *</label>
+      <input type="text" id="username" name="username" required placeholder="Enter your full name">
     </div>
+
+    <div class="form-group">
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" required placeholder="Enter your email">
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Mobile Number *</label>
+      <div class="phone-group">
+        <select id="countryCode" name="countryCode" required>
+          <option value="+91" selected>🇮🇳 +91</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+        </select>
+        <input type="tel" id="phone" required placeholder="10-digit number" pattern="[0-9]{10}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="department">Department *</label>
+      <select id="department" name="department" required>
+        <option value="" disabled selected>Select your department</option>
+        <option value="Teaching">Teaching</option>
+        <option value="Management">Management</option>
+        <option value="Kitchen">Kitchen</option>
+        <option value="Library">Library</option>
+        <option value="Accounts">Accounts</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password *</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password">
+    </div>
+
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <div class="form-footer">
+    Already have an account? <a href="/Staff/login">Log in</a>
+  </div>
 </div>
 
 <script>
-    const form = document.getElementById('registerForm');
-    const rawPhone = document.getElementById('phone');
-    const countryCode = document.getElementById('countryCode');
- 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const fullPhone = countryCode.value + rawPhone.value.replace(/\D/g, '');
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+  const form = document.getElementById('registerForm');
+  const rawPhone = document.getElementById('phone');
+  const countryCode = document.getElementById('countryCode');
 
-        if (password !== confirmPassword) {
-            alert("Passwords do not match.");
-            return;
-        }
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const fullPhone = countryCode.value + rawPhone.value.replace(/\D/g, '');
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
-        const data = {
-            username: document.getElementById('username').value,
-            email: document.getElementById('email').value,
-            phone: fullPhone,
-            password,
-            confirmPassword
-        };
-        try {
-            const response = await fetch("/Staff/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            if (response.ok) {
-                alert("Registration successful! Please wait for admin authorization to log in.");
-                window.location.href = "/Staff/login";
-            } else {
-                const result = await response.json();
-                alert(result.message || "Registration failed. Please try again.");
-            }
-        } catch (err) {
-            alert("An error occurred. Please try again.");
-            console.error(err);
-        }
-    });
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const data = {
+      username: document.getElementById('username').value,
+      email: document.getElementById('email').value,
+      phone: fullPhone,
+      department: document.getElementById('department').value,
+      password,
+      confirmPassword
+    };
+
+    try {
+      const response = await fetch("/Staff/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert("Registration successful! Please wait for admin authorization to log in.");
+        window.location.href = "/Staff/login";
+      } else {
+        const result = await response.json();
+        alert(result.message || "Registration failed. Please try again.");
+      }
+    } catch (err) {
+      alert("An error occurred. Please try again.");
+      console.error(err);
+    }
+  });
 </script>
 
 </body>

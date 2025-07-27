@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Librarian Dashboard</title>
+    <title>Staff Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- START OF NEW CSS --- */
@@ -115,7 +115,7 @@
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border-top: 4px solid #f97316; /* Orange accent */
+            border-top: 4px solid #1e40af;
         }
         
         .card p:first-child {
@@ -167,8 +167,8 @@
             font-weight: 600;
             font-size: 0.8rem;
         }
-        .status.returned { background-color: #d1fae5; color: #065f46; }
-        .status.borrowed { background-color: #fee2e2; color: #991b1b; }
+        .status.present { background-color: #d1fae5; color: #065f46; }
+        .status.leave { background-color: #fee2e2; color: #991b1b; }
 
         .edit-btn {
             background-color: #3b82f6;
@@ -188,7 +188,7 @@
         }
 
         .download-btn button {
-            background-color: #f97316;
+            background-color: #f97316; /* KASH theme orange */
             color: white;
             padding: 0.75rem 1.5rem;
             border: none;
@@ -248,144 +248,205 @@
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="navbar">
-            <div class="top">
-                <div class="brand">Librarian Dashboard</div>
-                <div class="search-logout">
-                    <input type="text" placeholder="Search books..." />
-                    <button>Change Password</button>
-                    <button>Log Out</button>
-                </div>
-            </div>
-            <nav>
-                <a href="#">Dashboard</a>
-                <a href="#">Books</a>
-                <a href="#">Borrowed</a>
-                <a href="#">Requests</a>
-                <a href="#">Overdue</a>
-                <a href="#">Settings</a>
-            </nav>
+  <div class="dashboard">
+    <div class="navbar">
+      <div class="top">
+        <div class="brand">Teaching Dashboard</div>
+        <div class="search-logout">
+          <input type="text" placeholder="Search..." />
+          <button id="changePasswordBtn">Change Password</button>
+          <button id="logoutBtn">Log Out</button>
         </div>
-
-        <div class="main">
-            <div class="cards">
-                <div class="card">
-                    <p>Total Books</p>
-                    <p class="amount">3,200</p>
-                </div>
-                <div class="card">
-                    <p>Borrowed Books</p>
-                    <p class="amount">740</p>
-                </div>
-                <div class="card">
-                    <p>Overdue Books</p>
-                    <p class="amount">52</p>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Recent Book Transactions</h3>
-                <table id="book-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Student</th>
-                            <th>Book Title</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Date">July 24, 2025</td>
-                            <td data-label="Student">Ananya Sharma</td>
-                            <td data-label="Book Title">Python for Beginners</td>
-                            <td data-label="Status"><span class="status returned">Returned</span></td>
-                            <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
-                        </tr>
-                        <tr>
-                            <td data-label="Date">July 20, 2025</td>
-                            <td data-label="Student">Ravi Kumar</td>
-                            <td data-label="Book Title">Data Structures in C</td>
-                            <td data-label="Status"><span class="status borrowed">Borrowed</span></td>
-                            <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="download-btn">
-                    <button onclick="downloadExcel()">Download Report</button>
-                </div>
-            </div>
-        </div>
+      </div>
+      <nav>
+        <a href="/Staff/Teaching/profile">Manage Profile</a>
+        <a href="/Staff/Teaching/manage-courses">Manage Courses</a>
+        <a href="#">Communication Tools</a>
+        <a href="#">Attendance Management</a>
+        <a href="/Staff/Leave/dashboard">Leave Requests</a>
+        <a href="#">Performance Review</a>
+      </nav>
     </div>
 
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h3>Edit Transaction</h3>
-            <input type="text" id="edit-date" placeholder="Date">
-            <input type="text" id="edit-student" placeholder="Student Name">
-            <input type="text" id="edit-title" placeholder="Book Title">
-            <select id="edit-status">
-                <option value="Returned">Returned</option>
-                <option value="Borrowed">Borrowed</option>
-            </select>
-            <div class="modal-buttons">
-                <button class="cancel" onclick="closeModal()">Cancel</button>
-                <button class="save" onclick="saveEdit()">Save Changes</button>
-            </div>
-        </div>
+    <div class="welcome-message" style="margin-bottom: 2rem;">
+  <h2 id="welcomeText" style="font-size: 1.8rem; color: #1e3a8a;">Welcome, [Teacher Name]</h2>
+  <p style="font-size: 1rem; color: #475569; margin-top: 0.5rem;">Here is your professional overview.</p>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <p>Full Name</p>
+    <p class="amount" id="teacherName">--</p>
+  </div>
+  <div class="card">
+    <p>Department</p>
+    <p class="amount" id="teacherDept">--</p>
+  </div>
+ <div class="card">
+  <p>Class Assigned</p>
+  <p class="amount" id="teacherClassAssigned">--</p>
+</div>
+<div class="card">
+  <p>Designation</p>
+  <p class="amount" id="teacherDesignation">--</p>
+</div>
+
+</div>
+
+
+      <div class="table-container">
+        <h3 style="margin-bottom: 15px;">Recent Notifications / Updates</h3>
+        <table id="notifications-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic rows will be injected here later -->
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <script>
-        let currentRow;
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h3>Edit Record</h3>
+      <input type="text" id="edit-date" placeholder="Date">
+      <input type="text" id="edit-title" placeholder="Title">
+      <input type="text" id="edit-category" placeholder="Category">
+      <select id="edit-status">
+        <option value="Read">Read</option>
+        <option value="Unread">Unread</option>
+      </select>
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closeModal()">Cancel</button>
+        <button class="save" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
 
-        function downloadExcel() {
-            const table = document.getElementById("book-table");
-            let rows = table.rows, csv = [];
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td:not(:last-child), th:not(:last-child)");
-                for (let j = 0; j < cols.length; j++) {
-                    let data = cols[j].innerText.replace(/"/g, '""');
-                    row.push('"' + data + '"');
-                }
-                csv.push(row.join(","));
+  <script>
+    let currentRow;
+
+    function editRow(btn) {
+      currentRow = btn.closest("tr");
+      document.getElementById("edit-date").value = currentRow.cells[0].innerText;
+      document.getElementById("edit-title").value = currentRow.cells[1].innerText;
+      document.getElementById("edit-category").value = currentRow.cells[2].innerText;
+      document.getElementById("edit-status").value = currentRow.cells[3].innerText;
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
+
+    function saveEdit() {
+      currentRow.cells[0].innerText = document.getElementById("edit-date").value;
+      currentRow.cells[1].innerText = document.getElementById("edit-title").value;
+      currentRow.cells[2].innerText = document.getElementById("edit-category").value;
+      currentRow.cells[3].innerText = document.getElementById("edit-status").value;
+      closeModal();
+    }
+  </script>
+
+  <script>
+    window.onload = function () {
+      const token = localStorage.getItem('token');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (!token) {
+        alert('You are not logged in. Redirecting to login page.');
+        window.location.href = '/Staff/login';
+        return;
+      }
+
+      try {
+  fetch('/Auth/verify-token', {
+    method: 'GET', // or 'POST' if your route is set up to handle POST
+    credentials: 'include' // IMPORTANT: ensures cookies are sent with the request
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Unauthorized');
+      return res.json();
+    })
+    .then(data => {
+      const department = data.department;
+      if (department !== 'Teaching') {
+        alert('You are not authorized to access this page.');
+        window.location.href = '/Staff/login';
+      }
+    });
+} catch (err) {
+  console.error('Token verification error:', err);
+  alert('Session expired. Please log in again.');
+  window.location.href = '/Staff/login';
+}
+
+      logoutBtn.addEventListener('click', async function () {
+        try {
+          const res = await fetch('/Staff/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
             }
-            const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "library_report.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+          });
+
+          if (res.ok) {
+            localStorage.removeItem('token');
+            // localStorage.removeItem('user');
+            alert('Logged out successfully!');
+            window.location.href = '/Staff/login';
+          } else {
+            alert('Logout failed.');
+          }
+        } catch (err) {
+          console.error('Logout error:', err);
+          alert('Something went wrong during logout.');
         }
+      });
+    };
+  </script>
 
-        function editRow(btn) {
-            currentRow = btn.closest("tr");
-            document.getElementById("edit-date").value = currentRow.cells[0].innerText;
-            document.getElementById("edit-student").value = currentRow.cells[1].innerText;
-            document.getElementById("edit-title").value = currentRow.cells[2].innerText;
-            document.getElementById("edit-status").value = currentRow.cells[3].querySelector('.status').innerText;
-            document.getElementById("editModal").style.display = "flex";
-        }
+  <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+    let user = null;
 
-        function closeModal() {
-            document.getElementById("editModal").style.display = "none";
-        }
+    if (token) {
+    try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    user = payload;
+  } catch (e) {
+    console.error("Failed to decode token:", e);
+  }
+  }
+    
+    if (!user) return;
+    try {
+      const userObj = user;
+      document.getElementById("welcomeText").textContent = `Welcome, ${userObj.name || "Teacher"}`;
+      document.getElementById("teacherName").textContent = userObj.username || "--";
+      document.getElementById("teacherDept").textContent = userObj.department || "--";
+     document.getElementById('teacherClassAssigned').textContent = userObj.classAssigned.join(', ') || "--";
+    document.getElementById('teacherDesignation').textContent = userObj.designation || "--";
+    } catch (e) {
+      console.error("Failed to parse user info:", e);
+    }
+  });
+</script>
 
-        function saveEdit() {
-            const newStatus = document.getElementById("edit-status").value;
-            currentRow.cells[0].innerText = document.getElementById("edit-date").value;
-            currentRow.cells[1].innerText = document.getElementById("edit-student").value;
-            currentRow.cells[2].innerText = document.getElementById("edit-title").value;
-
-            const statusSpan = currentRow.cells[3].querySelector('.status');
-            statusSpan.innerText = newStatus;
-            statusSpan.className = 'status ' + newStatus.toLowerCase();
-
-            closeModal();
-        }
-    </script>
+<script>
+  document.getElementById('changePasswordBtn').addEventListener('click', () => {
+    window.location.href = '/Staff/change-password';
+  });
+</script>
 </body>
 </html>

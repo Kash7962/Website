@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fef7ed;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    h2 {
+      color: #1e3a8a;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      margin-top: 1.2rem;
+      color: #475569;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    input[disabled], textarea[disabled], select[disabled] {
+      background-color: #f3f4f6;
+      color: #6b7280;
+    }
+
+    button {
+      margin-top: 2rem;
+      background-color: #1e40af;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e3a8a;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Manage Profile</h2>
+    <form id="profileForm">
+      <div class="form-grid">
+        <div>
+          <label for="username">Full Name</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" disabled />
+        </div>
+
+        <div>
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" required />
+        </div>
+
+        <div>
+          <label for="designation">Designation</label>
+          <input type="text" id="designation" name="designation" disabled />
+        </div>
+
+        <div>
+          <label for="department">Department</label>
+          <input type="text" id="department" name="department" disabled />
+        </div>
+
+        <div>
+          <label for="classAssigned">Classes Assigned</label>
+          <input type="text" id="classAssigned" name="classAssigned" disabled />
+        </div>
+
+        <div>
+          <label for="subjects">Subjects</label>
+          <input type="text" id="subjects" name="subjects" placeholder="e.g. Math, Science" />
+        </div>
+
+        <div>
+          <label for="experience">Years of Experience</label>
+          <input type="number" id="experience" name="experience" min="0" />
+        </div>
+
+        <div>
+          <label for="salary">Salary</label>
+          <input type="number" id="salary" name="salary" disabled />
+        </div>
+
+        <div>
+          <label for="employmentType">Employment Type</label>
+          <select id="employmentType" name="employmentType" disabled>
+            <option value="Permanent">Permanent</option>
+            <option value="Contract">Contract</option>
+            <option value="Part-Time">Part-Time</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="joiningDate">Joining Date</label>
+          <input type="date" id="joiningDate" name="joiningDate" disabled />
+        </div>
+
+        <div>
+          <label for="qualifications">Qualifications</label>
+          <textarea id="qualifications" name="qualifications" rows="3" placeholder="e.g. B.Ed, M.Sc in Physics"></textarea>
+        </div>
+
+        <div>
+          <label for="skills">Skills</label>
+          <textarea id="skills" name="skills" rows="2"></textarea>
+        </div>
+
+        <div>
+          <label for="achievements">Achievements</label>
+          <textarea id="achievements" name="achievements" rows="2"></textarea>
+        </div>
+      </div>
+      <button type="submit">Update Profile</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('profileForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const token = localStorage.getItem('token');
+
+      const user = {
+        username: document.getElementById('username').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        department: document.getElementById('department').value,
+        subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
+        yearsOfExperience: parseInt(document.getElementById('experience').value),
+        qualifications: document.getElementById('qualifications').value.split(',').map(s => s.trim()),
+        skills: document.getElementById('skills').value.split(',').map(s => s.trim()),
+        achievements: document.getElementById('achievements').value.split(',').map(s => s.trim()),
+        
+      };
+
+      try {
+        const res = await fetch('/Staff/Teaching/update-profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(user)
+        });
+
+        if (res.ok) {
+          const updatedUser = await res.json();
+          // localStorage.setItem('user', JSON.stringify(updatedUser));
+          alert('Profile updated successfully!');
+        } else {
+          alert('Failed to update profile.');
+        }
+      } catch (err) {
+        console.error('Update error:', err);
+        alert('Something went wrong.');
+      }
+    });
+
+    // Optionally, pre-fill the form with current user info
+    window.onload = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) return alert('User not logged in.');
+
+  try {
+    const res = await fetch('/Staff/Teaching/update-profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch user profile');
+    }
+
+    const user = await res.json(); // ✅ This is the actual user object
+
+    // Prefill the form fields
+    document.getElementById('username').value = user.username || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('phone').value = user.phone || '';
+    document.getElementById('department').value = user.department || '';
+    document.getElementById('designation').value = user.designation || '';
+    document.getElementById('classAssigned').value = (user.classAssigned || []).join(', ');
+    document.getElementById('subjects').value = (user.subjects || []).join(', ');
+    document.getElementById('experience').value = user.yearsOfExperience || '';
+    document.getElementById('salary').value = user.salary || '';
+    document.getElementById('employmentType').value = user.employmentType || 'Permanent';
+    document.getElementById('joiningDate').value = user.joiningDate ? user.joiningDate.substring(0, 10) : '';
+    document.getElementById('qualifications').value = (user.qualifications || []).join(', ');
+    document.getElementById('skills').value = (user.skills || []).join(', ');
+    document.getElementById('achievements').value = (user.achievements || []).join(', ');
+
+    // Optional: store fresh copy locally
+    localStorage.setItem('user', JSON.stringify(user));
+
+  } catch (err) {
+    console.error('Profile fetch error:', err);
+    alert('Failed to load user profile.');
+  }
+};
+  </script>
+</body>
+</html>

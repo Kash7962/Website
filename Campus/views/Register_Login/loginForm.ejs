@@ -1,234 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <style>
-        * { 
-            box-sizing: border-box; 
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome (CSP-safe) -->
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-        body {
-            font-family: 'Droid Serif', serif;
-            background-color: #fef7ed; /* Light background from your main site */
-            margin: 0;
-            padding: 1rem;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <style>
+    * { box-sizing: border-box; }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
-            background: #ffffff;
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-top: 5px solid #1e40af; /* Blue accent color for Login */
-        }
+    body {
+      font-family: 'Droid Serif', serif;
+      background-color: #fef7ed;
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        h2 {
-            text-align: center;
-            color: #1e40af; /* Blue from your theme */
-            margin-bottom: 2rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 1.75rem;
-        }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #1e40af;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
+    .header-with-button {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+    .home-icon-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      background-color: #1e40af;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+    }
 
-        label {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #4b5563;
-            font-size: 0.9rem;
-        }
+    .home-icon-btn:hover {
+      background-color: #172554;
+    }
 
-        input {
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            font-family: 'Droid Serif', serif;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+    h2 {
+      color: #1e40af;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.75rem;
+      margin: 0;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-        }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
 
-        button[type="submit"] {
-            background-color: #1e40af; /* Blue button for Login */
-            color: white;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 1rem;
-        }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
 
-        button[type="submit"]:hover {
-            background-color: #1c3d90;
-        }
+    label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #4b5563;
+      font-size: 0.9rem;
+    }
 
-        .form-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.95rem;
-        }
+    input {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: 'Droid Serif', serif;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
 
-        .forgot-password {
-            text-align: right;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-        }
+    input:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+    }
 
-        .form-footer a, .forgot-password a {
-            color: #1e40af; /* Blue link */
-            text-decoration: none;
-            font-weight: 600;
-        }
+    button[type="submit"] {
+      background-color: #1e40af;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
 
-        .form-footer a:hover, .forgot-password a:hover {
-            text-decoration: underline;
-        }
-        
-        .google-wrapper {
-            margin-top: 1.5rem;
-        }
+    button[type="submit"]:hover {
+      background-color: #1c3d90;
+    }
 
-        @media (max-width: 500px) {
-            body {
-                padding: 0;
-            }
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-                box-shadow: none;
-                padding: 2rem 1.5rem;
-            }
-            h2 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    .form-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-footer a, .forgot-password a {
+      color: #1e40af;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover, .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .google-wrapper {
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 0;
+      }
+
+      .container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+        box-shadow: none;
+        padding: 2rem 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Login to Your Account</h2>
+  <div class="header-with-button">
+    <a href="/" class="home-icon-btn" title="Go Home">
+      <i class="fas fa-home"></i>
+    </a>
+    <h2>Login to Campus</h2>
+  </div>
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="identifier">Email *</label>
-            <input type="email" id="identifier" name="identifier" required placeholder="Enter your email" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password *</label>
-            <input type="password" id="password" name="password" required placeholder="Enter your password" />
-            <div class="forgot-password">
-                <a href="/Staff/forgot-password">Forgot Password?</a>
-            </div>
-        </div>
-        <button type="submit">Login</button>
-    </form>
-
-    <div class="google-wrapper">
-        <div id="g_id_signin"></div>
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="identifier">Email *</label>
+      <input type="email" id="identifier" name="identifier" required placeholder="Enter your email" />
     </div>
-
-    <div class="form-footer">
-        Don't have an account? <a href="/Staff/register">Register here</a>
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="password" required placeholder="Enter your password" />
+      <div class="forgot-password">
+        <a href="/Staff/forgot-password">Forgot Password?</a>
+      </div>
     </div>
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="google-wrapper">
+    <div id="g_id_signin"></div>
+  </div>
+
+  <div class="form-footer">
+    Don't have an account? <a href="/Staff/register">Register here</a>
+  </div>
 </div>
 
 <script>
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const identifier = document.getElementById('identifier').value.trim();
-        const password = document.getElementById('password').value.trim();
-        try {
-            const res = await fetch('/Staff/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier, password })
-            });
-            const data = await res.json();
-            if (res.ok && data.token) {
-                if(data.user?.isAuthorized) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/Staff/dashboard';
-                } else {
-                    alert('You are not authorized to access this page.');
-                }
-            } else {
-                alert(data.message || 'Login failed.');
-            }
-        } catch (err) {
-            console.error('Login error:', err);
-            alert('Something went wrong. Try again.');
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const identifier = document.getElementById('identifier').value.trim();
+    const password = document.getElementById('password').value.trim();
+    try {
+      const ip = await getClientIP();
+      const userAgent = navigator.userAgent;
+      const res = await fetch('/Staff/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'ip': ip, 'userAgent': userAgent },
+        body: JSON.stringify({ identifier, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        if (isUserAuthorized(data.token)) {
+          localStorage.setItem('token', data.token);
+          // localStorage.setItem('user', JSON.stringify(data.user));
+          redirectToDashboard(data.token);
+        } else {
+          alert('You are not authorized to access this page.');
         }
-    });
-
-    window.onload = function () {
-        google.accounts.id.initialize({
-            client_id: '386508050197-iluerjae4ua3i4jgd4k4taio51mav3bt.apps.googleusercontent.com', // 🔁 Make sure this is your actual Client ID
-            callback: handleGoogleResponse,
-        });
-        google.accounts.id.renderButton(
-            document.getElementById("g_id_signin"),
-            { theme: "outline", size: "large", width: "358" }
-        );
-    };
-
-    async function handleGoogleResponse(response) {
-        try {
-            const res = await fetch('/Staff/google-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tokenId: response.credential }),
-            });
-            const data = await res.json();
-            if (res.ok && data.token) {
-                if (data.user?.isAuthorized) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/Staff/dashboard';
-                } else {
-                    alert('You are not authorized to access this page.');
-                }
-            } else {
-                alert(data.message || 'Google login failed.');
-            }
-        } catch (err) {
-            console.error('Google login failed:', err);
-            alert('Google login failed. Please try again.');
-        }
+      } else {
+        alert(data.message || 'Login failed.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Something went wrong. Try again.');
     }
+  });
+
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: '386508050197-iluerjae4ua3i4jgd4k4taio51mav3bt.apps.googleusercontent.com',
+      callback: handleGoogleResponse,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("g_id_signin"),
+      { theme: "outline", size: "large", width: "358" }
+    );
+  };
+
+  async function handleGoogleResponse(response) {
+    try {
+      const ip = await getClientIP();
+      const userAgent = navigator.userAgent;
+      const res = await fetch('/Staff/google-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'ip': ip, 'userAgent': userAgent },
+        body: JSON.stringify({ tokenId: response.credential }),
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        if (isUserAuthorized(data.token)) {
+          localStorage.setItem('token', data.token);
+          // localStorage.setItem('user', JSON.stringify(data.user));
+          redirectToDashboard(data.token);
+        } else {
+          alert('You are not authorized to access this page.');
+        }
+      } else {
+        alert(data.message || 'Google login failed.');
+      }
+    } catch (err) {
+      console.error('Google login failed:', err);
+      alert('Google login failed. Please try again.');
+    }
+  }
+
+  function redirectToDashboard(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const department = payload.department;
+      switch (department) {
+        case 'Teaching':
+          window.location.href = '/Staff/dashboard/teaching'; break;
+        case 'Kitchen':
+          window.location.href = '/Staff/dashboard/kitchen'; break;
+        case 'Library':
+          window.location.href = '/Staff/dashboard/library'; break;
+        case 'Management':
+          window.location.href = '/Staff/dashboard/management'; break;
+        case 'Accounts':
+          window.location.href = '/Staff/dashboard/accounts'; break;
+        default:
+          window.location.href = '/Staff/login';
+      }
+    } catch (err) {
+      console.error('Failed to decode token:', err);
+      alert('Invalid token. Please log in again.');
+    }
+  }
+
+  function isUserAuthorized(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.isAuthorized === true;
+    } catch (err) {
+      console.error('Token decode failed:', err);
+      return false;
+    }
+  }
+
+  async function getClientIP() {
+  const res = await fetch('https://api.ipify.org?format=json');
+  const data = await res.json();
+  return data.ip;
+}
+
 </script>
 
 </body>

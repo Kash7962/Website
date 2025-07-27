@@ -3,7 +3,7 @@ const { validationResult } = require('express-validator');
 
 module.exports = {
   registrationForm: (req, res) => {
-    res.render('Forms/admissionForm');
+    res.render('Admission/admissionForm');
   },
 
 submitAdmissionForm : async (req, res) => {
@@ -12,14 +12,13 @@ submitAdmissionForm : async (req, res) => {
     // Log or handle error response
     return res.status(400).json({ errors: errors.array() });
   }
-
   try {
     const admission = new Admission(req.body);
     await admission.save();
-    res.status(200).send('Admission form submitted successfully!');
+    res.status(200).json({message: 'Admission form submitted successfully!'});
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).json({message: 'Server error'});
   }
 },
 };

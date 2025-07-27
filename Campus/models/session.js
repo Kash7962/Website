@@ -14,6 +14,10 @@ const sessionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  department: {
+    type: String,
+    required: true,
+  },
   loginTime: {
     type: Date,
     default: Date.now,

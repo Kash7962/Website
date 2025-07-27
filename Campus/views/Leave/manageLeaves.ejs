@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Leave Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .leave-info {
+      flex: 1;
+    }
+
+    .leave-info strong {
+      font-size: 1.1rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    select, button {
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>All Leave Requests</h2>
+    <ul id="leaveList"></ul>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+    const userData = user;
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    const department = decoded.department;
+
+    if (department !== 'Management') {
+      alert('Access Denied: Only Management can view this page.');
+      window.location.href = '/'; // Redirect to homepage
+    }
+
+    async function fetchLeaves() {
+      try {
+        const res = await fetch('/api/leaves', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        const leaveList = document.getElementById('leaveList');
+        leaveList.innerHTML = '';
+
+        data.forEach(leave => {
+          const li = document.createElement('li');
+
+          li.innerHTML = `
+            <div class="leave-info">
+              <strong>${leave.username}</strong><br>
+              Reason: ${leave.reason}<br>
+              From: ${new Date(leave.fromDate).toDateString()}<br>
+              To: ${new Date(leave.toDate).toDateString()}<br>
+              Status: <span id="status-${leave._id}">${leave.status}</span>
+            </div>
+            <div class="actions">
+              <select id="select-${leave._id}">
+                <option value="">--Choose--</option>
+                <option value="Approved">Approve</option>
+                <option value="Denied">Deny</option>
+              </select>
+              <button onclick="updateStatus('${leave._id}')">Update</button>
+            </div>
+          `;
+          leaveList.appendChild(li);
+        });
+      } catch (err) {
+        console.error('Error fetching leaves:', err);
+        alert('Failed to load leave requests.');
+      }
+    }
+
+    async function updateStatus(id) {
+      const newStatus = document.getElementById(`select-${id}`).value;
+
+      if (!newStatus) return alert('Please select a status.');
+
+      try {
+        const res = await fetch(`/api/leaves/status/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        const result = await res.json();
+        if (!res.ok) {
+          alert(result.message || 'Failed to update status.');
+          return;
+        }
+
+        document.getElementById(`status-${id}`).textContent = result.status;
+        alert('Leave status updated!');
+      } catch (err) {
+        console.error('Error updating status:', err);
+        alert('Failed to update leave status.');
+      }
+    }
+
+    window.onload = fetchLeaves;
+  </script>
+</body>
+</html>

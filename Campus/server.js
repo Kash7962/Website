@@ -2,15 +2,21 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const path = require('path');
+// const session = require('express-session');
+// const flash = require('connect-flash');
 require('dotenv').config();
-
+const cookieParser = require('cookie-parser');
 const app = express();
 
 const Academic = require('./Routes/AcademicRoutes.js');
 const WhoWeAre = require('./Routes/WhoWeAreRoutes.js');
 const Form = require('./Routes/AdmissionFormRoutes.js');
-const UserRoutes = require('./Routes/StaffRoutes.js');
-
+const StaffRoutes = require('./Routes/StaffRoutes.js');
+const AuthRoutes = require('./Routes/AuthRoute.js');
+const TeachingRoutes = require('./Routes/TeachingRoutes.js');
+const LeaveRoutes = require('./Routes/LeaveRoutes.js');
+const cron = require('node-cron');
+const { deleteExpiredLeaves } = require('./Controllers/LeaveController');
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
 const db = mongoose.connection;
@@ -65,9 +71,10 @@ app.use(
         "https://www.google.com",
         "https://www.google.com/maps",
         "https://www.youtube.com",
-        "https://www.youtube-nocookie.com"
+        "https://www.youtube-nocookie.com",
+
       ],
-      connectSrc: ["'self'", "https://unpkg.com"],
+      connectSrc: ["'self'", "https://unpkg.com", "https://api.ipify.org"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
@@ -80,7 +87,18 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use(session({
+//   secret: process.env.SESSION_SECRET || 'your-secret-key',
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: { secure: false } // Set true if using HTTPS
+// }));
 
+
+// Make flash messages available in all templates (EJS)
+
+app.use(cookieParser());
 // Routes
 app.get('/', (req, res) => {
   res.render('Home/Home');
@@ -88,9 +106,17 @@ app.get('/', (req, res) => {
 
 app.use('/Academic', Academic);
 app.use('/WhoWeAre', WhoWeAre);
-app.use('/Form', Form);
-app.use('/Staff', UserRoutes);
+app.use('/Admission', Form);
+app.use('/Staff', StaffRoutes);
+app.use('/Auth', AuthRoutes);
+app.use('/Staff/Teaching', TeachingRoutes);
+app.use('/Staff/Leave', LeaveRoutes);
+cron.schedule('0 0 * * *', async () => {
+  await deleteExpiredLeaves(); // Runs daily at midnight
+});
 // Start server
 app.listen(process.env.PORT, () => {
   console.log(`Server started on port ${process.env.PORT}`);
 });
+
+

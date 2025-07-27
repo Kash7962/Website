@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Kitchen Manager Dashboard</title>
+    <title>Accountant Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- START OF NEW CSS --- */
@@ -105,7 +105,7 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
@@ -117,7 +117,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             border-top: 4px solid #1e40af;
         }
-        
+
         .card p:first-child {
             font-weight: 600;
             color: #64748b;
@@ -161,18 +161,8 @@
             background-color: #f8fafc;
         }
 
-        .status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-        .status.pending { background-color: #fef3c7; color: #92400e; }
-        .status.in-progress { background-color: #dbeafe; color: #1e40af; }
-        .status.completed { background-color: #d1fae5; color: #065f46; }
-
         .edit-btn {
-            background-color: #3b82f6;
+            background-color: #f59e0b;
             color: white;
             padding: 6px 12px;
             border: none;
@@ -203,38 +193,28 @@
             background-color: #ea580c;
         }
 
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white; padding: 2rem; border-radius: 12px;
-            width: 90%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .modal-content h3 { font-size: 1.5rem; color: #1e40af; margin-bottom: 1.5rem; }
-        .modal-content input, .modal-content select { width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; }
-        
-        .modal-buttons { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
-        .modal-buttons button { padding: 0.6rem 1.2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .modal-buttons .save { background-color: #1e40af; color: white; }
-        .modal-buttons .cancel { background-color: #e5e7eb; color: #334155; }
-
         /* Responsive table from your original code, kept as is */
         @media (max-width: 768px) {
-            .navbar .top { flex-direction: column; align-items: stretch; }
-            .navbar nav, .navbar .search-logout { margin-top: 1rem; }
+            .navbar .top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .navbar nav, .navbar .search-logout {
+                margin-top: 1rem;
+            }
+            
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { display: none; }
             tr { border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
-            td { padding-left: 50%; position: relative; border: none; border-bottom: 1px solid #f1f5f9; }
-            td:last-child { border-bottom: none; }
+            td { 
+                padding-left: 50%; 
+                position: relative;
+                border: none;
+                border-bottom: 1px solid #f1f5f9;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
             td::before {
                 content: attr(data-label);
                 position: absolute;
@@ -252,19 +232,18 @@
     <div class="dashboard">
         <div class="navbar">
             <div class="top">
-                <div class="brand">Kitchen Manager</div>
+                <div class="brand">Accountant Dashboard</div>
                 <div class="search-logout">
                     <input type="text" placeholder="Search..." />
                     <button>Change Password</button>
-                    <button>Log Out</button>
+                    <button id="logoutBtn">Log Out</button>
                 </div>
             </div>
             <nav>
                 <a href="#">Dashboard</a>
-                <a href="#">Inventory</a>
-                <a href="#">Orders</a>
-                <a href="#">Staff</a>
-                <a href="#">Vendors</a>
+                <a href="#">Income</a>
+                <a href="#">Expenses</a>
+                <a href="#">Payroll</a>
                 <a href="#">Reports</a>
                 <a href="#">Settings</a>
             </nav>
@@ -273,56 +252,52 @@
         <div class="main">
             <div class="cards">
                 <div class="card">
-                    <p>Total Inventory Items</p>
-                    <p class="amount">420</p>
+                    <p>Total Income</p>
+                    <p class="amount">₹1,50,000</p>
                 </div>
                 <div class="card">
-                    <p>Pending Orders</p>
-                    <p class="amount">8</p>
+                    <p>Total Expenses</p>
+                    <p class="amount">₹30,000</p>
                 </div>
                 <div class="card">
-                    <p>Available Staff</p>
-                    <p class="amount">24</p>
-                </div>
-                <div class="card">
-                    <p>Low Stock Alerts</p>
-                    <p class="amount">5</p>
+                    <p>Net Balance</p>
+                    <p class="amount">₹1,20,000</p>
                 </div>
             </div>
 
             <div class="table-container">
-                <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Today's Activities</h3>
-                <table id="manager-table">
+                <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Recent Transactions</h3>
+                <table id="transaction-table">
                     <thead>
                         <tr>
-                            <th>Activity</th>
-                            <th>Category</th>
-                            <th>Assigned To</th>
-                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td data-label="Activity">Order Vegetables</td>
-                            <td data-label="Category">Procurement</td>
-                            <td data-label="Assigned To">Ravi</td>
-                            <td data-label="Status"><span class="status pending">Pending</span></td>
-                            <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
+                            <td data-label="Date">July 24, 2025</td>
+                            <td data-label="Description">Tuition Fee Collection</td>
+                            <td data-label="Type">Income</td>
+                            <td data-label="Amount">₹85,000</td>
+                            <td data-label="Action"><button class="edit-btn">Edit</button></td>
                         </tr>
                         <tr>
-                            <td data-label="Activity">Clean Storage</td>
-                            <td data-label="Category">Maintenance</td>
-                            <td data-label="Assigned To">Anita</td>
-                            <td data-label="Status"><span class="status in-progress">In Progress</span></td>
-                            <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
+                            <td data-label="Date">July 23, 2025</td>
+                            <td data-label="Description">Library Maintenance</td>
+                            <td data-label="Type">Expense</td>
+                            <td data-label="Amount">₹12,500</td>
+                            <td data-label="Action"><button class="edit-btn">Edit</button></td>
                         </tr>
                         <tr>
-                            <td data-label="Activity">Menu Plan - August</td>
-                            <td data-label="Category">Planning</td>
-                            <td data-label="Assigned To">Self</td>
-                            <td data-label="Status"><span class="status completed">Completed</span></td>
-                            <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
+                            <td data-label="Date">July 22, 2025</td>
+                            <td data-label="Description">Faculty Salaries</td>
+                            <td data-label="Type">Expense</td>
+                            <td data-label="Amount">₹50,000</td>
+                            <td data-label="Action"><button class="edit-btn">Edit</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -333,75 +308,103 @@
         </div>
     </div>
 
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h3>Edit Task</h3>
-            <input type="text" id="edit-activity" placeholder="Activity">
-            <input type="text" id="edit-category" placeholder="Category">
-            <input type="text" id="edit-assigned" placeholder="Assigned To">
-            <select id="edit-status">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-            </select>
-            <div class="modal-buttons">
-                <button class="cancel" onclick="closeModal()">Cancel</button>
-                <button class="save" onclick="saveEdit()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let currentRow;
-
+        // Your original JavaScript, no changes needed
         function downloadExcel() {
-            const table = document.getElementById("manager-table");
-            let rows = table.rows, csv = [];
+            let table = document.getElementById("transaction-table");
+            let rows = table.rows;
+            let csv = [];
+
             for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td:not(:last-child), th:not(:last-child)");
-                for (let j = 0; j < cols.length; j++) {
-                    let data = cols[j].innerText.replace(/"/g, '""');
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                // Loop to cols.length - 1 to exclude the "Action" column
+                for (let j = 0; j < cols.length - 1; j++) {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
+                    data = data.replace(/"/g, '""'); // Escape double quotes
                     row.push('"' + data + '"');
                 }
                 csv.push(row.join(","));
             }
 
-            const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
+            let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "manager_tasks.csv");
+            link.setAttribute("download", "transactions_report.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
-
-        function editRow(btn) {
-            currentRow = btn.closest("tr");
-            document.getElementById("edit-activity").value = currentRow.cells[0].innerText;
-            document.getElementById("edit-category").value = currentRow.cells[1].innerText;
-            document.getElementById("edit-assigned").value = currentRow.cells[2].innerText;
-            document.getElementById("edit-status").value = currentRow.cells[3].querySelector('.status').innerText;
-            document.getElementById("editModal").style.display = "flex";
-        }
-
-        function closeModal() {
-            document.getElementById("editModal").style.display = "none";
-        }
-
-        function saveEdit() {
-            const newStatus = document.getElementById("edit-status").value;
-            currentRow.cells[0].innerText = document.getElementById("edit-activity").value;
-            currentRow.cells[1].innerText = document.getElementById("edit-category").value;
-            currentRow.cells[2].innerText = document.getElementById("edit-assigned").value;
-            
-            const statusSpan = currentRow.cells[3].querySelector('.status');
-            statusSpan.innerText = newStatus;
-            // Update class for color coding
-            statusSpan.className = 'status ' + newStatus.toLowerCase().replace(' ', '-');
-
-            closeModal();
-        }
     </script>
+
+    <script>
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    try{
+    const res = await fetch('/Auth/verify-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+        }
+    });
+    } catch (err) {
+      console.error('Token verification error:', err);
+      alert('Something went wrong. Please log in again.');
+      window.location.href = '/Staff/login';
+    }
+    if (!token) {
+      alert('You are not logged in. Redirecting to login page.');
+      window.location.href = '/Staff/login';
+    }
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const department = payload.department;
+
+    if(department !== 'Accounts') {
+            alert('You are not authorized to access this page.');
+            window.location.href = '/Staff/login';
+        }
+  </script>
+
+<script>
+  window.onload = function () {
+    const token = localStorage.getItem('token');
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) {
+      console.warn('Logout button not found');
+      return;
+    }
+
+    logoutBtn.addEventListener('click', async function () {
+      console.log('Logout button clicked');
+      try {
+        const res = await fetch('/Staff/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+
+        if (res.ok) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          alert('Logged out successfully!');
+          window.location.href = '/Staff/login';
+        } else {
+          alert('Logout failed. Please try again.');
+        }
+      } catch (err) {
+        console.error('Logout error:', err);
+        alert('Something went wrong during logout.');
+      }
+    });
+  };
+</script>
+
+
+
 </body>
 </html>

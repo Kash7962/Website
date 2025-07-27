@@ -1,6 +1,6 @@
 const { OAuth2Client } = require('google-auth-library');
 const bcrypt = require('bcryptjs');
-const Staff = require('../models/staff'); // Adjust path if needed
+const {Staff} = require('../models/staff'); // Adjust path if needed
 const Session = require('../models/session'); // Adjust path if needed
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
       email,
       phone,
       password,
-      isGoogle = false,
+      department,
       isAuthorized = false,
     } = req.body;
 
@@ -29,22 +29,15 @@ const registerUser = async (req, res) => {
     }
 
     let hashedPassword = '';
-    if (!isGoogle && password) {
-      // Hash password for email/password users
-      const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(password, salt);
-    } else if (isGoogle && password) {
-      // Optionally hash password for Google users if provided
-      const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(password, salt);
-    }
+    const salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new Staff({
       username,
       email,
       phone,
       password: hashedPassword || '', // Store empty if Google user without password
-      isGoogle,
+      department,
       isAuthorized,
     });
 
@@ -57,7 +50,7 @@ const registerUser = async (req, res) => {
         username: newUser.username,
         email: newUser.email,
         phone: newUser.phone,
-        isGoogle: newUser.isGoogle,
+        department: newUser.department,
         isAuthorized: newUser.isAuthorized,
       },
     });
@@ -104,7 +97,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         phone: user.phone,
         username: user.username,
-        isGoogle: user.isGoogle,
+        department: user.department,
         isAuthorized: user.isAuthorized,
       },
       process.env.JWT_SECRET,
@@ -115,25 +108,31 @@ const loginUser = async (req, res) => {
     userId: user._id,
     name: user.username,
     email: user.email,
+    department: user.department,
     loginTime: new Date(),
     method: 'email', // or 'email'
     token,
-    ipAddress: req.ip,
-    userAgent: req.headers['user-agent'],
+    ipAddress: req.headers['ip'],
+    userAgent: req.headers['userAgent'],
 });
-
+     res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+    });
 
     res.status(200).json({
       message: 'Login successful.',
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        phone: user.phone,
-        isGoogle: user.isGoogle,
-        isAuthorized: user.isAuthorized,
-      }
+      // user: {
+      //   id: user._id,
+      //   username: user.username,
+      //   email: user.email,
+      //   phone: user.phone,
+      //   department: user.department,
+      //   isAuthorized: user.isAuthorized,
+      // }
     });
 
   } catch (err) {
@@ -150,7 +149,11 @@ const logout = async (req, res) => {
     { logoutTime: new Date(), isActive: false }
   );
 
-  res.clearCookie('token');
+  res.clearCookie('token', {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  });
   res.json({ message: 'Logged out successfully' });
 };
 
@@ -180,15 +183,7 @@ const googleLogin = async (req, res) => {
 
     if (!user) {
       // Auto-register Google user
-      user = new Staff({
-        username: name || email.split('@')[0],
-        email,
-        phone: '',
-        password: '', // No password for Google user
-        isGoogle: true,
-        isAuthorized: false, // Can be true if you want to auto-authorize Google users
-      });
-      await user.save();
+      res.status(201).json({ message: 'User not found. Please register first.' });
     }
 
     // Generate JWT
@@ -198,7 +193,7 @@ const googleLogin = async (req, res) => {
         email: user.email,
         username: user.username,
         phone: user.phone,
-        isGoogle: true,
+        department: user.department,
         isAuthorized: user.isAuthorized,
       },
       process.env.JWT_SECRET,
@@ -210,24 +205,32 @@ const googleLogin = async (req, res) => {
       userId: user._id,
       name: user.username,
       email: user.email,
+      department: user.department,
       loginTime: new Date(),
       method: 'google',
       token,
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
+      ipAddress: req.headers['ip'],
+      userAgent: req.headers['userAgent'],
+    });
+
+     res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
     });
 
     return res.status(200).json({
       message: 'Google login successful.',
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        phone: user.phone,
-        isGoogle: user.isGoogle,
-        isAuthorized: user.isAuthorized,
-      },
+      // user: {
+      //   id: user._id,
+      //   username: user.username,
+      //   email: user.email,
+      //   phone: user.phone,
+      //   department: user.department,
+      //   isAuthorized: user.isAuthorized,
+      // },
     });
 
   } catch (err) {
@@ -328,4 +331,25 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword };
+const changePassword = async (req, res) => {
+  const { _id, currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await Staff.findById(_id); // or User.findById
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Incorrect current password' });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error('Password change error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword };
