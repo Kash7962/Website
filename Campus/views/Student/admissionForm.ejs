@@ -239,7 +239,7 @@ button[type="submit"]:hover {
         </div>
       </div>
       <div class="form-group">
-        <label for="studentEmail">Student Email</label>
+        <label for="studentEmail">Student Email *</label>
         <input type="email" id="studentEmail" name="studentEmail">
       </div>
       <div class="form-group">
@@ -333,7 +333,7 @@ button[type="submit"]:hover {
       const data = Object.fromEntries(formData.entries());
 
       try {
-        const res = await fetch('/Admission/admissionForm', {
+        const res = await fetch('/Student/admissionForm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)

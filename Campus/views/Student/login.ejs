@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login</title>
-  
+
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
-  
+
   <!-- Font Awesome (CSP-safe) -->
   <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
@@ -127,6 +127,8 @@
       text-align: center;
       margin-top: 1.5rem;
       font-size: 0.95rem;
+      font-weight: 600;
+      color: #b91c1c; /* Attention-grabbing red */
     }
 
     .forgot-password {
@@ -187,7 +189,7 @@
       <label for="password">Password *</label>
       <input type="password" id="password" name="password" required placeholder="Enter your password" />
       <div class="forgot-password">
-        <a href="/Staff/forgot-password">Forgot Password?</a>
+        <a href="/Student/forgot-password">Forgot Password?</a>
       </div>
     </div>
     <button type="submit">Login</button>
@@ -198,7 +200,7 @@
   </div>
 
   <div class="form-footer">
-    Don't have an account? <a href="/Staff/register">Register here</a>
+    Logging in for the first time? Use Google to continue.
   </div>
 </div>
 
@@ -211,20 +213,18 @@
     try {
       const ip = await getClientIP();
       const userAgent = navigator.userAgent;
-      const res = await fetch('/Staff/login', {
+      const res = await fetch('/Student/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-forwarded-for': ip, 'userAgent': userAgent },
         body: JSON.stringify({ identifier, password })
       });
       const data = await res.json();
       if (res.ok && data.token) {
-        if (isUserAuthorized(data.token)) {
+        if (isUserEnrolled(data.token)) {
           localStorage.setItem('token', data.token);
-          // localStorage.setItem('user', JSON.stringify(data.user));
-          redirectToDashboard(data.token);
-        } else {
-          alert('You are not authorized to access this page.');
-        }
+            alert('Login successful!');
+            window.location.href = '/Student/dashboard';
+          }
       } else {
         alert(data.message || 'Login failed.');
       }
@@ -249,17 +249,16 @@
     try {
       const ip = await getClientIP();
       const userAgent = navigator.userAgent;
-      const res = await fetch('/Staff/google-login', {
+      const res = await fetch('/Student/google-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-forwarded-for': ip, 'userAgent': userAgent },
         body: JSON.stringify({ tokenId: response.credential }),
       });
       const data = await res.json();
       if (res.ok && data.token) {
-        if (isUserAuthorized(data.token)) {
+        if (isUserEnrolled(data.token)) {
           localStorage.setItem('token', data.token);
-          // localStorage.setItem('user', JSON.stringify(data.user));
-          redirectToDashboard(data.token);
+          window.location.href = '/Student/dashboard';
         } else {
           alert('You are not authorized to access this page.');
         }
@@ -272,34 +271,10 @@
     }
   }
 
-  function redirectToDashboard(token) {
+  function isUserEnrolled(token) {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const department = payload.department;
-      switch (department) {
-        case 'Teaching':
-          window.location.href = '/Staff/dashboard/teaching'; break;
-        case 'Kitchen':
-          window.location.href = '/Staff/dashboard/kitchen'; break;
-        case 'Library':
-          window.location.href = '/Staff/dashboard/library'; break;
-        case 'Management':
-          window.location.href = '/Staff/dashboard/management'; break;
-        case 'Accounts':
-          window.location.href = '/Staff/dashboard/accounts'; break;
-        default:
-          window.location.href = '/Staff/login';
-      }
-    } catch (err) {
-      console.error('Failed to decode token:', err);
-      alert('Invalid token. Please log in again.');
-    }
-  }
-
-  function isUserAuthorized(token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.isAuthorized === true;
+      return payload.isEnrolled === true;
     } catch (err) {
       console.error('Token decode failed:', err);
       return false;
@@ -307,11 +282,10 @@
   }
 
   async function getClientIP() {
-  const res = await fetch('https://api.ipify.org?format=json');
-  const data = await res.json();
-  return data.ip;
-}
-
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip;
+  }
 </script>
 
 </body>

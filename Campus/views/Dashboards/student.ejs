@@ -212,7 +212,7 @@
                 <div class="search-logout">
                     <input type="text" placeholder="Search courses..." />
                     <button>My Profile</button>
-                    <button>Log Out</button>
+                    <button id="logoutBtn">Log Out</button>
                 </div>
             </div>
             <nav>
@@ -273,5 +273,44 @@
             </div>
         </div>
     </div>
+
+    <script>
+    // Function to fetch and display data from the server
+    window.onload = function () {
+    const token = localStorage.getItem('token');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (!token) {
+      alert('You are not logged in. Redirecting to login page.');
+      window.location.href = '/Student/login';
+      return;
+    }
+
+    // Logout button click
+    logoutBtn.addEventListener('click', async function () {
+      try {
+        const res = await fetch('/Student/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (res.ok) {
+          localStorage.removeItem('token');
+          alert('Logged out successfully!');
+          window.location.href = '/Student/login';
+        } else {
+          alert('Logout failed.');
+        }
+      } catch (err) {
+        console.error('Logout error:', err);
+        alert('Something went wrong during logout.');
+      }
+    });
+  };
+</script>
+
 </body>
 </html>

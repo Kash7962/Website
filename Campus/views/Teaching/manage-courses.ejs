@@ -141,79 +141,92 @@
   </div>
 
   <script>
-     const token = localStorage.getItem("token");
-      let user = null;
+  const token = localStorage.getItem("token");
+  let user = null;
+  let _id, username, email;
 
-    if (token) {
+  if (token) {
     try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    user = payload;
-  } catch (e) {
-    console.error("Failed to decode token:", e);
-  }
-  }
-    const { _id, username, email } = user || {};
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      user = payload;
 
-    // Upload Logic
-    const uploadForm = document.getElementById('uploadForm');
-    uploadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      // Now safely assign values
+      _id = user._id;
+      username = user.username;
+      email = user.email;
 
-      const formData = new FormData();
-      formData.append("courseName", document.getElementById("courseName").value);
-      formData.append("file", document.getElementById("file").files[0]);
-      formData.append("userId", _id);
-      formData.append("username", username);
-      formData.append("email", email);
-
-      try {
-        const res = await fetch('/Staff/Teaching/upload-course', {
-          method: 'POST',
-          body: formData
-        });
-
-        const result = await res.text();
-        if (res.ok) {
-          alert("Upload successful!");
-          location.reload();
-        } else {
-          alert("Upload failed: " + result);
-        }
-      } catch (err) {
-        alert("Upload error");
-      }
-    });
-
-    // Show delete buttons only for uploader
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      if (btn.dataset.email === email) {
-        btn.style.display = "block";
-        btn.addEventListener("click", () => deleteMaterial(btn.dataset.id));
-      }
-    });
-
-    // Delete Logic
-    async function deleteMaterial(id) {
-      if (!confirm("Are you sure you want to delete this material?")) return;
-
-      try {
-        const res = await fetch("/Staff/Teaching/manage-courses/delete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, email })
-        });
-
-        const result = await res.text();
-        if (res.ok) {
-          alert("Deleted successfully");
-          document.getElementById(`card-${id}`).remove();
-        } else {
-          alert("Delete failed: " + result);
-        }
-      } catch (err) {
-        alert("Delete error");
-      }
+    } catch (e) {
+      console.error("Failed to decode token:", e);
     }
-  </script>
+  }
+  console.log("User:", user.id, user.username, user.email);
+
+  // If token is missing or invalid, stop here
+  if (!user) {
+    alert("You are not logged in. Please log in again.");
+    window.location.href = "/Staff/login";
+  }
+
+  // Upload Logic
+  const uploadForm = document.getElementById('uploadForm');
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("courseName", document.getElementById("courseName").value);
+    formData.append("file", document.getElementById("file").files[0]);
+    formData.append("userId", _id);
+    formData.append("username", username);
+    formData.append("email", email);
+
+    try {
+      const res = await fetch('/Staff/Teaching/upload-course', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await res.text();
+      if (res.ok) {
+        alert("Upload successful!");
+        location.reload();
+      } else {
+        alert("Upload failed: " + result);
+      }
+    } catch (err) {
+      alert("Upload error");
+    }
+  });
+
+  // Show delete buttons only for uploader
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    if (btn.dataset.email === email) {
+      btn.style.display = "block";
+      btn.addEventListener("click", () => deleteMaterial(btn.dataset.id));
+    }
+  });
+
+  // Delete Logic
+  async function deleteMaterial(id) {
+    if (!confirm("Are you sure you want to delete this material?")) return;
+
+    try {
+      const res = await fetch("/Staff/Teaching/manage-courses/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, email })
+      });
+
+      const result = await res.text();
+      if (res.ok) {
+        alert("Deleted successfully");
+        document.getElementById(`card-${id}`).remove();
+      } else {
+        alert("Delete failed: " + result);
+      }
+    } catch (err) {
+      alert("Delete error");
+    }
+  }
+</script>
 </body>
 </html>

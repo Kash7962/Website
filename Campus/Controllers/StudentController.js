@@ -1,7 +1,8 @@
+const { validationResult } = require('express-validator');
+const { Student } = require('../models/student');
 const { OAuth2Client } = require('google-auth-library');
 const bcrypt = require('bcryptjs');
-const { Staff } = require('../models/staff'); // Adjust path if needed
-const Session = require('../models/session'); // Adjust path if needed
+const { StudentSession } = require('../models/session_student'); // Adjust path if needed
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const nodemailer = require('nodemailer');
@@ -11,56 +12,28 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret';
 const CLIENT_URL = process.env.CLIENT_URL 
 
-const registerUser = async (req, res) => {
-  try {
-    const {
-      username,
-      email,
-      phone,
-      password,
-      department,
-      isAuthorized = false,
-    } = req.body;
 
-    // Check if email or phone already exists
-    const existingUser = await Staff.findOne({ $or: [{ email }, { phone }] });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email or phone already in use.' });
-    }
-
-    let hashedPassword = '';
-    const salt = await bcrypt.genSalt(10);
-    hashedPassword = await bcrypt.hash(password, salt);
-
-    const newUser = new Staff({
-      username,
-      email,
-      phone,
-      password: hashedPassword || '', // Store empty if Google user without password
-      department,
-      isAuthorized,
-    });
-
-    await newUser.save();
-
-    res.status(201).json({
-      message: 'User registered successfully.',
-      user: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        phone: newUser.phone,
-        department: newUser.department,
-        isAuthorized: newUser.isAuthorized,
-      },
-    });
-
-  } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
-  }
+// Controller to render the admission form
+const showRegistrationForm = (req, res) => {
+  res.render('Student/admissionForm');
 };
 
+// Controller to handle form submission
+const submitAdmissionForm = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const student = new Student(req.body);
+    await student.save();
+    res.status(200).json({ message: 'Admission form submitted successfully!' });
+  } catch (err) {
+    console.error('Error saving student:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 const loginUser = async (req, res) => {
   try {
@@ -71,51 +44,52 @@ const loginUser = async (req, res) => {
     }
     // console.log(identifier, password);
     // Convert email to lowercase and find user
-    const user = await Staff.findOne({ email: identifier.toLowerCase() });
+    const user = await Student.findOne({ studentEmail: identifier.toLowerCase() });
     // console.log(user)
     if (!user) {
       return res.status(401).json({ message: 'User not found.' });
     }
 
+    // For Google-based users with no password, block login via form
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
-    if (!user.isAuthorized) {
-      return res.status(401).json({ message: 'User not authorized.' });
+    if (!user.isEnrolled) {
+      return res.status(401).json({ message: 'User not enrolled.' });
     }
     // Generate JWT
     const token = jwt.sign(
       {
         _id: user._id,
-        email: user.email,
-        phone: user.phone,
-        username: user.username,
-        department: user.department,
-        isAuthorized: user.isAuthorized,
+        email: user.studentEmail,
+        phone: user.studentPhone,
+        username: user.firstName,
+        isEnrolled: user.isEnrolled,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: '1h' }
     );
 
-    await Session.create({
+    await StudentSession.create({
     userId: user._id,
-    name: user.username,
-    email: user.email,
-    department: user.department,
+    name: user.firstName,
+    registration_number: user.registration_number,
+    email: user.studentEmail,
     loginTime: new Date(),
-    method: 'email', // or 'email'
+    isStudent: true,
+    method: 'email', // or 'google'
     token,
     ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress || '',
-    userAgent: req.headers['userAgent'],
+    userAgent: req.headers['user-agent'] || '',
 });
      res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+      maxAge: 1 * 60 * 60 * 1000, // 1 hours
     });
 
     res.status(200).json({
@@ -140,7 +114,7 @@ const loginUser = async (req, res) => {
 const logout = async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
 
-  await Session.findOneAndUpdate(
+  await StudentSession.findOneAndUpdate(
     { token },
     { logoutTime: new Date(), isActive: false }
   );
@@ -175,48 +149,48 @@ const googleLogin = async (req, res) => {
     }
 
     // Check if user already exists
-    let user = await Staff.findOne({ email });
+    let user = await Student.findOne({ studentEmail: email });
 
     if (!user) {
       // Auto-register Google user
       res.status(201).json({ message: 'User not found. Please register first.' });
     }
 
-    if (!user.isAuthorized) {
-      return res.status(401).json({ message: 'User not authorized.' });
+    // Generate JWT
+    if (!user.isEnrolled) {
+      return res.status(401).json({ message: 'User not enrolled.' });
     }
     // Generate JWT
     const token = jwt.sign(
       {
         _id: user._id,
-        email: user.email,
-        username: user.username,
-        phone: user.phone,
-        department: user.department,
-        isAuthorized: user.isAuthorized,
+        email: user.studentEmail,
+        phone: user.studentPhone,
+        username: user.firstName,
+        isEnrolled: user.isEnrolled,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: '1h' }
     );
 
-    // Save session
-    await Session.create({
-      userId: user._id,
-      name: user.username,
-      email: user.email,
-      department: user.department,
-      loginTime: new Date(),
-      method: 'google',
-      token,
-      ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress || '',
-      userAgent: req.headers['userAgent'],
-    });
+   await StudentSession.create({
+    userId: user._id,
+    name: user.firstName,
+    registration_number: user.registration_number,
+    email: user.studentEmail,
+    loginTime: new Date(),
+    isStudent: true,
+    method: 'email', // or 'google'
+    token,
+    ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress || '',
+    userAgent: req.headers['user-agent'] || '',
+});
 
      res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+      maxAge: 1 * 60 * 60 * 1000, // 1 hours
     });
 
     return res.status(200).json({
@@ -244,7 +218,7 @@ const forgotPassword = async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await Staff.findOne({ email });
+    const user = await Student.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'No account found with that email.' });
     }
@@ -257,7 +231,7 @@ const forgotPassword = async (req, res) => {
     );
 
     // Create reset URL
-    const resetUrl = `${CLIENT_URL}/Staff/reset-password?token=${token}`;
+    const resetUrl = `${CLIENT_URL}/Student/reset-password?token=${token}`;
 
     // Email content
     const html = `
@@ -305,7 +279,7 @@ const resetPassword = async (req, res) => {
     const userId = decoded.id;
 
     // Find user
-    const user = await Staff.findById(userId);
+    const user = await Student.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -334,7 +308,7 @@ const changePassword = async (req, res) => {
   const { _id, currentPassword, newPassword } = req.body;
 
   try {
-    const user = await Staff.findById(_id); // or User.findById
+    const user = await Student.findById(_id); // or User.findById
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
@@ -351,4 +325,13 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword };
+module.exports = {
+  showRegistrationForm,
+  submitAdmissionForm,
+  loginUser,
+  changePassword,
+  googleLogin,
+  forgotPassword,
+  resetPassword,
+  logout,
+};

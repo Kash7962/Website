@@ -10,7 +10,7 @@ const app = express();
 
 const Academic = require('./Routes/AcademicRoutes.js');
 const WhoWeAre = require('./Routes/WhoWeAreRoutes.js');
-const Form = require('./Routes/AdmissionFormRoutes.js');
+const StudentRoutes = require('./Routes/StudentRoutes.js');
 const StaffRoutes = require('./Routes/StaffRoutes.js');
 const AuthRoutes = require('./Routes/AuthRoute.js');
 const TeachingRoutes = require('./Routes/TeachingRoutes.js');
@@ -95,9 +95,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //   cookie: { secure: false } // Set true if using HTTPS
 // }));
 
-
-// Make flash messages available in all templates (EJS)
-
 app.use(cookieParser());
 // Routes
 app.get('/', (req, res) => {
@@ -106,7 +103,7 @@ app.get('/', (req, res) => {
 
 app.use('/Academic', Academic);
 app.use('/WhoWeAre', WhoWeAre);
-app.use('/Admission', Form);
+app.use('/Student', StudentRoutes);
 app.use('/Staff', StaffRoutes);
 app.use('/Auth', AuthRoutes);
 app.use('/Staff/Teaching', TeachingRoutes);
