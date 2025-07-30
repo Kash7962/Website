@@ -6,6 +6,7 @@ const { StudentSession } = require('../models/session_student'); // Adjust path 
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const nodemailer = require('nodemailer');
+const CourseMaterial = require('../models/course');
 dotenv.config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -26,8 +27,20 @@ const submitAdmissionForm = async (req, res) => {
   }
 
   try {
-    const student = new Student(req.body);
+    const { studentEmail } = req.body;
+
+    // Hash the email to use as default password
+    const hashedPassword = await bcrypt.hash(studentEmail, 10);
+
+    // Create new student with hashed password
+    const studentData = {
+      ...req.body,
+      password: hashedPassword
+    };
+
+    const student = new Student(studentData);
     await student.save();
+
     res.status(200).json({ message: 'Admission form submitted successfully!' });
   } catch (err) {
     console.error('Error saving student:', err);
@@ -61,13 +74,16 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'User not enrolled.' });
     }
     // Generate JWT
+    
     const token = jwt.sign(
       {
-        _id: user._id,
+       _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        registration_number: user.registration_number,
         email: user.studentEmail,
-        phone: user.studentPhone,
-        username: user.firstName,
         isEnrolled: user.isEnrolled,
+        isStudent: true,
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
@@ -113,7 +129,7 @@ const loginUser = async (req, res) => {
 
 const logout = async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-
+  // console.log(token);
   await StudentSession.findOneAndUpdate(
     { token },
     { logoutTime: new Date(), isActive: false }
@@ -150,7 +166,7 @@ const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user = await Student.findOne({ studentEmail: email });
-
+    // console.log('User not enrolled:', user);
     if (!user) {
       // Auto-register Google user
       res.status(201).json({ message: 'User not found. Please register first.' });
@@ -158,16 +174,19 @@ const googleLogin = async (req, res) => {
 
     // Generate JWT
     if (!user.isEnrolled) {
+      
       return res.status(401).json({ message: 'User not enrolled.' });
     }
     // Generate JWT
     const token = jwt.sign(
       {
         _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        registration_number: user.registration_number,
         email: user.studentEmail,
-        phone: user.studentPhone,
-        username: user.firstName,
         isEnrolled: user.isEnrolled,
+        isStudent: true,
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
@@ -180,7 +199,7 @@ const googleLogin = async (req, res) => {
     email: user.studentEmail,
     loginTime: new Date(),
     isStudent: true,
-    method: 'email', // or 'google'
+    method: 'google', // or 'google'
     token,
     ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress || '',
     userAgent: req.headers['user-agent'] || '',
@@ -218,7 +237,7 @@ const forgotPassword = async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await Student.findOne({ email });
+    const user = await Student.findOne({ studentEmail: email.toLowerCase() });
     if (!user) {
       return res.status(404).json({ message: 'No account found with that email.' });
     }
@@ -252,7 +271,7 @@ const forgotPassword = async (req, res) => {
 
     // Send email
     await transporter.sendMail({
-      to: user.email,
+      to: user.studentEmail,
       from: `"Support Team" <${process.env.EMAIL_USER}>`,
       subject: 'Reset Your Password',
       html
@@ -325,6 +344,33 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getAllCourses = async (req, res) => {
+  try {
+    const files = await CourseMaterial.find().sort({ uploadedAt: -1 });
+    res.render('Student/getCourses', { files });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error while fetching materials");
+  }
+};
+
+// GET /Student/profile
+const getStudentProfile = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+
+    if (!student) return res.status(404).json({ message: 'Student not found' });
+
+    res.json(student); // Return student data
+  } catch (error) {
+    console.error("Error fetching student profile:", error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
 module.exports = {
   showRegistrationForm,
   submitAdmissionForm,
@@ -334,4 +380,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   logout,
+  getAllCourses,
+  getStudentProfile,
 };

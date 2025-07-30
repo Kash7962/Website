@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Staff - Full Form</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 30px; }
+    form {
+      background: #fff; padding: 25px; max-width: 900px;
+      margin: auto; border: 1px solid #ccc;
+    }
+    h2 { text-align: center; margin-bottom: 20px; }
+    label { font-weight: bold; margin-top: 15px; display: block; }
+    input, select, textarea {
+      width: 100%; padding: 10px;
+      margin-top: 5px; margin-bottom: 10px;
+    }
+    button {
+      background: #28a745; color: white; padding: 12px 20px;
+      border: none; margin-top: 15px; cursor: pointer;
+    }
+    button:hover { background: #218838; }
+    .delete-button {
+      background: #dc3545; margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Edit Staff Record</h2>
+  <form method="POST" action="/Staff/Management/staffs/edit/<%= staff._id %>">
+    <!-- Basic Info -->
+    <label>Username</label>
+    <input name="username" value="<%= staff.username %>" required />
+
+    <label>Email</label>
+    <input name="email" type="email" value="<%= staff.email %>" required />
+
+    <label>Phone (+CountryCode)</label>
+    <input name="phone" value="<%= staff.phone %>" required />
+
+    <label>Password (Re-enter or update)</label>
+    <input name="password" type="password" value="<%= staff.password %>" required />
+
+    <label>Department</label>
+    <select name="department" required>
+      <% ['Teaching', 'Kitchen', 'Library', 'Management', 'Accounts'].forEach(dep => { %>
+        <option value="<%= dep %>" <%= staff.department === dep ? 'selected' : '' %>><%= dep %></option>
+      <% }) %>
+    </select>
+
+    <label>Is Authorized</label>
+    <select name="isAuthorized">
+      <option value="true" <%= staff.isAuthorized ? 'selected' : '' %>>Yes</option>
+      <option value="false" <%= !staff.isAuthorized ? 'selected' : '' %>>No</option>
+    </select>
+
+    <label>Salary</label>
+    <input name="salary" type="number" value="<%= staff.salary || '' %>" />
+
+    <!-- Teaching Fields -->
+    <label>Qualifications (comma-separated)</label>
+    <input name="qualifications" value="<%= (staff.qualifications || []).join(', ') %>" />
+
+    <label>Years of Experience</label>
+    <input name="yearsOfExperience" type="number" value="<%= staff.yearsOfExperience || '' %>" />
+
+    <label>Subjects (comma-separated)</label>
+    <input name="subjects" value="<%= (staff.subjects || []).join(', ') %>" />
+
+    <label>Designation</label>
+    <input name="designation" value="<%= staff.designation || '' %>" />
+
+    <label>Class Assigned (comma-separated)</label>
+    <input name="classAssigned" value="<%= (staff.classAssigned || []).join(', ') %>" />
+
+    <label>Joining Date</label>
+    <input name="joiningDate" type="date" value="<%= staff.joiningDate ? staff.joiningDate.toISOString().split('T')[0] : '' %>" />
+
+    <label>Employment Type</label>
+    <select name="employmentType">
+      <% ['Permanent', 'Contract', 'Part-Time'].forEach(type => { %>
+        <option value="<%= type %>" <%= staff.employmentType === type ? 'selected' : '' %>><%= type %></option>
+      <% }) %>
+    </select>
+
+    <label>Skills (comma-separated)</label>
+    <input name="skills" value="<%= (staff.skills || []).join(', ') %>" />
+
+    <label>Achievements (comma-separated)</label>
+    <input name="achievements" value="<%= (staff.achievements || []).join(', ') %>" />
+
+    <!-- Kitchen Staff -->
+    <label>Shift Timing</label>
+    <select name="shiftTiming">
+      <option value="">--</option>
+      <% ['Morning', 'Evening', 'Night'].forEach(shift => { %>
+        <option value="<%= shift %>" <%= staff.shiftTiming === shift ? 'selected' : '' %>><%= shift %></option>
+      <% }) %>
+    </select>
+
+    <label>Area Assigned</label>
+    <input name="areaAssigned" value="<%= staff.areaAssigned || '' %>" />
+
+    <label>Food Safety Certified</label>
+    <select name="foodSafetyCertified">
+      <option value="true" <%= staff.foodSafetyCertified ? 'selected' : '' %>>Yes</option>
+      <option value="false" <%= !staff.foodSafetyCertified ? 'selected' : '' %>>No</option>
+    </select>
+
+    <!-- Library Staff -->
+    <label>Library Section</label>
+    <select name="section">
+      <option value="">--</option>
+      <% ['Reference', 'Circulation', 'Digital', 'Periodicals'].forEach(sec => { %>
+        <option value="<%= sec %>" <%= staff.section === sec ? 'selected' : '' %>><%= sec %></option>
+      <% }) %>
+    </select>
+
+    <label>Issued Books Count</label>
+    <input name="issuedBooksCount" type="number" value="<%= staff.issuedBooksCount || 0 %>" />
+
+    <label>Is Catalog Manager</label>
+    <select name="isCatalogManager">
+      <option value="true" <%= staff.isCatalogManager ? 'selected' : '' %>>Yes</option>
+      <option value="false" <%= !staff.isCatalogManager ? 'selected' : '' %>>No</option>
+    </select>
+
+    <!-- Management -->
+    <label>Role</label>
+    <select name="role">
+      <option value="">--</option>
+      <% ['Principal', 'Vice Principal', 'Director', 'Admin Officer'].forEach(r => { %>
+        <option value="<%= r %>" <%= staff.role === r ? 'selected' : '' %>><%= r %></option>
+      <% }) %>
+    </select>
+
+    <label>Responsibilities (comma-separated)</label>
+    <input name="responsibilities" value="<%= (staff.responsibilities || []).join(', ') %>" />
+
+    <!-- Accounts -->
+    <label>Finance Level</label>
+    <select name="financeLevel">
+      <option value="">--</option>
+      <% ['Junior Accountant', 'Senior Accountant', 'Finance Manager'].forEach(f => { %>
+        <option value="<%= f %>" <%= staff.financeLevel === f ? 'selected' : '' %>><%= f %></option>
+      <% }) %>
+    </select>
+
+    <label>Certifications (comma-separated)</label>
+    <input name="certifications" value="<%= (staff.certifications || []).join(', ') %>" />
+
+    <label>Manages Payroll</label>
+    <select name="managesPayroll">
+      <option value="true" <%= staff.managesPayroll ? 'selected' : '' %>>Yes</option>
+      <option value="false" <%= !staff.managesPayroll ? 'selected' : '' %>>No</option>
+    </select>
+
+    <!-- Submit -->
+    <button type="submit">Update Staff</button>
+    <button type="button" class="delete-button" id="deleteBtn">Delete Staff</button>
+  </form>
+
+  <script>
+    document.getElementById('deleteBtn').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to delete this staff?')) {
+        await fetch('/Staff/Management/staffs/delete/<%= staff._id %>', { method: 'DELETE' });
+        window.location.href = '/staffs';
+      }
+    });
+  </script>
+</body>
+</html>

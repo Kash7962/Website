@@ -205,111 +205,147 @@
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="navbar">
-            <div class="top">
-                <div class="brand">Student Portal</div>
-                <div class="search-logout">
-                    <input type="text" placeholder="Search courses..." />
-                    <button>My Profile</button>
-                    <button id="logoutBtn">Log Out</button>
-                </div>
-            </div>
-            <nav>
-                <a href="#">Dashboard</a>
-                <a href="#">My Courses</a>
-                <a href="#">Assignments</a>
-                <a href="#">Exams</a>
-                <a href="#">Timetable</a>
-                <a href="#">Results</a>
-            </nav>
+  <div class="dashboard">
+    <div class="navbar">
+      <div class="top">
+        <div class="brand">Student Portal</div>
+        <div class="search-logout">
+          <input type="text" placeholder="Search courses..." />
+          <button id="profileBtn">My Profile</button>
+          <button id="changePasswordBtn">Change Password</button>
+          <button id="logoutBtn">Log Out</button>
         </div>
-
-        <div class="main">
-            <div class="cards">
-                <div class="card">
-                    <p>Total Courses</p>
-                    <p class="amount">6</p>
-                </div>
-                <div class="card">
-                    <p>Assignments Due</p>
-                    <p class="amount">3</p>
-                </div>
-                <div class="card">
-                    <p>Upcoming Exams</p>
-                    <p class="amount">2</p>
-                </div>
-            </div>
-
-            <div class="table-container">
-                <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Assignment Tracker</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Title</th>
-                            <th>Due Date</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Subject">Mathematics</td>
-                            <td data-label="Title">Integration Worksheet</td>
-                            <td data-label="Due Date">July 25, 2025</td>
-                            <td data-label="Status"><span class="status pending">Pending</span></td>
-                            <td><a href="#" class="view-btn">View</a></td>
-                        </tr>
-                        <tr>
-                            <td data-label="Subject">English</td>
-                            <td data-label="Title">Essay on Shakespeare</td>
-                            <td data-label="Due Date">July 24, 2025</td>
-                            <td data-label="Status"><span class="status submitted">Submitted</span></td>
-                            <td><a href="#" class="view-btn">View</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      </div>
+      <nav>
+        <a href="/Student/dashboard">Dashboard</a>
+        <a href="/Student/get-courses">My Courses</a>
+        <a href="#">Assignments</a>
+        <a href="#">Exams</a>
+        <a href="#">Timetable</a>
+        <a href="#">Results</a>
+        <!-- <a href="#">Fees Due</a> -->
+      </nav>
     </div>
 
-    <script>
-    // Function to fetch and display data from the server
-    window.onload = function () {
-    const token = localStorage.getItem('token');
-    const logoutBtn = document.getElementById('logoutBtn');
+    <div class="main">
+      <div class="cards">
+        <div class="card">
+          <p>Total Courses</p>
+          <p class="amount">6</p>
+        </div>
+        <div class="card">
+          <p>Assignments Due</p>
+          <p class="amount">3</p>
+        </div>
+        <div class="card">
+          <p>Upcoming Exams</p>
+          <p class="amount">2</p>
+        </div>
+      </div>
+      <div class="table-container">
+        <h3 style="margin-bottom: 15px; font-family: 'Inter', sans-serif;">Assignment Tracker</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Title</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Subject">--</td>
+              <td data-label="Title">--</td>
+              <td data-label="Due Date">--</td>
+              <td data-label="Status"><span class="status pending">Pending</span></td>
+              <td><a href="#" class="view-btn">View</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    if (!token) {
-      alert('You are not logged in. Redirecting to login page.');
-      window.location.href = '/Student/login';
-      return;
+  <script>
+    function parseJwt(token) {
+      try {
+        return JSON.parse(atob(token.split('.')[1]));
+      } catch (e) {
+        return null;
+      }
     }
 
-    // Logout button click
-    logoutBtn.addEventListener('click', async function () {
-      try {
-        const res = await fetch('/Student/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+    window.onload = function () {
+      const token = localStorage.getItem('token');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+    //   console.log("Token on dashboard load:", token);
+
+      // Check token existence
+      if (!token) {
+        alert("You are not logged in.");
+        window.location.href = "/Student/login";
+        return;
+      }
+
+      // Decode and validate token
+      const decoded = parseJwt(token);
+      if (!decoded || decoded.isEnrolled !== true) {
+        alert("You are not enrolled. Please complete admission first.");
+        window.location.href = "/";
+        return;
+      }
+
+      // Attach logout event
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function () {
+          try {
+            const res = await fetch('/Student/logout', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            });
+
+            console.log("Logout response status:", res.status);
+
+            if (res.ok) {
+              localStorage.removeItem('token');
+              alert('Logged out successfully!');
+              window.location.href = '/Student/login';
+            } else {
+              const errorText = await res.text();
+              console.error("Logout failed response:", errorText);
+              alert('Logout failed.');
+            }
+          } catch (err) {
+            console.error('Logout error:', err);
+            alert('Something went wrong during logout.');
           }
         });
-
-        if (res.ok) {
-          localStorage.removeItem('token');
-          alert('Logged out successfully!');
-          window.location.href = '/Student/login';
-        } else {
-          alert('Logout failed.');
-        }
-      } catch (err) {
-        console.error('Logout error:', err);
-        alert('Something went wrong during logout.');
+      } else {
+        console.error("Logout button not found.");
       }
-    });
-  };
+
+      // Attach change password button event
+      if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', function () {
+          window.location.href = '/Student/change-password';
+        });
+      } else {
+        console.error("Change Password button not found.");
+      }
+    };
+  </script>
+
+  <script>
+  document.getElementById("profileBtn").addEventListener("click", () => {
+    window.location.href = "/Student/profile";
+  });
 </script>
 
 </body>

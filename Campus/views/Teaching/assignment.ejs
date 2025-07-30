@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Assignment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h2, h3 {
+      color: #333;
+      text-align: center;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+      background-color: white;
+    }
+
+    table th,
+    table td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ccc;
+    }
+
+    img {
+      max-height: 80px;
+      object-fit: contain;
+    }
+
+    form.delete-form {
+      display: inline;
+    }
+
+    .pdf-link {
+      text-decoration: none;
+      color: #007BFF;
+    }
+
+    .pdf-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>Upload Assignment</h2>
+
+  <form action="/Staff/Teaching/assignments" method="POST" enctype="multipart/form-data">
+    <label for="title">Assignment Title:</label>
+    <input type="text" name="title" id="title" required>
+
+    <label for="classAssigned">Select Class:</label>
+    <select name="classAssigned" id="classAssigned" required>
+      <% if (user.classAssigned && Array.isArray(user.classAssigned)) { %>
+        <% user.classAssigned.forEach(cls => { %>
+          <option value="<%= cls %>"><%= cls %></option>
+        <% }); %>
+      <% } %>
+    </select>
+
+    <label for="submissionDate">Submission Date:</label>
+    <input type="date" name="submissionDate" id="submissionDate" required>
+
+    <label for="file">Upload File (PDF/Image):</label>
+    <input type="file" name="file" id="file" accept=".pdf, image/*" required>
+
+    <button type="submit">Upload Assignment</button>
+  </form>
+
+  <h3>Your Uploaded Assignments</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Class</th>
+        <th>Submission Date</th>
+        <th>File</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (assignments.length > 0) { %>
+        <% assignments.forEach(a => { %>
+          <tr>
+            <td><%= a.title %></td>
+            <td><%= a.classAssigned %></td>
+            <td><%= new Date(a.submissionDate).toLocaleDateString() %></td>
+            <td>
+              <% if (a.file.endsWith('.pdf')) { %>
+                <a href="/uploads/teaching/assignment/<%= a.file %>" target="_blank" class="pdf-link">View PDF</a>
+              <% } else { %>
+                <img src="/uploads/teaching/assignment/<%= a.file %>" alt="Assignment Image">
+              <% } %>
+            </td>
+            <td>
+              <form action="/Staff/Teaching/assignments/delete/<%= a._id %>" method="POST" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="5">No assignments uploaded yet.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <script>
+    console.log('Assignment page loaded.');
+
+    const token = localStorage.getItem('token');
+    const teacherId = JSON.parse(atob(token.split('.')[1]))._id;
+
+    let user = null;
+
+    async function fetchTeacherData() {
+      try {
+        const res = await fetch(`/Staff/Teaching/update-profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch teacher data');
+        user = await res.json();
+        // console.log('Fetched teacher:', user);
+
+        // Example: populate class dropdown dynamically if needed
+        const classDropdown = document.getElementById('classAssigned');
+        if (Array.isArray(user.classAssigned)) {
+          classDropdown.innerHTML = '';
+          user.classAssigned.forEach(cls => {
+            const opt = document.createElement('option');
+            opt.value = cls;
+            opt.textContent = cls;
+            classDropdown.appendChild(opt);
+          });
+        }
+
+      } catch (err) {
+        console.error('Error fetching teacher data:', err);
+      }
+    }
+
+    fetchTeacherData();
+  </script>
+</body>
+</html>

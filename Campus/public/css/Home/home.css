@@ -444,6 +444,24 @@ section {
   box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
 }
 
+.event-link-btn a {
+  display: inline-block;
+  padding: 8px 14px;
+  background-color: #004aad;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.event-link-btn a:hover {
+  background-color: #003080;
+}
+
+
+
 /* Campus Section */
 #campus {
   background: #f8fafc;

@@ -200,7 +200,7 @@
   </div>
 
   <div class="form-footer">
-    Logging in for the first time? Use Google to continue.
+    Logging in for the first time? your password is same as your email or continue with google.
   </div>
 </div>
 
@@ -255,6 +255,7 @@
         body: JSON.stringify({ tokenId: response.credential }),
       });
       const data = await res.json();
+      // console.log('Google login response:', data);
       if (res.ok && data.token) {
         if (isUserEnrolled(data.token)) {
           localStorage.setItem('token', data.token);
@@ -275,6 +276,7 @@
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.isEnrolled === true;
+      // console.log('User enrollment status:', payload.isEnrolled);
     } catch (err) {
       console.error('Token decode failed:', err);
       return false;

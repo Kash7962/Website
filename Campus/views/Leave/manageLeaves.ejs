@@ -80,85 +80,115 @@
   </div>
 
   <script>
-    const user = JSON.parse(localStorage.getItem('user'));
-    const token = user?.token;
-    const userData = user;
-    const decoded = JSON.parse(atob(token.split('.')[1]));
-    const department = decoded.department;
+    (function () {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Access Denied: No token found.');
+        window.location.href = '/';
+        return;
+      }
 
-    if (department !== 'Management') {
-      alert('Access Denied: Only Management can view this page.');
-      window.location.href = '/'; // Redirect to homepage
-    }
-
-    async function fetchLeaves() {
+      let department = '';
       try {
-        const res = await fetch('/api/leaves', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        department = payload.department;
+        if (department !== 'Management') {
+          alert('Access Denied: Only Management can view this page.');
+          window.location.href = '/';
+          return;
+        }
+      } catch (err) {
+        console.error('Invalid token structure', err);
+        alert('Session invalid. Please login again.');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+        return;
+      }
 
-        const leaveList = document.getElementById('leaveList');
-        leaveList.innerHTML = '';
+      async function fetchLeaves() {
+        try {
+          const res = await fetch('/Staff/Leave', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const data = await res.json();
 
-        data.forEach(leave => {
-          const li = document.createElement('li');
+          const leaveList = document.getElementById('leaveList');
+          leaveList.innerHTML = '';
 
-          li.innerHTML = `
-            <div class="leave-info">
+          data.forEach(leave => {
+            const li = document.createElement('li');
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'leave-info';
+            infoDiv.innerHTML = `
               <strong>${leave.username}</strong><br>
               Reason: ${leave.reason}<br>
               From: ${new Date(leave.fromDate).toDateString()}<br>
               To: ${new Date(leave.toDate).toDateString()}<br>
               Status: <span id="status-${leave._id}">${leave.status}</span>
-            </div>
-            <div class="actions">
-              <select id="select-${leave._id}">
-                <option value="">--Choose--</option>
-                <option value="Approved">Approve</option>
-                <option value="Denied">Deny</option>
-              </select>
-              <button onclick="updateStatus('${leave._id}')">Update</button>
-            </div>
-          `;
-          leaveList.appendChild(li);
-        });
-      } catch (err) {
-        console.error('Error fetching leaves:', err);
-        alert('Failed to load leave requests.');
+            `;
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'actions';
+
+            const select = document.createElement('select');
+            select.id = `select-${leave._id}`;
+            select.innerHTML = `
+              <option value="">--Choose--</option>
+              <option value="Approved">Approve</option>
+              <option value="Denied">Deny</option>
+            `;
+
+            const button = document.createElement('button');
+            button.textContent = 'Update';
+            button.addEventListener('click', () => updateStatus(leave._id));
+
+            actionsDiv.appendChild(select);
+            actionsDiv.appendChild(button);
+
+            li.appendChild(infoDiv);
+            li.appendChild(actionsDiv);
+            leaveList.appendChild(li);
+          });
+        } catch (err) {
+          console.error('Error fetching leaves:', err);
+          alert('Failed to load leave requests.');
+        }
       }
-    }
 
-    async function updateStatus(id) {
-      const newStatus = document.getElementById(`select-${id}`).value;
-
-      if (!newStatus) return alert('Please select a status.');
-
-      try {
-        const res = await fetch(`/api/leaves/status/${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ status: newStatus })
-        });
-
-        const result = await res.json();
-        if (!res.ok) {
-          alert(result.message || 'Failed to update status.');
+      async function updateStatus(id) {
+        const newStatus = document.getElementById(`select-${id}`).value;
+        if (!newStatus) {
+          alert('Please select a status.');
           return;
         }
 
-        document.getElementById(`status-${id}`).textContent = result.status;
-        alert('Leave status updated!');
-      } catch (err) {
-        console.error('Error updating status:', err);
-        alert('Failed to update leave status.');
-      }
-    }
+        try {
+          const res = await fetch(`/Staff/Leave/status/${id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
 
-    window.onload = fetchLeaves;
+          const result = await res.json();
+          if (!res.ok) {
+            alert(result.message || 'Failed to update status.');
+            return;
+          }
+
+          document.getElementById(`status-${id}`).textContent = result.status;
+          alert('Leave status updated!');
+        } catch (err) {
+          console.error('Error updating status:', err);
+          alert('Failed to update leave status.');
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', fetchLeaves);
+    })();
   </script>
 </body>
 </html>

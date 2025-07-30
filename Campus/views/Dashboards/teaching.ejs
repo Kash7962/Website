@@ -261,10 +261,10 @@
       <nav>
         <a href="/Staff/Teaching/profile">Manage Profile</a>
         <a href="/Staff/Teaching/manage-courses">Manage Courses</a>
+        <a href="/Staff/Teaching/students">Students</a>
+        <a href="/Staff/Teaching/assignments">Assignment</a>
         <a href="#">Communication Tools</a>
-        <a href="#">Attendance Management</a>
         <a href="/Staff/Leave/dashboard">Leave Requests</a>
-        <a href="#">Performance Review</a>
       </nav>
     </div>
 
@@ -292,8 +292,6 @@
 </div>
 
 </div>
-
-
       <div class="table-container">
         <h3 style="margin-bottom: 15px;">Recent Notifications / Updates</h3>
         <table id="notifications-table">
@@ -416,29 +414,33 @@
   </script>
 
   <script>
-  window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
-    let user = null;
 
-    if (token) {
+    if (!token) return;
+
     try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    user = payload;
-  } catch (e) {
-    console.error("Failed to decode token:", e);
-  }
-  }
-    
-    if (!user) return;
-    try {
-      const userObj = user;
-      document.getElementById("welcomeText").textContent = `Welcome, ${userObj.name || "Teacher"}`;
-      document.getElementById("teacherName").textContent = userObj.username || "--";
-      document.getElementById("teacherDept").textContent = userObj.department || "--";
-     document.getElementById('teacherClassAssigned').textContent = userObj.classAssigned.join(', ') || "--";
-    document.getElementById('teacherDesignation').textContent = userObj.designation || "--";
-    } catch (e) {
-      console.error("Failed to parse user info:", e);
+      const res = await fetch('/Staff/Teaching/update-profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+
+      const user = await res.json();
+
+      document.getElementById("welcomeText").textContent = `Welcome, ${user.name || "Teacher"}`;
+      document.getElementById("teacherName").textContent = user.username || "--";
+      document.getElementById("teacherDept").textContent = user.department || "--";
+      document.getElementById("teacherClassAssigned").textContent = (user.classAssigned || []).join(', ') || "--";
+      document.getElementById("teacherDesignation").textContent = user.designation || "--";
+
+    } catch (err) {
+      console.error("Failed to fetch user info:", err);
+      alert("Could not load user data. Please log in again.");
+      window.location.href = '/Staff/login';
     }
   });
 </script>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notices</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 30px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    li:last-child {
+      border-bottom: none;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    small {
+      display: block;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Notices</h1>
+    <% if (notices.length === 0) { %>
+      <p>No notices available.</p>
+    <% } else { %>
+      <ul>
+        <% notices.forEach(notice => { %>
+          <li>
+            <p><%= notice.description %></p>
+            <% if (notice.file) { %>
+              <a href="/uploads/notices/<%= notice.file %>" target="_blank">View Attachment</a>
+            <% } %>
+            <small>Posted on: <%= notice.postedOn.toDateString() %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+  <script>
+    // Any additional scripts if needed
+  </script>
+</body>
+</html>

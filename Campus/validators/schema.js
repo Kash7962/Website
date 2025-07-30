@@ -171,6 +171,16 @@ const studentValidator = [
     .isBoolean()
     .withMessage('isEnrolled must be true or false'),
 
+  body('isHostelResident')
+    .optional({ checkFalsy: true })
+    .isBoolean()
+    .withMessage('isHostelResident must be true or false'),
+
+  body('isTransportResident')
+    .optional({ checkFalsy: true })
+    .isBoolean()
+    .withMessage('isTransportResident must be true or false'),
+
   body('isPromoted')
     .optional({ checkFalsy: true })
     .isBoolean()
@@ -278,4 +288,26 @@ const leaveValidator = [
   body('toDate').notEmpty().withMessage('End date is required').isISO8601()
 ];
 
-module.exports = { studentValidator, validateRegister, validateLogin, validateCourseUpload, leaveValidator };
+const assignmentValidator = [
+  body('title').trim().escape().notEmpty().withMessage('Title is required'),
+  body('classAssigned').trim().escape().notEmpty().withMessage('Class is required'),
+  body('submissionDate').isISO8601().withMessage('Valid submission date required'),
+];
+
+const validateNotice = [
+  body('description')
+    .trim()
+    .escape()
+    .notEmpty().withMessage('Description is required.')
+];
+
+const validateClassSchedule = [
+  body('classAssigned')
+    .trim()
+    .escape()
+    .notEmpty().withMessage('Class Assigned is required'),
+
+  // You can optionally validate file uploads by multer separately
+];
+
+module.exports = { studentValidator, validateRegister, validateLogin, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule };

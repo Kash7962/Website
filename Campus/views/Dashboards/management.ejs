@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Kitchen Manager Dashboard</title>
+    <title>Management Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- START OF NEW CSS --- */
@@ -260,13 +260,19 @@
                 </div>
             </div>
             <nav>
-                <a href="#">Dashboard</a>
-                <a href="#">Inventory</a>
-                <a href="#">Orders</a>
-                <a href="#">Staff</a>
-                <a href="#">Vendors</a>
-                <a href="#">Reports</a>
-                <a href="#">Settings</a>
+                <a href="/Staff/dashboard/management">Dashboard</a>
+                <a href="/Staff/Management/applications">Enrollments</a>
+                <a href="/Staff/Management/students/get">Students</a>
+                <a href="/Staff/Management/staffs">Staff</a>
+                <a href="/Staff/Management/notices">Notices</a>
+                <a href="/Staff/Management/programs">Programs</a>
+                <a href="/Staff/Management/events">Events</a>
+                <a href="/Staff/Leave/manage">Leaves</a>
+                <a href="/Staff/Management/schedules">Schedules</a>
+                <a href="/Staff/Management/curriculum">Curriculum</a>
+                <a href="/Staff/Management/schedules">Inventory</a>
+                <a href="/Staff/Management/schedules">Budget</a>
+                <a href="/Staff/Management/schedules">Accounts</a>
             </nav>
         </div>
 
@@ -406,7 +412,7 @@
 
      <script>
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    // const user = localStorage.getItem('user'); 
     try{
     const res = await fetch('/Auth/verify-token', {
     method: 'POST',

@@ -75,6 +75,8 @@ const studentSchema = new mongoose.Schema({
   // Login & Auth
   password: { type: String }, // Hashed password
   isEnrolled: { type: Boolean, default: false },
+  isHostelResident: { type: Boolean, default: false },
+  isTransportResident: { type: Boolean, default: false },
 
   // Optional Enhancements
   documents: [documentSchema],

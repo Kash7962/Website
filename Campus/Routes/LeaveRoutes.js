@@ -14,5 +14,7 @@ router.patch('/status/:id', verifyToken, updateLeaveStatus);
 router.get('/dashboard', verifyToken, (req, res) => {
   res.render('Leave/staffLeave', { title: 'Staff Leave Dashboard' });
 });
-
+router.get('/manage', verifyToken, (req, res) => {
+  res.render('Leave/manageLeaves', { title: 'Manage Leave' });
+});
 module.exports = router;

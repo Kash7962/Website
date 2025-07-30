@@ -118,6 +118,7 @@
         <% } %>
 
         <p>Uploaded by: <%= file.uploadedBy.name %></p>
+        <p>Uploaded on: <%= new Date(file.uploadedAt).toLocaleString() %></p>
 
         <!-- Download Button -->
         <a

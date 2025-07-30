@@ -44,7 +44,7 @@ const staffSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
+    salary: Number,
   // ================================
   // Optional Fields: Teaching Staff
   // ================================
@@ -55,7 +55,7 @@ const staffSchema = new mongoose.Schema({
   subjects: [String],
   designation: String,
   classAssigned: [String],
-  salary: Number,
+
   joiningDate: Date,
   employmentType: {
     type: String,

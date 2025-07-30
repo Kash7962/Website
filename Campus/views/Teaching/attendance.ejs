@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f0f0f0;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    form {
+      margin: 20px 0;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      width: 30%;
+    }
+    .edit-form {
+      display: none;
+      background: #eef;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Attendance for <%= student.firstName %> <%= student.lastName %></h1>
+
+  <h2>Add Attendance</h2>
+  <form action="/Staff/Teaching/attendance/<%= student._id %>/add" method="POST">
+    <input type="text" name="subject" placeholder="Subject" required>
+    <input type="number" name="attended" placeholder="Attended" required>
+    <input type="number" name="totalClasses" placeholder="Total Classes" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <h2>Attendance Records</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Attended</th>
+        <th>Total Classes</th>
+        <th>Percentage</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% student.attendance.forEach((a, index) => { %>
+        <tr>
+          <td><%= a.subject %></td>
+          <td><%= a.attended %></td>
+          <td><%= a.totalClasses %></td>
+          <td><%= ((a.attended / a.totalClasses) * 100).toFixed(2) %>%</td>
+          <td>
+            <button class="edit-btn" data-index="<%= index %>">Edit</button>
+            <form action="/Staff/Teaching/attendance/<%= student._id %>/delete/<%= index %>" method="POST" style="display:inline;">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <tr class="edit-form" id="edit-form-<%= index %>">
+          <td colspan="5">
+            <form action="/Staff/Teaching/attendance/<%= student._id %>/edit/<%= index %>" method="POST">
+              <input type="text" name="subject" value="<%= a.subject %>" required>
+              <input type="number" name="attended" value="<%= a.attended %>" required>
+              <input type="number" name="totalClasses" value="<%= a.totalClasses %>" required>
+              <button type="submit">Update</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const editButtons = document.querySelectorAll('.edit-btn');
+      editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const index = this.getAttribute('data-index');
+          const formRow = document.getElementById('edit-form-' + index);
+          formRow.style.display = formRow.style.display === 'table-row' ? 'none' : 'table-row';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

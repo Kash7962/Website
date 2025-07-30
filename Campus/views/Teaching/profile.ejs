@@ -242,7 +242,7 @@
     document.getElementById('achievements').value = (user.achievements || []).join(', ');
 
     // Optional: store fresh copy locally
-    localStorage.setItem('user', JSON.stringify(user));
+    // localStorage.setItem('user', JSON.stringify(user));
 
   } catch (err) {
     console.error('Profile fetch error:', err);
