@@ -1,590 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KASH Donation Page</title>
-    <link rel="stylesheet" href="app2.css">
-    <link rel="stylesheet" href="app.css">
-    
+    <title>KASH Foundation - Donate Today</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
-   <body style="background-color:#FFF7ED ;">
-    
-    <div class="donation-banner">
-        <div class="donation-links">
-          <a href="donationBox.html">Donate for Library</a>
-          <a href="donationBox1.html">Donate for CCTV Camera</a>
-          <a href="donationBox2.html">Donate for Dormitory Beds/Mattresses/Study Table</a>
-          <a href="donationBox3.html">Donate for Dormitary building</a>
-          <a href="donationBox4.html">Donate for Sports</a>
-          <a href="donationBox5.html">Donate for college building for mass education for class 9 & 10</a>
-        </div>
-      </div>
-  
-    <p>
-        80.5%* of Total funds received go towards education expenses of the students <br>
-        residential program, food and accomodation 
-    </p>
-    <div class="card p-3 mt-4" style="background-color: orange; border: 5px solid rgba(221, 156, 51, 0.708);">
-        <p style="color: white; font-weight: bold; text-align: center; width: 500px;">
-           <b>Sponsor a Student</b>
-        </p>
-    </div>
-    <p>
-        PICTURE LEAVE A BOX BLANK WILL INSERT PIC LATER*
-    </p>
-    <p>
-        Donate for Education of Poor Students
-        Here’s how our approach to Student sponsorship works:
+    <style>
+        :root {
+            --bg-color: #f9f9f9; /* A very light, neutral gray */
+            --card-bg: #ffffff;
+            --primary-text: #212529; /* Dark charcoal for text */
+            --secondary-text: #6c757d; /* Lighter gray for secondary text */
+            --accent-color: #F57C00; /* Vibrant and professional orange */
+            --accent-light: #fff3e0; /* A light, creamy orange for backgrounds */
+            --accent-gradient: linear-gradient(135deg, #FFA726, #F57C00); /* Orange gradient for buttons */
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --border-color: #dee2e6;
+        }
 
-    </p>
-    <p>
-        We are community-led: We work hand-in-hand with the community to fix <br>
-        the root causes of poverty – so every Student can get educated and grow <br>
-        into who God created them to be.
-    </p>
-    <p>
-        We are Student -focused: We ensure Students are empowered with higher <br>
-        education  through our institution residential program and also to develop <br>
-        Holistically, with healthy minds, bodies, and spirits, so they can achieve <br>
-        long-term success for themselves and their community.
-    </p>
-    <p>
-        We maximize impact: We combine your monthly donations with those of <br>
-        other sponsors of that community to make the biggest impact on the worst <br>
-        problems Students face. In fact, because of our community-focused <br>
-        solutions, for every Student you help, four more benefit, too.
-    </p>
-    <p>
-        When you support a Student  education, you help them change their futures.  
-    </p>
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--secondary-text);
+        }
 
-    <p>
-        We’re building a world where children are safe and secure, free from abuse and <br>
-        violence.
-    </p>
-    <p>
-        Help meet urgent needs and empower people with the tools to fight poverty. As part of <br>
-        our global community, you can help deliver impact at scale to children in the hardest-to-reach <br>
-        places. 
-        Your generosity will support a range of programs to help Student/ children live life to <br>
-        the fullest
-    </p>
-    <p>
-        Donate for FEED THE STUDENTS <br>
-        Your Open hearted Contribution may make a difference in lives of Hundreds of Students <br>
-        who reside and study at our Institutional program campus.
-    </p>
-    <p>
-        Food for Education. <br>
-        Help Create a Hunger free world <br>
-    </p>
-
-        <div class="container donation-container">
-            <div class="mb-3">
-                <label for="currencySelect" class="form-label">Select Currency:</label>
-                <select class="form-select" id="currencySelect" onchange="updateCurrency()">
-                    <option value="INR">Indian Rupees (INR)</option>
-                    <option value="USD">US Dollar (USD)</option>
-                    <option value="EUR">Euro (EUR)</option>
-                    <option value="KHR">Cambodian Riel (KHR)</option>
-                    <option value="GBP">British Pound (GBP)</option>
-                    <option value="AUD">Australian Dollar (AUD)</option>
-                    <option value="CAD">Canadian Dollar (CAD)</option>
-                    <option value="JPY">Japanese Yen (JPY)</option>
-                    <option value="CNY">Chinese Yuan (CNY)</option>
-                    <option value="SGD">Singapore Dollar (SGD)</option>
-                    <option value="ZAR">South African Rand (ZAR)</option>
-                    <option value="BRL">Brazilian Real (BRL)</option>
-                </select>
-            </div>
-            <div class="table-responsive">
-                <table class="table">
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="10000">₹10,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td> 
-                    </tr>
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="15000">₹15,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="30000">₹30,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="60000">₹60,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="90000">₹90,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Sponsor a Student</td>
-                        <td class="amount" data-inr="120000">₹1,20,000</td>
-                        <td><button onclick="redirectToDonationBox(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Donate any Amount</td>
-                        <td>
-                            <label for="customAmount">Enter Amount : </label>
-                            <input type="number" id="customAmount" name="amount" min="0" step="0.01" placeholder="0.00">
-                        </td>
-                        <td><button onclick="redirectCustomAmount()">Donate</button></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-
-            Blank Photographs Palates to be Placed (Phots to be insertes later)
-    <p>
-        AVAIL 80G BENEFITS ON ALL THE DONATION MADE TO SOLID-KASH <br>
-        EXEMPTION ORDER REF NO:AAFTS2598QF20212 / DT:23 SEPT 2021 FEOM AY 2022-23 <br>
-        EXPIRES ON : AY 2026-27 <br>
-    </p>
-    <p>
-        Donation Through Bank(NEFT/RTGS) <br>
-        <br>
-        Bank Name : HDFC Bank  <br>
-        Account name : Karan Shanti(KASH) campus <br>
-        Account Number :                        <br>
-        IFSC code :                              <br>
-    </p>
-    <p>
-    Donation using Razor Pay:QR Code for both Domestic and International Donation <br>
-    <B>BANK DETAILS TO TRANSFER FOREIGN FUNDS</B> <br>
-    </p>
-
-    <div>
-
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            th, td {
-                border: 2px solid orangered; /* Orange border */
-                border-radius: 10px; /* Rounded corners */
-                padding: 10px;
-                text-align: center;
-            }
-        </style>
-    <p>
-        <table border="1" width="60%">
-            <tr>
-                <th>Name of the Bank</th>
-                <th>State Bank of India</th>
-            </tr>
-            <tr>
-                <th>Bank Address</th>
-                <th>FCRA Cell, 4th Floor, State Bank of India, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</th>
-            </tr>
-            <tr>
-                <th>Branch Code</th>
-                <th>00691</th>
-            </tr>
-            <tr>
-                <th>Branch IFSC Code</th>
-                <th>SBIN0000691</th>
-            </tr>
-            <tr>
-                <th>Bank Swift Code</th>
-                <th>SBININBB104</th>
-            </tr>
-            <tr>
-                <th>Name of the Account Holder/Beneficiary</th>
-                <th>Solidarity for Developing Communities </th>
-            </tr>
-            <tr>
-                <th>Address of the Account Holder: </th>
-                <th>Hillpatna, Berhampur, District-Ganjam, Odisha, India, Pin-760005</th>
-            </tr>
-            <tr>
-                <th>Beneficiary Bank Account No. :</th>
-                <th>40062282417(FCRA CURRENT ACCOUNT)</th>
-            </tr>
-            <tr>
-                <th>Account Opening Date: </th>
-                <th>08.03.2021</th>
-            </tr>
-        </table>
-    </p>
-    </div>
-    <p>
-        For International Remitance Please go to Donate and go to International donations and pay <br>
-        by Razor Host     <br>
-    </p>
-    <p>
-        Gentle Request! While doing International FCRA payment by   <br>
-        Bank Swift Telegraphic transfer <br>
-        Please send us a screenshot along with compplete address and other details <br>
-        on our whatsapp no. - +91 9437828822 and to <br>
-        our Email: SOLIDNGO5@gmail.com <br>
-        You may also call on the above number for other queries.  <br>
-    </p>
-
-    <p>
-        INTERNATIONAL DONATION MADE TO SOLID-KASH <br>
-        MADE UNDER FORIGN CONTRIBUTION REGULATION ACT APPROVAL REGISTRATION ON: <br>
-        104910070/FROM AY 1 APRIL 20222 EXPIRES ON: AY 2026-27 <br>
-    </p>
-
-    <p>
-        Donate through UPI:Google Pay,BHIM,Phone Pe, PayTm and others
-    </p>
-
-    <p>
-        Gentle Request! While doing Paytm/UPIApp payments or Bank(NEFT/RTGS) <br>
-        please send us a screenshot along with complete address and PAN details <br>
-        on our whatsapp no- +91 9437828822 and to our <br>
-        our Email:SOLIDNGO5@gmail.com <br>
-        You may also call on the above number for other queries.  <br>
-    </p>
-
-    <p>
-        Click here to donate through HDFC/AXIS bank Net-Banking or other Payment gateway. <br>
-        Doubt in this line****  <br>
-    </p>
-
-    <p>
-        For CSR related Query, Please call- +91 9178178129 on whatsapp. <br>
-    </p>
-
-    <p>
-        For Foreign/International donation Please click here <br>
-        BANK DETAILS TO TRANSFER FOREIGN FUNDS 
-    </p>
-    <div>
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            th, td {
-                border: 2px solid orangered; /* Orange border */
-                border-radius: 10px; /* Rounded corners */
-                padding: 10px;
-                text-align: center;
-            }
-        </style>
-    <p>
-        <table border="1" width="60%">
-            <tr>
-                <th>Name of the Bank</th>
-                <th>State Bank of India</th>
-            </tr>
-            <tr>
-                <th>Bank Address</th>
-                <th>FCRA Cell, 4th Floor, State Bank of India, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</th>
-            </tr>
-            <tr>
-                <th>Branch Code:</th>
-                <th>00691</th>
-            </tr>
-            <tr>
-                <th>Branch IFSC Code: </th>
-                <th>SBIN0000691</th>
-            </tr>
-            <tr>
-                <th>Bank Swift Code: </th>
-                <th>SBININBB104</th>
-            </tr>
-            <tr>
-                <th>Name of the Account Holder/Beneficiery: </th>
-                <th>Solidarity For Developing Communities </th>
-            </tr>
-            <tr>
-                <th>Address of the Accout Holder: </th>
-                <th>Hillpatna, Berhampur, District-Ganjam, Odisha, India, Pin-760005</th>
-            </tr>
-            <tr>
-                <th>Beneficiary Bank Account No. :</th>
-                <th>40062282417 (FCRA CURRENT ACCOUNT)</th>
-            </tr>
-            <tr>
-                <th>Account Opening Date: </th>
-                <th>08.03.2021</th>
-            </tr>
-            
-        </table>
-    </p>
-    </div>
-    <p>
-        For International Temitance Please go to Donate and go to the International Donations and pay by <br>
-        Razor Host <br> 
-    </p>
-    <p>
-        Gentle Request! While doing International FRCA payments by <br>
-        Bank Swift Telegraph transfer <br>
-        Please send us a screenshot along with complete address and other details <br>
-        on our whatsapp no.- +91 9537828822 and to <br>
-        out Email:SOLIDNGO5@gmail.com <br>
-        You can also call on the above number for other queries. <br>
-    </p>
-    <p>
-       INTERNATIONAL DONATION MADE TO SOLID-KASH <br>
-       MADE UNDER FOREIGN CONTRIBUTION REGULATION ACT APPROVAL REGISTRATION NO: <br>
-       104910070/FROM AY 1 APRIL 2022 EXPIRES ON : AY 2026-27 <br>  
-    </p>
-    <P>
-        What people say about SOLID Hunger for life Program <br>
-        PICTURES********************************** <br>
-        SOLID is doing great job <br>
-        Job of feeding adolescents and <br>
-        Hungry people.It's the most genuine <br>
-        Activity and a sincere effort to feed <br>
-    </P>
-    <p>
-        The needy, <br>
-        <br>
-        Donation for Nutrition & free Meals a day <br>
-        <br>
-        Donate for Kitchen <br>
+        /* --- Header --- */
+        .header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-text) !important;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: var(--primary-text) !important;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+        .btn-donate-header {
+            background: var(--accent-gradient);
+            color: white !important;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
+        }
+        .btn-donate-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
+        }
         
-        Sponsor of the kitchen and Cafeteria with place for dinning <br>
-        <br>
-        for Kitchen construction and Dinning place for 500 Students I support <br>
-        <br>
-        <div class="container donation-container">
-            <div class="mb-3">
-                <label for="currencySelect2" class="form-label">Select Currency:</label>
-                <select class="form-select" id="currencySelect2" onchange="updateCurrency2()">
-                    <option value="INR">Indian Rupees (INR)</option>
-                    <option value="USD">US Dollar (USD)</option>
-                    <option value="EUR">Euro (EUR)</option>
-                    <option value="KHR">Cambodian Riel (KHR)</option>
-                    <option value="GBP">British Pound (GBP)</option>
-                    <option value="AUD">Australian Dollar (AUD)</option>
-                    <option value="CAD">Canadian Dollar (CAD)</option>
-                    <option value="JPY">Japanese Yen (JPY)</option>
-                    <option value="CNY">Chinese Yuan (CNY)</option>
-                    <option value="SGD">Singapore Dollar (SGD)</option>
-                    <option value="ZAR">South African Rand (ZAR)</option>
-                    <option value="BRL">Brazilian Real (BRL)</option>
-                </select>
+        /* --- Hero Section --- */
+        .hero-section {
+            background-image: linear-gradient(rgba(40, 30, 20, 0.6), rgba(40, 30, 20, 0.6)), url(https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600);
+            background-size: cover;
+            background-position: center;
+            padding: 6rem 1rem;
+            color: white;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        .hero-section p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 1rem auto 0;
+            opacity: 0.9;
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            padding: 5rem 0;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-text);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+            color: var(--secondary-text);
+        }
+
+        /* --- Donation Card Grid --- */
+        .donation-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+        .donation-card .amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-text);
+        }
+        .donation-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-top: 0.5rem;
+        }
+        .donation-card .card-text {
+            flex-grow: 1;
+            margin: 1rem 0;
+        }
+        .btn-donate-card {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
+        }
+        .btn-donate-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+        }
+        
+        /* --- Approach Section --- */
+        .approach-item {
+            text-align: center;
+            padding: 1rem;
+        }
+        .approach-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+        .approach-item h5 {
+            font-weight: 600;
+            color: var(--primary-text);
+        }
+
+        /* --- Our Causes Section --- */
+        .causes-banner {
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .causes-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .causes-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background-color: var(--accent-light);
+            transition: all 0.3s ease;
+            border: 1px solid #ffd8a8;
+        }
+        .causes-links a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        /* --- Accordion for Payment Info --- */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px !important;
+            margin-bottom: 1rem;
+        }
+        .accordion-button {
+            font-weight: 600;
+            color: var(--primary-text);
+            border-radius: 8px !important;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+        }
+        .accordion-button:focus { box-shadow: 0 0 0 0.25rem rgba(245, 124, 0, 0.25); }
+        .bank-details-table { text-align: left; }
+        .bank-details-table th { width: 35%; font-weight: 600; }
+        
+        /* --- Footer --- */
+        .footer {
+            background-color: #343a40;
+            padding: 4rem 0;
+            color: #adb5bd;
+        }
+        .footer h5 { color: #ffffff; font-weight: 600; }
+        .footer a { text-decoration: none; color: #adb5bd; transition: color 0.3s ease; }
+        .footer a:hover { color: #ffffff; }
+
+    </style>
+</head>
+<body>
+
+    <header class="header sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <a class="navbar-brand" href="#">KASH FOUNDATION</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#sponsor">Sponsor a Student</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#causes">Our Causes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#payment">Ways to Give</a></li>
+                </ul>
+                <a href="#sponsor" class="btn btn-donate-header">Donate Now</a>
             </div>
-            <div class="table-responsive">
-                <table class="table">
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="5800">₹5,800</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td> 
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="29000">₹29,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="58000">₹58,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="100000">₹1,00,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="150000">₹1,50,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="250000">₹2,50,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="500000">₹5,00,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>I support</td>
-                        <td class="amount2" data-inr2="1000000">₹10,00,000</td>
-                        <td><button onclick="redirectToDonationBox2(this)">Donate</button></td>
-                    </tr>
-                    <tr>
-                        <td>Donate any Amount</td>
-                        <td>
-                            <label for="customAmount2">Enter Amount : </label>
-                            <input type="number" id="customAmount2" name="amount" min="0" step="0.01" placeholder="0.00">
-                        </td>
-                        <td><button onclick="redirectCustomAmount2()">Donate</button></td>
-                    </tr>
-                </table>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h1>Transform a Life Today</h1>
+                <p>Your open-hearted contribution can make a profound difference in the lives of hundreds of students who reside and study at our campus.</p>
             </div>
+        </section>
+
+        <section id="sponsor" class="content-section">
+            <div class="container">
+                <h2 class="section-title">Sponsor a Student</h2>
+                <p class="section-subtitle">Choose an amount or enter your own to empower a student's educational journey. 80.5% of funds go directly to their education, food, and accommodation.</p>
+
+                <div class="d-flex justify-content-center justify-content-md-end mb-4">
+                    <div style="max-width: 250px;">
+                        <label for="currencySelect" class="form-label fw-bold">Select Currency:</label>
+                        <select class="form-select" id="currencySelect" onchange="updateCurrency()">
+                            <option value="INR">Indian Rupees (INR)</option>
+                            <option value="USD">US Dollar (USD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="GBP">British Pound (GBP)</option>
+                            <option value="AUD">Australian Dollar (AUD)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="donation-card">
+                            <div class="amount" data-inr="5800">₹5,800</div>
+                            <h5 class="card-title">Provide Meals</h5>
+                            <p class="card-text">Nourishing meals for a student for a full month.</p>
+                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Feed the Students')">Support Now</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="donation-card">
+                            <div class="amount" data-inr="10000">₹10,000</div>
+                            <h5 class="card-title">Educational Kit</h5>
+                            <p class="card-text">Books, supplies, and learning materials for one semester.</p>
+                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Sponsor Education')">Sponsor Now</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="donation-card">
+                            <div class="amount" data-inr="30000">₹30,000</div>
+                            <h5 class="card-title">Semester Fee</h5>
+                            <p class="card-text">Cover the full tuition and academic fees for one semester.</p>
+                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Sponsor Education')">Sponsor Now</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="donation-card">
+                            <h5 class="card-title mt-0">Give Any Amount</h5>
+                            <p class="card-text flex-grow-0">Your custom contribution makes a huge impact.</p>
+                            <input type="number" class="form-control mb-3" id="customAmount" placeholder="Enter Amount">
+                            <button class="btn-donate-card" onclick="redirectCustomAmount()">Donate Custom</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section bg-white">
+            <div class="container">
+                <h2 class="section-title">Our Approach</h2>
+                <div class="row mt-5">
+                    <div class="col-md-4 approach-item">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='9' cy='7' r='4'%3E%3C/circle%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87'%3E%3C/path%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'%3E%3C/path%3E%3C/svg%3E" class="approach-icon" alt="Community Icon">
+                        <h5>Community-Led</h5>
+                        <p>We work hand-in-hand with the community to address root causes of poverty, creating lasting change.</p>
+                    </div>
+                    <div class="col-md-4 approach-item">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'%3E%3C/path%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'%3E%3C/path%3E%3C/svg%3E" class="approach-icon" alt="Student Icon">
+                        <h5>Student-Focused</h5>
+                        <p>We empower students with higher education and holistic development for long-term personal success.</p>
+                    </div>
+                    <div class="col-md-4 approach-item">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='16' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'%3E%3C/line%3E%3C/svg%3E" class="approach-icon" alt="Impact Icon">
+                        <h5>Maximum Impact</h5>
+                        <p>We combine donations to make the biggest impact, ensuring that for every student you help, four more benefit.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="causes" class="content-section">
+            <div class="container">
+                <h2 class="section-title">Support a Specific Cause</h2>
+                <p class="section-subtitle">You can also choose to support a specific project that is critical to our campus development and student welfare. Click on any cause to learn more and donate.</p>
+                <div class="causes-banner">
+                    <div class="causes-links">
+                        <a href="donationBox.html">Library Fund</a>
+                        <a href="donationBox1.html">CCTV Security</a>
+                        <a href="donationBox2.html">Dormitory Essentials</a>
+                        <a href="donationBox3.html">Dormitory Building</a>
+                        <a href="donationBox4.html">Sports Complex</a>
+                        <a href="donationBox5.html">College Extension</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="payment" class="content-section bg-white">
+            <div class="container">
+                <h2 class="section-title">Other Ways to Give</h2>
+                <p class="section-subtitle">We welcome direct bank transfers. Please see the details below. All donations are eligible for 80G tax benefits.</p>
+                
+                <div class="accordion" id="paymentAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                Domestic Donations (NEFT/RTGS/UPI)
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                <table class="table table-borderless bank-details-table">
+                                    <tbody>
+                                        <tr><th>Bank Name:</th><td>HDFC Bank</td></tr>
+                                        <tr><th>Account Name:</th><td>Karun Shanti (KASH) Campus</td></tr>
+                                        <tr><th>Account Number:</th><td>[Your Account Number Here]</td></tr>
+                                        <tr><th>IFSC Code:</th><td>[Your IFSC Code Here]</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                Foreign/International Donations (FCRA)
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                <table class="table table-borderless bank-details-table">
+                                     <tbody>
+                                        <tr><th>Bank Name:</th><td>State Bank of India</td></tr>
+                                        <tr><th>Account Name:</th><td>Solidarity For Developing Communities</td></tr>
+                                        <tr><th>Account No:</th><td>40062282417 (FCRA CURRENT ACCOUNT)</td></tr>
+                                        <tr><th>Bank Address:</th><td>FCRA Cell, 4th Floor, SBI, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</td></tr>
+                                        <tr><th>IFSC Code:</th><td>SBIN0000691</td></tr>
+                                        <tr><th>Swift Code:</th><td>SBININBB104</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-4" role="alert">
+                  <h5 class="alert-heading fw-bold">Important Request!</h5>
+                  <p class="mb-0">After making a direct bank transfer, please send a screenshot with your full address and PAN details to us via WhatsApp at <strong>+91 9437828822</strong> or email at <strong>SOLIDNGO5@gmail.com</strong> to receive your tax receipt.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-4">
+                    <h5>KASH FOUNDATION</h5>
+                    <p>Empowering marginalized students through quality education and holistic development. Join us in building a brighter future.</p>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#sponsor">Sponsor</a></li>
+                        <li><a href="#causes">Our Causes</a></li>
+                        <li><a href="FAQ.html">FAQ</a></li>
+                    </ul>
+                </div>
+                 <div class="col-lg-3 col-md-4 col-6">
+                    <h5>Our Causes</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="donationBox.html">Library Fund</a></li>
+                        <li><a href="donationBox3.html">Building Fund</a></li>
+                        <li><a href="donationBox4.html">Sports Fund</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                         <li>Hillpatna, Berhampur</li>
+                         <li>Odisha, India, 760005</li>
+                         <li class="mt-2"><strong>Email:</strong> <a href="mailto:SOLIDNGO5@gmail.com">SOLIDNGO5@gmail.com</a></li>
+                         <li><strong>Phone:</strong> <a href="tel:+919437828822">+91 9437828822</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4">
+            <p class="text-center text-muted small mb-0">&copy; 2025 KASH Foundation. All Rights Reserved.</p>
         </div>
-    </p>
-
-    <p>
-        <b>CAMPAIGN DONATION PAYMENT FORM</b> <br>
-        <b>QUICK DONATE</b> <br>
-    </p>
-
-    <p>
-        If you would like to make a donation towards a perticular area of activity, please select an <br>
-        option from Below. SOLID-KASH enitirely relies on voluntary donation and every donation <br>
-        counts. Please note the donation is processed on a secure site and we don't keep any copies of anything. <br>
-    </p>
-
-    <p>
-        Picture****************** <br>
-    </p>
-
-    <p>
-        Blank Photograph Palets to be plalced (Photots to be inserted later)****************
-    </p>
-
-    <div class="card p-3 mt-4" style="background-color: #b65961; border-left: 5px solid #dc3545;">
-        <p style="color: white; font-weight: bold; text-align: center;">
-           <b>DONATION THROUGH BANK(NEFT/RTGS)   </b>    
-        </p>
-    </div>
-    <p>
-        Bank Name- HDFC Bank <br>
-        Account Name- Karun Shanti (KASH) Campus <br>
-        Account Number- <br>
-        IFSC code- <br>
-    </p>
-    
-    
-    <div class="card p-3 mt-4" style="background-color: #b65961; border-left: 5px solid #dc3545;">
-        <p style="color: white; font-weight: bold; text-align: center;">
-           <b>Donate through UPI: Google Pay, BHIM, Phone Pe, PayTM and others   </b>    
-        </p>
-    </div>
-
-    <div class="card p-3 mt-4" style="background-color: #e2e73c; border-left: 5px solid #a0a428;">
-        <p style="color: black; font-weight: bold; text-align: center;">
-            Gentle Request! While doing Payment/UPI App payments or Bank (NEFT/RTGS) <br>
-            please send us a screenshot along with complete address and PAN details <br>
-            on our Whatsapp no- +91 9437828822 and to <br>
-            our Email:SOLIDNGO5@gmail.com <br>
-            You may also call on the above number for other queries. <br>    
-        </p>
-    </div>
-
-    <div class="card p-3 mt-4" style="background-color: rgba(255, 255, 0, 0.542); border-left: 5px solid #d0b73c;">
-        <p style="color: black; font-weight: bold; text-align: center;">
-            Click here to donate through HDFC/AXIS Bank Net-Banking or other Payment gateways. <br>
-            Please Click ******************* <br>
-        </p>
-    </div>
-
-    <div class="card p-3 mt-4" style="background-color: rgba(255, 255, 0, 0.542); border-left: 5px solid #d0b73c;">
-        <p style="color: black; font-weight: bold; text-align: center;">
-            For CSR related Query, Please call - +91 9178178129 on whatsapp <br>
-        </p>
-    </div>
-
-    <div class="card p-3 mt-4" style="background-color: rgba(255, 255, 0, 0.542); border-left: 5px solid #d0b73c;">
-        <p style="color: black; font-weight: bold; text-align: center;">
-            For Foreign/International donation Please click Here <br>
-        </p>
-    </div>
-    <p>For TT</p>
-
-    <div class="card p-3 mt-4" style="background-color: yellow; ">
-        <p style="color: black; font-weight: bold; text-align: center;">
-            BANK DETAILS TO TRANSFER FOREIGN FUNDS  <br>
-        </p>
-    </div>
-
-    <div>
-
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            th, td {
-                border: 2px solid orange; /* Orange border */
-                border-radius: 10px; /* Rounded corners */
-                padding: 10px;
-                text-align: center;
-            }
-        </style>
-    <p>
-        <table border="1" width="60%" >
-            
-            <tr>
-                <th>Name of the Bank:</th>
-                <th>State Bank of India</th>
-            </tr>
-            <tr>
-                <th>Bank Address</th>
-                <th>FCRA Cell, 4th Floor, State Bank of India, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</th>
-            </tr>
-            <tr>
-                <th>Branch Code:</th>
-                <th>00691</th>
-            </tr>
-            <tr>
-                <th>Branch IFSC Code: </th>
-                <th>SBIN0000691</th>
-            </tr>
-            <tr>
-                <th>Bank Swift Code: </th>
-                <th>SBININBB104</th>
-            </tr>
-            <tr>
-                <th>Name of the Account Holder/Beneficiery: </th>
-                <th>Solidarity For Developing Communities </th>
-            </tr>
-            <tr>
-                <th>Address of the Accout Holder: </th>
-                <th>Hillpatna, Berhampur, District-Ganjam, Odisha, India, Pin-760005</th>
-            </tr>
-            <tr>
-                <th>Beneficiary Bank Account No. :</th>
-                <th>40062282417 (FCRA CURRENT ACCOUNT)</th>
-            </tr>
-            <tr>
-                <th>Account Opening Date: </th>
-                <th>08.03.2021</th>
-            </tr>
-
-        </table>
-    </p>
-   </div>
-
-   <div class="card p-3 mt-4" style="background-color: rgba(255, 255, 0, 0.542); border-left: 5px solid #d0b73c;">
-    <p style="color: black; font-weight: bold; text-align: center;">
-        For International Remitance Please go to Donate and go to International donation and pay <br>
-        by Razor Host <br>
-    </p>
-</div>
-
-<div class="card p-3 mt-4" style="background-color: #e2e73c; border-left: 5px solid #a0a428;">
-    <p style="color: black; font-weight: bold; text-align: center;">
-        Gentle Request! Whilw doing International FRCA payments by <br>
-        Bank Swift Telegraphic transfer <br>
-        please send us  screenshot along witha a complete address and other details <br>
-        on our whatsapp no- +91 9178178129 and to <br>
-        our Email: SOLIDNGO5@gmail.com <br>
-        You may also call on the above number for other queries. <br>
-    </p>
-</div>
-
-<p>
-    INTERNATIONAL DONATION MADE TO SOLID-KASH <br>
-    MADE UNDER FOREIGN CONTRIBUTION REGULATION ACT APPROVAL REGISTRATION NO: <br>
-    104910070/ FROM AY 1 APRIL 2022 EXPIRES ON: AY 2026-27 <br>   
-</p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-    
-   </body>
-</head>
+    <script>
+        const exchangeRates = {
+            INR: 1, USD: 0.012, EUR: 0.011, GBP: 0.0095, AUD: 0.018
+        };
+        const currencySymbols = {
+            INR: '₹', USD: '$', EUR: '€', GBP: '£', AUD: 'A$'
+        };
+
+        function updateCurrency() {
+            const currency = document.getElementById('currencySelect').value;
+            const symbol = currencySymbols[currency] || currency;
+            document.querySelectorAll('.donation-card .amount').forEach(el => {
+                const inrAmount = parseFloat(el.getAttribute('data-inr'));
+                const convertedAmount = (inrAmount * (exchangeRates[currency] || 1));
+                
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: currency,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                });
+
+                if (currency === 'INR') {
+                     el.textContent = symbol + new Intl.NumberFormat('en-IN').format(convertedAmount);
+                } else {
+                     el.textContent = formatter.format(convertedAmount).replace(currency, symbol).trim();
+                }
+            });
+        }
+
+        function redirectToDonationBox(button, cause) {
+            const card = button.closest('.donation-card');
+            const inrAmount = card.querySelector('.amount').getAttribute('data-inr');
+            const currency = document.getElementById('currencySelect').value;
+            window.location.href = `donationBoxGeneral.html?amount=${inrAmount}&currency=${currency}&donationFor=${encodeURIComponent(cause)}`;
+        }
+
+        function redirectCustomAmount() {
+            const amount = document.getElementById('customAmount').value;
+            if (amount && amount > 0) {
+                const currency = document.getElementById('currencySelect').value;
+                window.location.href = `donationBoxGeneral.html?amount=${amount}&currency=${currency}&donationFor=General Donation`;
+            } else {
+                alert('Please enter a valid amount.');
+            }
+        }
+        
+        window.onload = () => {
+            updateCurrency();
+        };
+    </script>
+</body>
 </html>

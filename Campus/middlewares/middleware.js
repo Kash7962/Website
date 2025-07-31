@@ -4,7 +4,7 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies.token; // Read token from cookie
 
   if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided in cookie.' });
+    return res.status(401).json({ message: 'Access denied!!!' });
   }
 
   try {
@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
     next(); // Proceed
   } catch (err) {
     console.error('Token verification failed:', err);
-    return res.status(403).json({ message: 'Invalid or expired token.' });
+    return res.status(403).json({ message: 'Session expired!!!' });
   }
 };
 

@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FAQ Section</title>
   <style>
+    /* Google Fonts for a cleaner look (Optional but recommended) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -12,61 +15,99 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #FFF7ED; /* Pale orange background */
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #FFF7ED; /* Keeps the warm background */
       padding: 2rem;
+      color: #333;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 2rem;
-      font-size: 2rem;
-      color: #333;
+      margin-bottom: 2.5rem;
+      font-size: 2.5rem;
+      color: #5D4037; /* A deep, warm brown */
+      font-weight: 700;
     }
 
     .faq-container {
-      max-width: 800px;
+      max-width: 750px;
       margin: auto;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      overflow: hidden;
     }
 
     .faq-item {
-      border-bottom: 1px solid #e0e0e0;
+      background-color: #fff;
+      margin-bottom: 1rem; /* Creates space between items */
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      overflow: hidden; /* Ensures child elements respect the border radius */
+      transition: box-shadow 0.3s ease;
     }
 
+    .faq-item:hover {
+      box-shadow: 0 7px 15px rgba(0,0,0,0.08);
+    }
+    
     .faq-question {
-      background-color: #ffe6cc; /* Light orange for questions */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       cursor: pointer;
-      padding: 1rem 1.5rem;
+      padding: 1.25rem 1.5rem;
       font-weight: 600;
-      color: #5a3921;
+      font-size: 1.1rem;
+      color: #5D4037;
       transition: background-color 0.3s ease;
     }
 
-    .faq-question:hover {
-      background-color: #ffd1a3;
+    /* The '+' icon for the closed state */
+    .faq-question::after {
+      content: '+';
+      font-size: 1.75rem;
+      font-weight: 300;
+      color: #E64A19; /* A vibrant accent color */
+      transition: transform 0.3s ease-in-out;
     }
-
+    
     .faq-answer {
       max-height: 0;
       overflow: hidden;
       padding: 0 1.5rem;
-      background-color: #ffe6cc;
+      background-color: #fff;
       transition: max-height 0.4s ease, padding 0.4s ease;
-      color: #444;
+      color: #4a4a4a;
+      line-height: 1.6;
+    }
+
+    /* --- Active State Styling --- */
+    .faq-item.active .faq-question {
+      background-color: #fdf8f2; /* A very subtle highlight for the active question */
+    }
+
+    /* The '×' icon for the open state */
+    .faq-item.active .faq-question::after {
+      content: '×';
+      transform: rotate(45deg);
     }
 
     .faq-item.active .faq-answer {
-      max-height: 500px;
-      padding: 1rem 1.5rem;
+      max-height: 500px; /* Adjust if your answers are very long */
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid #f0e9e1; /* A soft separator line */
     }
 
+    /* --- Responsive Adjustments --- */
     @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+      
       .faq-question {
         font-size: 1rem;
+        padding: 1rem 1.25rem;
       }
 
       .faq-answer {
@@ -77,41 +118,41 @@
 </head>
 <body>
 
-  <h2>FAQ's</h2>
+  <h2>Frequently Asked Questions</h2>
 
   <div class="faq-container">
     <div class="faq-item">
       <div class="faq-question">1. What is Section 80G of the Income Tax Act?</div>
       <div class="faq-answer">
-        Section 80G of the Income Tax Act, 1961, allows you to claim deductions on donations made to eligible charitable organizations like Smile Foundation. This means you can reduce your taxable income by the amount you donate.
+        Section 80G of the Income Tax Act, 1961, allows you to claim deductions for donations made to eligible charitable organizations. This means you can reduce your taxable income by the amount you donate, lowering your overall tax liability.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-question">2. Is there an 80G Tax Deduction Limit on Donations?</div>
+      <div class="faq-question">2. Is there a limit on 80G tax deductions?</div>
       <div class="faq-answer">
-        You can claim deductions of varying percentages on your donation amount with a minimum donation amount of INR 500. The limit depends on the charity and the donor's category (individual or business).
+        Yes, there are limits. For some donations, you can claim 100% of the donated amount, while for others, it's 50%. There's also an overall limit of 10% of your 'Adjusted Gross Total Income'. The exact deduction depends on the charity's registration.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-question">3. Why Donate under Section 80G?</div>
+      <div class="faq-question">3. Why should I donate under Section 80G?</div>
       <div class="faq-answer">
-        Double Impact: Your donation under Section 80G not only supports a noble cause but also provides you with a valuable income tax exemption, making your tax planning better. You can enjoy the satisfaction of making a difference in the lives of those in need while reducing your income tax liability.
+        Donating under Section 80G offers a double benefit. You get the personal satisfaction of supporting a cause you care about, and you also receive a direct financial benefit by reducing your income tax payment. It's a powerful way to make your contribution go further.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-question">4. Can Non-Resident Indians (NRIs) avail tax benefits?</div>
+      <div class="faq-question">4. Can Non-Resident Indians (NRIs) claim 80G benefits?</div>
       <div class="faq-answer">
-        Yes, NRIs can also avail tax benefits by making donations to Smile Foundation. Section 80G of the Income Tax Act allows NRIs to claim deductions on their Indian income for charitable contributions made to eligible organizations like Smile Foundation. It’s advised to consult with financial advisors and keep records of donations.
+        Absolutely. NRIs who have taxable income in India can claim deductions under Section 80G for donations made to eligible Indian charities. The process is the same as for resident Indians.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-question">5. How to claim 80G deduction tax benefits?</div>
+      <div class="faq-question">5. How do I claim the 80G deduction?</div>
       <div class="faq-answer">
-        SOLID NGO will e-mail your tax-exempt certification (10BE) of all the donations you have made in a year by 31st May of the next year. For example, if you make 5 donations of Rs. 500 each in the financial year of 2023-24, we will send you the tax-exempt certification of all your donations by 31st May 2024.
+        To claim the deduction, you must have a donation receipt and a Form 10BE certificate issued by the charitable organization. The NGO will typically email you this certificate. When filing your income tax return (ITR), you need to provide the details from this certificate.
       </div>
     </div>
   </div>
@@ -120,11 +161,17 @@
     const items = document.querySelectorAll(".faq-item");
 
     items.forEach(item => {
-      item.querySelector(".faq-question").addEventListener("click", () => {
+      const question = item.querySelector(".faq-question");
+      question.addEventListener("click", () => {
+        const currentlyActive = document.querySelector(".faq-item.active");
+        
+        // If there is an active item and it's not the one we just clicked, close it.
+        if (currentlyActive && currentlyActive !== item) {
+          currentlyActive.classList.remove("active");
+        }
+
+        // Toggle the active state of the clicked item.
         item.classList.toggle("active");
-        items.forEach(i => {
-          if (i !== item) i.classList.remove("active");
-        });
       });
     });
   </script>
