@@ -1,4 +1,3 @@
-const { validationResult } = require('express-validator');
 const { Student } = require('../models/student');
 const { OAuth2Client } = require('google-auth-library');
 const bcrypt = require('bcryptjs');
@@ -21,10 +20,6 @@ const showRegistrationForm = (req, res) => {
 
 // Controller to handle form submission
 const submitAdmissionForm = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
   try {
     const { studentEmail } = req.body;
@@ -44,7 +39,7 @@ const submitAdmissionForm = async (req, res) => {
     res.status(200).json({ message: 'Admission form submitted successfully!' });
   } catch (err) {
     console.error('Error saving student:', err);
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -53,25 +48,25 @@ const loginUser = async (req, res) => {
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+      return res.status(400).render('error/error', {message: 'Email or password is missing'});
     }
     // console.log(identifier, password);
     // Convert email to lowercase and find user
     const user = await Student.findOne({ studentEmail: identifier.toLowerCase() });
     // console.log(user)
     if (!user) {
-      return res.status(401).json({ message: 'User not found.' });
+      return res.status(404).render('error/error', {message: 'User not found'});
     }
 
     // For Google-based users with no password, block login via form
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials.' });
+      return res.status(401).render('error/error', {message: 'Invalid credentials'});
     }
 
     if (!user.isEnrolled) {
-      return res.status(401).json({ message: 'User not enrolled.' });
+      return res.status(401).render('error/error', {message: 'User not enrolled'});
     }
     // Generate JWT
     
@@ -123,11 +118,12 @@ const loginUser = async (req, res) => {
 
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
 const logout = async (req, res) => {
+  try{
   const token = req.headers.authorization?.split(' ')[1];
   // console.log(token);
   await StudentSession.findOneAndUpdate(
@@ -141,6 +137,10 @@ const logout = async (req, res) => {
   sameSite: 'strict',
   });
   res.json({ message: 'Logged out successfully' });
+} catch (error) {
+  console.error('Logout error:', error);
+  return res.status(500).render('error/error', {message: 'Server error'});
+}
 };
 
 
@@ -148,7 +148,7 @@ const googleLogin = async (req, res) => {
   try {
     const { tokenId } = req.body;
     if (!tokenId) {
-      return res.status(400).json({ message: 'Google token missing.' });
+      return res.status(400).render('error/error', {message: 'Token not provided.'});
     }
 
     // Verify token with Google
@@ -158,10 +158,10 @@ const googleLogin = async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    const { email, name } = payload;
+    const { email } = payload;
 
     if (!email) {
-      return res.status(400).json({ message: 'Google email not found.' });
+      return res.status(404).render('error/error', {message: 'Google email not found.'});
     }
 
     // Check if user already exists
@@ -169,13 +169,13 @@ const googleLogin = async (req, res) => {
     // console.log('User not enrolled:', user);
     if (!user) {
       // Auto-register Google user
-      res.status(201).json({ message: 'User not found. Please register first.' });
+      return res.status(404).render('error/error', {message: 'User not found.'});
     }
 
     // Generate JWT
     if (!user.isEnrolled) {
       
-      return res.status(401).json({ message: 'User not enrolled.' });
+      return res.status(401).render('error/error', {message: 'User not enrolled'});
     }
     // Generate JWT
     const token = jwt.sign(
@@ -227,7 +227,7 @@ const googleLogin = async (req, res) => {
 
   } catch (err) {
     console.error('Google login error:', err);
-    res.status(500).json({ message: 'Google login failed.' });
+    return res.status(404).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -239,7 +239,7 @@ const forgotPassword = async (req, res) => {
     // Check if user exists
     const user = await Student.findOne({ studentEmail: email.toLowerCase() });
     if (!user) {
-      return res.status(404).json({ message: 'No account found with that email.' });
+      return res.status(404).render('error/error', {message: 'No user found with the provided email.'});
     }
 
     // Create JWT token valid for 15 minutes
@@ -281,7 +281,7 @@ const forgotPassword = async (req, res) => {
 
   } catch (err) {
     console.error('Forgot password error:', err);
-    res.status(500).json({ message: 'Server error. Try again later.' });
+    return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -289,7 +289,7 @@ const resetPassword = async (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token) {
-    return res.status(400).json({ message: 'Missing reset token.' });
+    return res.status(400).render('error/error', {message: 'Missing token.'});
   }
 
   try {
@@ -300,7 +300,7 @@ const resetPassword = async (req, res) => {
     // Find user
     const user = await Student.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).render('error/error', {message: 'User not found.'});
     }
 
     // Hash new password
@@ -316,10 +316,10 @@ const resetPassword = async (req, res) => {
     console.error('Reset password error:', err);
 
     if (err.name === 'TokenExpiredError') {
-      return res.status(400).json({ message: 'Reset token has expired. Please request a new one.' });
+      return res.status(400).render('error/error', {message: 'Invalid token. Please request a new one.'});
     }
 
-    res.status(400).json({ message: 'Invalid or expired token.' });
+    return res.status(400).render('error/error', {message: 'Invalid token. Please request a new one.'});
   }
 };
 
@@ -328,10 +328,10 @@ const changePassword = async (req, res) => {
 
   try {
     const user = await Student.findById(_id); // or User.findById
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).render('error/error', {message: 'User not found.'});
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Incorrect current password' });
+    if (!isMatch) return res.status(400).render('error/error', {message: 'Invalid current password.'});
 
     const hashed = await bcrypt.hash(newPassword, 10);
     user.password = hashed;
@@ -340,7 +340,7 @@ const changePassword = async (req, res) => {
     res.status(200).json({ message: 'Password changed successfully' });
   } catch (err) {
     console.error('Password change error:', err);
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).render('error/error', {message: 'Server error.'});
   }
 };
 
@@ -350,24 +350,10 @@ const getAllCourses = async (req, res) => {
     res.render('Student/getCourses', { files });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error while fetching materials");
+    return res.status(500).render('error/error', {message: 'Server error.'});
   }
 };
 
-// GET /Student/profile
-const getStudentProfile = async (req, res) => {
-  try {
-    const studentId = req.params.id;
-    const student = await Student.findById(studentId);
-
-    if (!student) return res.status(404).json({ message: 'Student not found' });
-
-    res.json(student); // Return student data
-  } catch (error) {
-    console.error("Error fetching student profile:", error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
 
 
 
@@ -381,5 +367,4 @@ module.exports = {
   resetPassword,
   logout,
   getAllCourses,
-  getStudentProfile,
 };

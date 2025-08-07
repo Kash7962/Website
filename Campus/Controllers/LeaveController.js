@@ -1,10 +1,7 @@
 const LeaveRequest = require('../models/leave');
-const { validationResult } = require('express-validator');
 
 // Submit leave
 const createLeave = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
   const { reason, fromDate, toDate } = req.body;
   const { username, email, phone } = req.user;
@@ -15,7 +12,7 @@ const createLeave = async (req, res) => {
     res.status(201).json({ message: 'Leave request submitted' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -25,7 +22,7 @@ const getAllLeaves = async (req, res) => {
     const leaves = await LeaveRequest.find().sort({ createdAt: -1 });
     res.json(leaves);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -35,14 +32,14 @@ const updateLeaveStatus = async (req, res) => {
   const { status } = req.body;
 
   if (!['Approved', 'Denied'].includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
+    return res.status(400).render('error/error', {message: 'Invalid status'});
   }
 
   try {
     const leave = await LeaveRequest.findByIdAndUpdate(id, { status }, { new: true });
     res.json(leave);
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    return res.status(404).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -53,16 +50,18 @@ const deleteLeaveByUser = async (req, res) => {
 
   try {
     const leave = await LeaveRequest.findById(id);
-    if (!leave) return res.status(404).json({ error: 'Leave not found' });
+    if (!leave) return res.status(404).render('error/error', {message: 'Leave not found.'});
 
     if (leave.email !== userEmail) {
-      return res.status(403).json({ error: 'Not authorized' });
+      return res.status(403).render('error/error', {
+      message: 'You are not authorized to delete this leave.'});
     }
 
     await LeaveRequest.findByIdAndDelete(id);
-    res.json({ message: 'Leave deleted' });
+    res.status(200).json({ message: 'Leave deleted' });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', {
+      message: 'Server error' });;
   }
 };
 
@@ -73,6 +72,7 @@ const deleteExpiredLeaves = async () => {
     await LeaveRequest.deleteMany({ toDate: { $lt: today } });
   } catch (err) {
     console.error('Error deleting expired leaves:', err.message);
+    
   }
 };
 

@@ -1,20 +1,20 @@
 const mongoose = require('mongoose');
 
-const studentSessionSchema = new mongoose.Schema({
+const sessionSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student',
+    ref: 'Staff',
     required: true,
   },
   name: {
     type: String,
     required: true,
   },
-  registration_number: {
-    type: String,
-    default: null,
-  },
   email: {
+    type: String,
+    required: true,
+  },
+  department: {
     type: String,
     required: true,
   },
@@ -25,10 +25,6 @@ const studentSessionSchema = new mongoose.Schema({
   logoutTime: {
     type: Date,
     default: null,
-  },
-  isStudent: {
-    type: Boolean,
-    default: true,
   },
   method: {
     type: String,
@@ -51,9 +47,6 @@ const studentSessionSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   }
-}, {
-  timestamps: true,
-});
+}, { timestamps: true });
 
-const StudentSession = mongoose.model('StudentSession', studentSessionSchema);
-module.exports = { StudentSession };
+module.exports = mongoose.model('Session_Staff', sessionSchema);

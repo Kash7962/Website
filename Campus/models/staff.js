@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
 const staffSchema = new mongoose.Schema({
-  // Basic Info
-  username: {
+  // ============================
+  // Core Required Fields
+  // ============================
+  name: {
     type: String,
     required: true,
     trim: true,
@@ -20,42 +22,51 @@ const staffSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: /^\+[1-9]\d{6,14}$/, // E.164 format
+    match: /^\+[1-9]\d{6,14}$/, // E.164 international format
   },
   password: {
-  type: String,
-  required: true,
-  minlength: 6,
-  trim: true,
-  validate: {
-    validator: function (value) {
-      return value && value.trim().length >= 6;
+    type: String,
+    required: true,
+    minlength: 6,
+    trim: true,
+    validate: {
+      validator: function (value) {
+        return value && value.trim().length >= 6;
+      },
+      message: 'Password must be at least 6 characters.',
     },
-    message: 'Password must be at least 6 characters.',
   },
-},
-
   department: {
     type: String,
     required: true,
-    enum: ['Teaching', 'Kitchen', 'Library', 'Management', 'Accounts'],
+    enum: ['Academic', 'Residential', 'Kitchen', 'Library', 'Sports'],
   },
   isAuthorized: {
     type: Boolean,
     default: false,
   },
-    salary: Number,
-  // ================================
-  // Optional Fields: Teaching Staff
-  // ================================
-  qualifications: {
-    type: [String],
-  }, 
-  yearsOfExperience: Number,
-  subjects: [String],
-  designation: String,
-  classAssigned: [String],
+  salary: {
+    type: Number,
+    min: 0,
+  },
 
+  // ============================
+  // Optional Academic Info
+  // ============================
+  qualifications: {
+    type: [String], // e.g., ['M.Sc', 'Ph.D']
+    trim: true,
+  },
+  yearsOfExperience: {
+    type: Number,
+    min: 0,
+  },
+  subjects: [String],
+  designation: {
+    type: String,
+    trim: true,
+  },
+  classAssigned: [String],
   joiningDate: Date,
   employmentType: {
     type: String,
@@ -63,61 +74,60 @@ const staffSchema = new mongoose.Schema({
     default: 'Permanent',
   },
   skills: [String],
+  certifications: [String],
   achievements: [String],
 
-  // ================================
-  // Optional Fields: Kitchen Staff
-  // ================================
-  shiftTiming: {
-    type: String,
-    enum: ['Morning', 'Evening', 'Night'],
+  // ============================
+  // Biodata-Specific Additions
+  // ============================
+  academicDetails: [
+    {
+      examination: { type: String, trim: true },
+      boardOrUniversity: { type: String, trim: true },
+      yearOfPassing: Number,
+      divisionOrGrade: { type: String, trim: true }
+    }
+  ],
+  researchProjectsCompleted: {
+    type: [String],
   },
-  areaAssigned: String,
-  foodSafetyCertified: {
-    type: Boolean,
-    default: false,
+  ongoingProjects: {
+    type: [String],
   },
-
-  // ================================
-  // Optional Fields: Library Staff
-  // ================================
-  section: {
-    type: String,
-    enum: ['Reference', 'Circulation', 'Digital', 'Periodicals'],
+  researchScholars: {
+    completedPhD: { type: Number, default: 0 },
+    continuingPhD: { type: Number, default: 0 },
+    completedMPhil: { type: Number, default: 0 },
+    continuingMPhil: { type: Number, default: 0 },
   },
-  issuedBooksCount: {
+  awardsReceived: [String],
+  booksPublished: {
     type: Number,
-    default: 0,
+    min: 0,
   },
-  isCatalogManager: {
-    type: Boolean,
-    default: false,
+  researchPapers: {
+    published: { type: Number, default: 0 },
+    communicated: { type: Number, default: 0 },
   },
-
-  // ================================
-  // Optional Fields: Management
-  // ================================
-  role: {
+  presentAddress: {
     type: String,
-    enum: ['Principal', 'Vice Principal', 'Director', 'Admin Officer'],
+    trim: true,
   },
-  responsibilities: [String],
+  contactInfo: {
+    altPhone: {
+      type: String,
+      match: /^\+[1-9]\d{6,14}$/,
+    },
+    emailAlt: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+  }
 
-  // ================================
-  // Optional Fields: Accounts
-  // ================================
-  financeLevel: {
-    type: String,
-    enum: ['Junior Accountant', 'Senior Accountant', 'Finance Manager'],
-  },
-  certifications: [String],
-  managesPayroll: {
-    type: Boolean,
-    default: false,
-  },
 }, {
   timestamps: true,
 });
 
 const Staff = mongoose.model('Staff', staffSchema);
-module.exports = {Staff};
+module.exports = { Staff };

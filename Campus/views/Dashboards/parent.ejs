@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Parent Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fef7ed; /* Light background */
+            color: #333;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #1e40af; /* Theme blue */
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .navbar .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+        }
+
+        .navbar nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .navbar nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar .user-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .navbar button {
+            padding: 0.6rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .navbar button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #f97316; /* Orange accent */
+        }
+        
+        .card p:first-child {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card .amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        /* Table Containers */
+        .table-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+            margin-bottom: 2.5rem; /* Space between tables */
+        }
+
+        .table-container h3 {
+            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            color: #1e3a8a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+        .status.present { background-color: #d1fae5; color: #065f46; }
+        .status.absent { background-color: #fee2e2; color: #991b1b; }
+        .status.paid { background-color: #dcfce7; color: #166534; }
+        .status.due { background-color: #fef9c3; color: #854d0e; }
+
+        .action-btn {
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none; /* For use as a link */
+            display: inline-block;
+        }
+        .view-btn { background-color: #3b82f6; }
+        .pay-btn { background-color: #22c55e; }
+        .loading-text { color: #64748b; font-style: italic; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar .top { flex-direction: column; align-items: stretch; }
+            .navbar nav, .navbar .user-actions { margin-top: 1rem; }
+            .main { padding: 1rem; }
+            
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { display: none; }
+            tr { border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
+            td { padding-left: 50%; position: relative; border: none; border-bottom: 1px solid #f1f5f9; }
+            td:last-child { border-bottom: none; }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                padding-left: 1rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="navbar">
+      <div class="top">
+        <div class="brand">Parent Portal</div>
+        <div class="user-actions">
+          <button id="childProfileBtn">Child's Profile</button>
+          <button id="changePasswordBtn">Change Password</button>
+          <button id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+      <nav>
+        <a href="/Parent/dashboard">Dashboard</a>
+        <a href="#attendance">Attendance</a>
+        <a href="#performance">Performance</a>
+        <a href="#results">Results</a>
+        <a href="#fees">Fees</a>
+      </nav>
+    </div>
+
+    <div class="main">
+      <div class="cards">
+        <div class="card">
+          <p>Overall Attendance</p>
+          <p class="amount" id="summary-attendance">...</p>
+        </div>
+        <div class="card">
+          <p>Fees Due</p>
+          <p class="amount" id="summary-fees">...</p>
+        </div>
+        <div class="card">
+          <p>Latest Grade</p>
+          <p class="amount" id="summary-grade">...</p>
+        </div>
+      </div>
+
+      <div id="attendance" class="table-container">
+        <h3>Recent Attendance</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-body">
+            </tbody>
+        </table>
+      </div>
+
+      <div id="performance" class="table-container">
+        <h3>Performance Reviews</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Review Date</th>
+              <th>Subject</th>
+              <th>Feedback</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="performance-body">
+            </tbody>
+        </table>
+      </div>
+
+      <div id="results" class="table-container">
+        <h3>Exam Results</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Exam</th>
+              <th>Subject</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+            </tbody>
+        </table>
+      </div>
+
+      <div id="fees" class="table-container">
+        <h3>Fee Payment Information</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Amount</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="fees-body">
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =================================================================
+    // MOCK BACKEND DATA & API
+    // In a real application, you would remove this entire section
+    // and use the real `fetch()` function to call your backend server.
+    // =================================================================
+    const MOCK_DATA = {
+        summary: { attendance: '92%', fees: '₹45,000', grade: 'A-' },
+        attendance: [
+            { date: '2025-08-01', subject: 'Mathematics', status: 'present' },
+            { date: '2025-07-31', subject: 'Physics', status: 'absent' },
+            { date: '2025-07-30', subject: 'History', status: 'present' }
+        ],
+        performance: [
+            { date: '2025-07-15', subject: 'Science', feedback: 'Excellent participation in lab activities.', url: '#' },
+            { date: '2025-07-12', subject: 'English', feedback: 'Needs to focus more on grammar.', url: '#' }
+        ],
+        results: [
+            { exam: 'Mid-Term Exam', subject: 'Mathematics', marks: '88 / 100', grade: 'A-' },
+            { exam: 'Mid-Term Exam', subject: 'Science', marks: '95 / 100', grade: 'A+' }
+        ],
+        fees: [
+            { invoice: 'INV-00123', amount: '₹45,000.00', dueDate: '2025-08-15', status: 'due', url: '#' },
+            { invoice: 'INV-00122', amount: '₹45,000.00', dueDate: '2025-05-15', status: 'paid', url: null }
+        ]
+    };
+
+    /**
+     * This function simulates a network request to a backend.
+     * @param {string} endpoint - The API endpoint to call.
+     * @returns {Promise<any>} A promise that resolves with mock data.
+     */
+    function mockFetch(endpoint) {
+        console.log(`Fetching from mock endpoint: ${endpoint}`);
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                switch (endpoint) {
+                    case '/api/parent/summary':
+                        resolve(MOCK_DATA.summary);
+                        break;
+                    case '/api/parent/attendance':
+                        resolve(MOCK_DATA.attendance);
+                        break;
+                    case '/api/parent/performance':
+                        resolve(MOCK_DATA.performance);
+                        break;
+                    case '/api/parent/results':
+                        resolve(MOCK_DATA.results);
+                        break;
+                    case '/api/parent/fees':
+                        resolve(MOCK_DATA.fees);
+                        break;
+                    default:
+                        reject(new Error('Unknown endpoint'));
+                }
+            }, 500 + Math.random() * 500); // Simulate network delay
+        });
+    }
+
+    // =================================================================
+    // DYNAMIC RENDERING FUNCTIONS
+    // These functions take data and build the HTML content.
+    // =================================================================
+
+    function renderSummary(data) {
+        document.getElementById('summary-attendance').textContent = data.attendance;
+        document.getElementById('summary-fees').textContent = data.fees;
+        document.getElementById('summary-grade').textContent = data.grade;
+    }
+
+    function renderTable(tbodyId, data, rowBuilder) {
+        const tbody = document.getElementById(tbodyId);
+        tbody.innerHTML = ''; // Clear loading state
+        if (!data || data.length === 0) {
+            const row = tbody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 10; // A large colspan
+            cell.textContent = 'No data available.';
+            cell.classList.add('loading-text');
+            return;
+        }
+        data.forEach(item => {
+            const row = tbody.insertRow();
+            rowBuilder(row, item);
+        });
+    }
+    
+    function renderAttendance(data) {
+        renderTable('attendance-body', data, (row, item) => {
+            row.innerHTML = `
+                <td data-label="Date">${item.date}</td>
+                <td data-label="Subject">${item.subject}</td>
+                <td data-label="Status"><span class="status ${item.status}">${item.status}</span></td>
+            `;
+        });
+    }
+    
+    function renderPerformance(data) {
+        renderTable('performance-body', data, (row, item) => {
+             row.innerHTML = `
+                <td data-label="Review Date">${item.date}</td>
+                <td data-label="Subject">${item.subject}</td>
+                <td data-label="Feedback">${item.feedback}</td>
+                <td data-label="Action"><a href="${item.url}" class="action-btn view-btn">View Full</a></td>
+            `;
+        });
+    }
+    
+    function renderResults(data) {
+        renderTable('results-body', data, (row, item) => {
+            row.innerHTML = `
+                <td data-label="Exam">${item.exam}</td>
+                <td data-label="Subject">${item.subject}</td>
+                <td data-label="Marks">${item.marks}</td>
+                <td data-label="Grade">${item.grade}</td>
+            `;
+        });
+    }
+
+    function renderFees(data) {
+        renderTable('fees-body', data, (row, item) => {
+            const actionButton = item.status === 'due'
+                ? `<a href="${item.url}" class="action-btn pay-btn">Pay Now</a>`
+                : '--';
+            row.innerHTML = `
+                <td data-label="Invoice ID">${item.invoice}</td>
+                <td data-label="Amount">${item.amount}</td>
+                <td data-label="Due Date">${item.dueDate}</td>
+                <td data-label="Status"><span class="status ${item.status}">${item.status}</span></td>
+                <td data-label="Action">${actionButton}</td>
+            `;
+        });
+    }
+
+    async function loadDashboardData() {
+        const sections = [
+            { id: 'attendance-body', fetch: () => mockFetch('/api/parent/attendance'), render: renderAttendance },
+            { id: 'performance-body', fetch: () => mockFetch('/api/parent/performance'), render: renderPerformance },
+            { id: 'results-body', fetch: () => mockFetch('/api/parent/results'), render: renderResults },
+            { id: 'fees-body', fetch: () => mockFetch('/api/parent/fees'), render: renderFees }
+        ];
+
+        // Set initial loading states for tables
+        sections.forEach(section => {
+            document.getElementById(section.id).innerHTML = `<tr><td colspan="5" class="loading-text">Loading...</td></tr>`;
+        });
+
+        try {
+            const summaryData = await mockFetch('/api/parent/summary');
+            renderSummary(summaryData);
+
+            // Fetch and render table data
+            sections.forEach(async (section) => {
+                try {
+                    const data = await section.fetch();
+                    section.render(data);
+                } catch (error) {
+                    console.error(`Failed to load ${section.id}:`, error);
+                    const tbody = document.getElementById(section.id);
+                    tbody.innerHTML = `<tr><td colspan="5" class="loading-text" style="color: red;">Could not load data.</td></tr>`;
+                }
+            });
+
+        } catch (error) {
+            console.error("Failed to load initial summary data:", error);
+            document.getElementById('summary-attendance').textContent = 'Error';
+            document.getElementById('summary-fees').textContent = 'Error';
+            document.getElementById('summary-grade').textContent = 'Error';
+        }
+    }
+
+
+    window.onload = function () {
+      /*
+      // The token-based authentication logic would be here.
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = "/Parent/login";
+      }
+      */
+      
+      loadDashboardData();
+
+      
+      document.getElementById('logoutBtn')?.addEventListener('click', () => { 
+        alert("Logout clicked."); 
+      });
+      document.getElementById('changePasswordBtn')?.addEventListener('click', () => { 
+        alert("Change Password clicked."); 
+      });
+      document.getElementById('childProfileBtn')?.addEventListener('click', () => { 
+        alert("Child's Profile clicked."); 
+      });
+    };
+    document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+  </script>
+
+</body>
+</html>

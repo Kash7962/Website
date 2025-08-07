@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    form {
+      max-width: 500px;
+      margin: auto;
+      font-family: sans-serif;
+    }
+    input, label, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    input[readonly] {
+      background: #f0f0f0;
+    }
+
+    /* Flash and popup styles */
+    #errorPopupContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #errorPopupContainer * {
+      box-sizing: border-box;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #closeErrorPopup:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Flash Message Container -->
+  <div id="flashMessageContainer"></div>
+
+  <h2 style="text-align: center;">Admin Profile</h2>
+
+  <form id="adminProfileForm">
+    <label for="adminID">Admin ID</label>
+    <input type="text" id="adminID" value="<%= admin.adminID %>" readonly>
+
+    <label for="role">Role</label>
+    <input type="text" id="role" value="<%= admin.role %>" readonly>
+
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" value="<%= admin.name %>" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="<%= admin.email %>" required>
+
+    <label for="phone">Phone</label>
+    <input type="text" id="phone" name="phone" value="<%= admin.phone %>" required>
+
+    <button type="submit">Update Profile</button>
+  </form>
+
+  <script>
+    async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                    const html = await res.text();
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+
+                    const popup = tempDiv.querySelector('#errorPopupContainer');
+                    const scripts = tempDiv.querySelectorAll('script');
+
+                    if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            newScript.src = script.src;
+                        } else {
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                        });
+                        // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    } else {
+                        // alert('An unknown error occurred.');
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    }
+
+                    return;
+                    }
+
+                    // alert('Server error: unexpected content type.');
+                    showFlashMessage('error', 'Server error: unexpected content type.');
+                    // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    
+                }
+
+    function showFlashMessage(type, message, duration = 4000) {
+      const container = document.getElementById('flashMessageContainer');
+      const msg = document.createElement('div');
+      msg.classList.add('flash-message');
+      msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+      msg.textContent = message;
+
+      container.appendChild(msg);
+
+      setTimeout(() => {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 500);
+      }, duration);
+    }
+
+    window.onload = async () => {
+      const token = localStorage.getItem('token');
+    //   if (!token) {
+    //     showFlashMessage('error', 'No token found. Please log in.');
+    //     return;
+    //   }
+
+      try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                       try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const role = payload.role;
+
+                        if (role !== 'Super Admin' && role !== 'Admin') {
+                        showFlashMessage('error', 'Unauthorized access.');
+                        setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                        }
+                    } catch (err) {
+                        console.error('Failed to decode JWT:', err);
+                        showFlashMessage('error', 'Invalid token.');
+                    }
+                    
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('adminProfileForm');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        if (!token) {
+          showFlashMessage('error', 'Authentication token missing.');
+          return;
+        }
+
+        const body = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim().toLowerCase(),
+          phone: form.phone.value.trim()
+        };
+
+        try {
+          const res = await fetch('/admin/profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (!res.ok) {
+            await handleServerError(res);
+            return;
+          }
+
+          showFlashMessage('success', 'Profile updated successfully!');
+        } catch (err) {
+          console.error(err);
+          showFlashMessage('error', 'Something went wrong.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

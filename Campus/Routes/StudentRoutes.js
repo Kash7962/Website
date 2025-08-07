@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { showRegistrationForm, submitAdmissionForm, loginUser, googleLogin, forgotPassword, resetPassword, changePassword, logout, getAllCourses, getStudentProfile } = require('../Controllers/StudentController.js');
+const { showRegistrationForm, submitAdmissionForm, loginUser, googleLogin, forgotPassword, resetPassword, changePassword, logout, getAllCourses } = require('../Controllers/StudentController.js');
 const { studentValidator } = require('../validators/schema.js');
 const { verifyToken } = require('../middlewares/middleware.js');
 
@@ -31,13 +31,7 @@ router.get('/dashboard', verifyToken, (req, res) => {
   res.render('Dashboards/student', { title: 'Dashboard Student' });
 });
 
-router.get('/profile', verifyToken, (req, res) => {
-  res.render('Student/profile', { title: 'Student Profile' });
-});
-
 router.get('/get-courses', verifyToken, getAllCourses);
-
-router.get('/profile/:id', verifyToken, getStudentProfile);
 
 router.post('/login', studentValidator, loginUser);
 

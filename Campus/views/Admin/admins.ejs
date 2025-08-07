@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Admins</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+
+    #errorPopupContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #errorPopupContainer * {
+      box-sizing: border-box;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #closeErrorPopup:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .admin-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .admin-info p {
+      margin: 0.25rem 0;
+    }
+
+    .admin-actions {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Flash message & error popup styles unchanged... */
+
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <main class="container">
+    <h1>All Admins</h1>
+
+    <div class="top-actions">
+      <a href="/Admin/register" class="btn btn-primary">➕ Create New Admin</a>
+    </div>
+
+    <div id="adminList" class="admin-list">
+      <% admins.forEach(admin => { %>
+        <div class="admin-card">
+          <div class="admin-info">
+            <p><strong>ID:</strong> <%= admin.adminID %></p>
+            <p><strong>Name:</strong> <%= admin.name %></p>
+            <p><strong>Email:</strong> <%= admin.email %></p>
+            <p><strong>Status:</strong> <%= admin.isActive ? 'Active' : 'Inactive' %></p>
+          </div>
+          <div class="admin-actions">
+            <a href="/Admin/update/<%= admin._id %>" class="btn">✏️ Update</a>
+            <form class="delete-admin-form" data-id="<%= admin._id %>">
+            <button type="submit" class="btn">🗑️ Delete</button>
+            </form>
+
+            <!-- <form method="POST" action="/Admin/toggle-status/<%= admin._id %>" style="display:inline;">
+              <button type="submit" class="btn">🔄 Toggle Status</button>
+            </form> -->
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+
+  <script>
+    window.onload = async () => {
+      const token = localStorage.getItem('token');
+    //   if (!token) {
+    //     showFlashMessage('error', 'No token found. Please log in.');
+    //   }
+       try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const role = payload.role;
+
+                        if (role !== 'Super Admin') {
+                        showFlashMessage('error', 'Unauthorized access.');
+                        setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                        }
+                    } catch (err) {
+                        console.error('Failed to decode JWT:', err);
+                        showFlashMessage('error', 'Invalid token.');
+                    }
+                    };
+     async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                    const html = await res.text();
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+
+                    const popup = tempDiv.querySelector('#errorPopupContainer');
+                    const scripts = tempDiv.querySelectorAll('script');
+
+                    if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            newScript.src = script.src;
+                        } else {
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                        });
+                        // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    } else {
+                        // alert('An unknown error occurred.');
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    }
+
+                    return;
+                    }
+
+                    // alert('Server error: unexpected content type.');
+                    showFlashMessage('error', 'Server error: unexpected content type.');
+                    // setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                }
+    function showFlashMessage(type, message, duration = 4000) {
+      const container = document.getElementById('flashMessageContainer');
+      const msg = document.createElement('div');
+      msg.classList.add('flash-message');
+      msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+      msg.textContent = message;
+
+      container.appendChild(msg);
+
+      setTimeout(() => {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 500);
+      }, duration);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-admin-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!confirm('Are you sure you want to delete this admin?')) return;
+
+        const adminId = form.dataset.id;
+
+        try {
+          const res = await fetch(`/Admin/delete/${adminId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!res.ok) {
+            return handleServerError(res); // Your standard error popup handler
+          }
+
+          const data = await res.json();
+          showFlashMessage('success', data.message || 'Admin deleted successfully');
+          setTimeout(() => window.location.reload(), 1500)
+        //   window.location.reload(); // Or remove the row dynamically
+        } catch (err) {
+          console.error(err);
+          showFlashMessage('error', 'Failed to delete admin');
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>

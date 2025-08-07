@@ -4,493 +4,1176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KASH Foundation - Donate Today</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <meta name="description" content="Transform a life today with KASH Foundation. Support students through education, food, and accommodation." />
+    <meta name="author" content="KASH Foundation" />
+
+    <meta property="og:title" content="KASH Foundation - Donate Today" />
+    <meta property="og:description" content="Transform a life today with KASH Foundation. Support students through education, food, and accommodation." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #f9f9f9; /* A very light, neutral gray */
+            --bg-color: #f9f9f9;
             --card-bg: #ffffff;
-            --primary-text: #212529; /* Dark charcoal for text */
-            --secondary-text: #6c757d; /* Lighter gray for secondary text */
-            --accent-color: #F57C00; /* Vibrant and professional orange */
-            --accent-light: #fff3e0; /* A light, creamy orange for backgrounds */
-            --accent-gradient: linear-gradient(135deg, #FFA726, #F57C00); /* Orange gradient for buttons */
+            --primary-text: #212529;
+            --secondary-text: #6c757d;
+            --accent-color: #F57C00;
+            --accent-light: #fff3e0;
+            --accent-gradient: linear-gradient(135deg, #FFA726, #F57C00);
+            --accent-gradient-hero: linear-gradient(135deg, #F57C00, #E65100);
             --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.1);
             --border-color: #dee2e6;
+            --orange-50: #fff3e0;
+            --orange-100: #ffe0b2;
+            --orange-200: #ffcc02;
+            --orange-300: #ffb74d;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--secondary-text);
+            line-height: 1.6;
         }
 
-        /* --- Header --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
         .header {
-            background-color: var(--card-bg);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
             padding: 1rem 0;
         }
-        .navbar-brand {
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary-text) !important;
+            color: var(--primary-text);
+            text-decoration: none;
         }
-        .nav-link {
-            font-weight: 600;
-            color: var(--primary-text) !important;
-            transition: color 0.3s ease;
+
+        .nav-links {
+            display: none;
+            gap: 2rem;
+            list-style: none;
         }
-        .nav-link:hover {
-            color: var(--accent-color) !important;
+
+        .nav-links a {
+            color: var(--primary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-smooth);
         }
-        .btn-donate-header {
-            background: var(--accent-gradient);
-            color: white !important;
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            padding: 10px 25px;
             border-radius: 50px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-size: 0.875rem;
+        }
+
+        .btn-donate {
+            background: var(--accent-gradient);
+            color: white;
             box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
         }
-        .btn-donate-header:hover {
+
+        .btn-donate:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
+            color: white;
         }
-        
-        /* --- Hero Section --- */
-        .hero-section {
-            background-image: linear-gradient(rgba(40, 30, 20, 0.6), rgba(40, 30, 20, 0.6)), url(https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600);
+
+        .btn-hero {
+            background: var(--accent-gradient-hero);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(245, 124, 0, 0.4);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(245, 124, 0, 0.5);
+            color: white;
+        }
+
+        .btn-cause {
+            background: var(--accent-light);
+            color: var(--accent-color);
+            border: 1px solid #ffd8a8;
+            padding: 0.75rem 1.25rem;
+            text-align: left;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .btn-cause:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 70vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            background-image: linear-gradient(rgba(40, 30, 20, 0.6), rgba(40, 30, 20, 0.6)), url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=3600');
             background-size: cover;
             background-position: center;
-            padding: 6rem 1rem;
-            color: white;
-            text-align: center;
         }
-        .hero-section h1 {
-            font-size: 3.5rem;
+
+        .hero h1 {
+            font-size: 3rem;
             font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
         }
-        .hero-section p {
+
+        .hero p {
             font-size: 1.25rem;
             max-width: 700px;
-            margin: 1rem auto 0;
+            margin: 0 auto 2rem auto;
             opacity: 0.9;
         }
 
-        /* --- Content Sections --- */
-        .content-section {
-            padding: 5rem 0;
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+            .hero p {
+                font-size: 1.5rem;
+            }
         }
+
+        /* Sections */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-bg {
+            background-color: var(--card-bg);
+        }
+
         .section-title {
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--primary-text);
-            margin-bottom: 0.5rem;
             text-align: center;
+            margin-bottom: 1rem;
         }
+
         .section-subtitle {
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.125rem;
             max-width: 700px;
             margin: 0 auto 3rem auto;
             color: var(--secondary-text);
         }
 
-        /* --- Donation Card Grid --- */
-        .donation-card {
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-1 { grid-template-columns: 1fr; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        @media (min-width: 768px) {
+            .grid-md-2 { grid-template-columns: repeat(2, 1fr); }
+            .grid-md-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-lg-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* Cards */
+        .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 2rem;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: var(--transition-smooth);
             height: 100%;
             display: flex;
             flex-direction: column;
         }
-        .donation-card:hover {
+
+        .card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--card-shadow);
+            box-shadow: var(--card-shadow-hover);
         }
+
         .donation-card .amount {
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--primary-text);
+            margin-bottom: 0.5rem;
         }
-        .donation-card .card-title {
-            font-size: 1.1rem;
+
+        .donation-card .title {
+            font-size: 1.125rem;
             font-weight: 600;
             color: var(--accent-color);
-            margin-top: 0.5rem;
+            margin-bottom: 1rem;
         }
-        .donation-card .card-text {
+
+        .donation-card .description {
             flex-grow: 1;
-            margin: 1rem 0;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-text);
         }
-        .btn-donate-card {
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
-        }
-        .btn-donate-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
-        }
-        .form-select, .form-control {
-            border-radius: 8px;
-        }
-        
-        /* --- Approach Section --- */
+
+        /* Approach Section */
         .approach-item {
             text-align: center;
-            padding: 1rem;
-        }
-        .approach-icon {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 1rem;
-        }
-        .approach-item h5 {
-            font-weight: 600;
-            color: var(--primary-text);
+            padding: 1.5rem;
         }
 
-        /* --- Our Causes Section --- */
-        .causes-banner {
-            background-color: var(--card-bg);
-            padding: 3rem;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-        }
-        .causes-links {
-            display: flex;
-            flex-wrap: wrap;
+        .approach-icon {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
+            width: 4rem;
+            height: 4rem;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
         }
-        .causes-links a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 50px;
-            background-color: var(--accent-light);
-            transition: all 0.3s ease;
-            border: 1px solid #ffd8a8;
-        }
-        .causes-links a:hover {
-            background-color: var(--accent-color);
+
+        .approach-icon svg {
+            width: 2rem;
+            height: 2rem;
             color: white;
         }
-        
-        /* --- Accordion for Payment Info --- */
-        .accordion-item {
-            border: 1px solid var(--border-color);
-            border-radius: 8px !important;
-            margin-bottom: 1rem;
-        }
-        .accordion-button {
+
+        .approach-item h3 {
+            font-size: 1.25rem;
             font-weight: 600;
             color: var(--primary-text);
-            border-radius: 8px !important;
+            margin-bottom: 1rem;
         }
-        .accordion-button:not(.collapsed) {
-            background-color: var(--accent-light);
+
+        /* Causes Section */
+        .causes-banner {
+            background: linear-gradient(to bottom right, var(--orange-50), var(--orange-100));
+            padding: 3rem;
+            border-radius: 1rem;
+            border: 1px solid var(--orange-200);
+        }
+
+        .causes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .causes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .causes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--primary-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.1);
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .table .amount-cell {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--accent-color);
         }
-        .accordion-button:focus { box-shadow: 0 0 0 0.25rem rgba(245, 124, 0, 0.25); }
-        .bank-details-table { text-align: left; }
-        .bank-details-table th { width: 35%; font-weight: 600; }
-        
-        /* --- Footer --- */
-        .footer {
-            background-color: #343a40;
-            padding: 4rem 0;
-            color: #adb5bd;
-        }
-        .footer h5 { color: #ffffff; font-weight: 600; }
-        .footer a { text-decoration: none; color: #adb5bd; transition: color 0.3s ease; }
-        .footer a:hover { color: #ffffff; }
 
+        /* Accordion */
+        .accordion {
+            margin-bottom: 1rem;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-header:hover {
+            background: var(--accent-light);
+        }
+
+        .accordion-header.active {
+            background: var(--accent-light);
+            color: var(--accent-color);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 1.5rem;
+            background: var(--card-bg);
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        /* Bank Details */
+        .bank-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .bank-details .label {
+            font-weight: 600;
+            color: var(--primary-text);
+        }
+
+        .bank-details .value {
+            color: var(--secondary-text);
+        }
+
+        /* Alert */
+        .alert {
+            background: #fef3cd;
+            border: 1px solid #faebcd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer h3, .footer h4 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer .footer-section {
+            margin-bottom: 2rem;
+        }
+
+        .footer .footer-links {
+            list-style: none;
+        }
+
+        .footer .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .donation-card .amount {
+                font-size: 2rem;
+            }
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-8 { margin-top: 2rem; }
+        .max-w-sm { max-width: 24rem; margin: 0 auto; }
+        .max-w-4xl { max-width: 56rem; margin: 0 auto; }
+        .highlight { background: var(--accent-light); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color); }
     </style>
 </head>
-<body>
 
-    <header class="header sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-light container">
-            <a class="navbar-brand" href="#">KASH FOUNDATION</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="#sponsor">Sponsor a Student</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#causes">Our Causes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#payment">Ways to Give</a></li>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="nav-brand">KASH FOUNDATION</a>
+                <ul class="nav-links">
+                    <li><a href="#sponsor">Sponsor a Student</a></li>
+                    <li><a href="#causes">Our Causes</a></li>
+                    <li><a href="#payment">Ways to Give</a></li>
                 </ul>
-                <a href="#sponsor" class="btn btn-donate-header">Donate Now</a>
-            </div>
-        </nav>
+                <a href="#sponsor" class="btn btn-donate">Donate Now</a>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section class="hero-section">
+        <section class="hero">
             <div class="container">
                 <h1>Transform a Life Today</h1>
                 <p>Your open-hearted contribution can make a profound difference in the lives of hundreds of students who reside and study at our campus.</p>
+                <a href="#sponsor" class="btn btn-hero">Start Making a Difference</a>
             </div>
         </section>
 
-        <section id="sponsor" class="content-section">
+        <section id="sponsor" class="section">
             <div class="container">
                 <h2 class="section-title">Sponsor a Student</h2>
-                <p class="section-subtitle">Choose an amount or enter your own to empower a student's educational journey. 80.5% of funds go directly to their education, food, and accommodation.</p>
+                <p class="section-subtitle">
+                    Choose an amount or enter your own to empower a student's educational journey. 
+                    <strong style="color: var(--accent-color);">80.5% of funds</strong> go directly to their education, food, and accommodation.
+                </p>
 
-                <div class="d-flex justify-content-center justify-content-md-end mb-4">
-                    <div style="max-width: 250px;">
-                        <label for="currencySelect" class="form-label fw-bold">Select Currency:</label>
-                        <select class="form-select" id="currencySelect" onchange="updateCurrency()">
+                <div class="text-center mb-8">
+                    <div class="max-w-sm">
+                        <label for="currencySelect" class="form-label">Select Currency:</label>
+                        <select id="currencySelect" class="form-select" onchange="updateCurrency()">
                             <option value="INR">Indian Rupees (INR)</option>
                             <option value="USD">US Dollar (USD)</option>
                             <option value="EUR">Euro (EUR)</option>
+                            <option value="KHR">Cambodian Riel (KHR)</option>
                             <option value="GBP">British Pound (GBP)</option>
                             <option value="AUD">Australian Dollar (AUD)</option>
+                            <option value="CAD">Canadian Dollar (CAD)</option>
+                            <option value="JPY">Japanese Yen (JPY)</option>
+                            <option value="CNY">Chinese Yuan (CNY)</option>
+                            <option value="SGD">Singapore Dollar (SGD)</option>
+                            <option value="ZAR">South African Rand (ZAR)</option>
+                            <option value="BRL">Brazilian Real (BRL)</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="row g-4">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="donation-card">
-                            <div class="amount" data-inr="5800">₹5,800</div>
-                            <h5 class="card-title">Provide Meals</h5>
-                            <p class="card-text">Nourishing meals for a student for a full month.</p>
-                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Feed the Students')">Support Now</button>
-                        </div>
+                <div class="grid grid-1 grid-md-2 grid-lg-3 mb-8">
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="10000">₹10,000</div>
+                        <h3 class="title">Educational Kit</h3>
+                        <p class="description">Books, supplies, and learning materials for one semester.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(10000, 'Educational Kit')">Sponsor Now</button>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="donation-card">
-                            <div class="amount" data-inr="10000">₹10,000</div>
-                            <h5 class="card-title">Educational Kit</h5>
-                            <p class="card-text">Books, supplies, and learning materials for one semester.</p>
-                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Sponsor Education')">Sponsor Now</button>
-                        </div>
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="15000">₹15,000</div>
+                        <h3 class="title">Monthly Support</h3>
+                        <p class="description">Complete monthly support including meals and accommodation.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(15000, 'Monthly Support')">Sponsor Now</button>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="donation-card">
-                            <div class="amount" data-inr="30000">₹30,000</div>
-                            <h5 class="card-title">Semester Fee</h5>
-                            <p class="card-text">Cover the full tuition and academic fees for one semester.</p>
-                            <button class="btn-donate-card" onclick="redirectToDonationBox(this, 'Sponsor Education')">Sponsor Now</button>
-                        </div>
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="30000">₹30,000</div>
+                        <h3 class="title">Semester Fee</h3>
+                        <p class="description">Cover the full tuition and academic fees for one semester.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(30000, 'Semester Fee')">Sponsor Now</button>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="donation-card">
-                            <h5 class="card-title mt-0">Give Any Amount</h5>
-                            <p class="card-text flex-grow-0">Your custom contribution makes a huge impact.</p>
-                            <input type="number" class="form-control mb-3" id="customAmount" placeholder="Enter Amount">
-                            <button class="btn-donate-card" onclick="redirectCustomAmount()">Donate Custom</button>
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="60000">₹60,000</div>
+                        <h3 class="title">Half Year Support</h3>
+                        <p class="description">Complete educational and living support for 6 months.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(60000, 'Half Year Support')">Sponsor Now</button>
+                    </div>
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="90000">₹90,000</div>
+                        <h3 class="title">Annual Basics</h3>
+                        <p class="description">Essential educational support for a full academic year.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(90000, 'Annual Basics')">Sponsor Now</button>
+                    </div>
+                    <div class="card donation-card">
+                        <div class="amount" data-inr="120000">₹1,20,000</div>
+                        <h3 class="title">Full Year Sponsorship</h3>
+                        <p class="description">Complete sponsorship covering all educational and living expenses for one year.</p>
+                        <button class="btn btn-donate" onclick="handleDonate(120000, 'Full Year Sponsorship')">Sponsor Now</button>
+                    </div>
+                </div>
+
+                <div class="max-w-sm">
+                    <div class="card">
+                        <h3 class="title text-center">Custom Donation Amount</h3>
+                        <div class="form-group">
+                            <label for="customAmount" class="form-label">Enter Amount:</label>
+                            <input type="number" id="customAmount" class="form-input" placeholder="0.00" min="0" step="0.01">
                         </div>
+                        <button class="btn btn-donate" style="width: 100%;" onclick="handleCustomDonate()">Donate Custom Amount</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="content-section bg-white">
+        <section class="section section-bg">
             <div class="container">
                 <h2 class="section-title">Our Approach</h2>
-                <div class="row mt-5">
-                    <div class="col-md-4 approach-item">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='9' cy='7' r='4'%3E%3C/circle%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87'%3E%3C/path%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'%3E%3C/path%3E%3C/svg%3E" class="approach-icon" alt="Community Icon">
-                        <h5>Community-Led</h5>
+                <p class="section-subtitle">
+                    We ensure Students are empowered with higher education through our institution residential program and develop holistically, with healthy minds, bodies, and spirits.
+                </p>
+
+                <div class="grid grid-1 grid-md-3">
+                    <div class="approach-item">
+                        <div class="approach-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3>Community-Led</h3>
                         <p>We work hand-in-hand with the community to address root causes of poverty, creating lasting change.</p>
                     </div>
-                    <div class="col-md-4 approach-item">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'%3E%3C/path%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'%3E%3C/path%3E%3C/svg%3E" class="approach-icon" alt="Student Icon">
-                        <h5>Student-Focused</h5>
+                    <div class="approach-item">
+                        <div class="approach-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <h3>Student-Focused</h3>
                         <p>We empower students with higher education and holistic development for long-term personal success.</p>
                     </div>
-                    <div class="col-md-4 approach-item">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23F57C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='16' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'%3E%3C/line%3E%3C/svg%3E" class="approach-icon" alt="Impact Icon">
-                        <h5>Maximum Impact</h5>
+                    <div class="approach-item">
+                        <div class="approach-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <h3>Maximum Impact</h3>
                         <p>We combine donations to make the biggest impact, ensuring that for every student you help, four more benefit.</p>
                     </div>
                 </div>
+
+                <div class="mt-8 highlight">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--primary-text); margin-bottom: 1rem; text-align: center;">When you support a Student education, you help them change their futures.</h3>
+                    <p style="font-size: 1.125rem; margin-bottom: 1.5rem; text-align: center;">
+                        We're building a world where children are safe and secure, free from abuse and violence.
+                    </p>
+                    <p style="text-align: center;">
+                        Help meet urgent needs and empower people with the tools to fight poverty. As part of our global community, 
+                        you can help deliver impact at scale to children in the hardest-to-reach places. Your generosity will support 
+                        a range of programs to help Student/children live life to the fullest.
+                    </p>
+                </div>
             </div>
         </section>
-        
-        <section id="causes" class="content-section">
+
+        <section id="causes" class="section">
             <div class="container">
                 <h2 class="section-title">Support a Specific Cause</h2>
-                <p class="section-subtitle">You can also choose to support a specific project that is critical to our campus development and student welfare. Click on any cause to learn more and donate.</p>
+                <p class="section-subtitle">
+                    You can also choose to support a specific project that is critical to our campus development and student welfare. 
+                    Click on any cause to learn more and donate.
+                </p>
+
                 <div class="causes-banner">
-                    <div class="causes-links">
-                        <a href="donationBox.html">Library Fund</a>
-                        <a href="donationBox1.html">CCTV Security</a>
-                        <a href="donationBox2.html">Dormitory Essentials</a>
-                        <a href="donationBox3.html">Dormitory Building</a>
-                        <a href="donationBox4.html">Sports Complex</a>
-                        <a href="donationBox5.html">College Extension</a>
+                    <div style="background: var(--card-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-color);">
+                        <h3 style="color: var(--accent-color); font-weight: 700; text-align: center;">Our Priority Causes</h3>
+                    </div>
+                    
+                    <div class="causes-grid">
+                        <a href="donationBox.html" class="btn btn-cause">Donate for Library</a>
+                        <a href="donationBox1.html" class="btn btn-cause">Donate for CCTV Camera</a>
+                        <a href="donationBox2.html" class="btn btn-cause">Donate for Dormitory Beds/Mattresses/Study Table</a>
+                        <a href="donationBox3.html" class="btn btn-cause">Donate for Dormitary building</a>
+                        <a href="donationBox4.html" class="btn btn-cause">Donate for Sports</a>
+                        <a href="donationBox5.html" class="btn btn-cause">Donate for college building for mass education for class 9 & 10</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="payment" class="content-section bg-white">
+        <section class="section section-bg">
             <div class="container">
-                <h2 class="section-title">Other Ways to Give</h2>
-                <p class="section-subtitle">We welcome direct bank transfers. Please see the details below. All donations are eligible for 80G tax benefits.</p>
-                
-                <div class="accordion" id="paymentAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                Domestic Donations (NEFT/RTGS/UPI)
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#paymentAccordion">
-                            <div class="accordion-body">
-                                <table class="table table-borderless bank-details-table">
-                                    <tbody>
-                                        <tr><th>Bank Name:</th><td>HDFC Bank</td></tr>
-                                        <tr><th>Account Name:</th><td>Karun Shanti (KASH) Campus</td></tr>
-                                        <tr><th>Account Number:</th><td>[Your Account Number Here]</td></tr>
-                                        <tr><th>IFSC Code:</th><td>[Your IFSC Code Here]</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                Foreign/International Donations (FCRA)
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#paymentAccordion">
-                            <div class="accordion-body">
-                                <table class="table table-borderless bank-details-table">
-                                     <tbody>
-                                        <tr><th>Bank Name:</th><td>State Bank of India</td></tr>
-                                        <tr><th>Account Name:</th><td>Solidarity For Developing Communities</td></tr>
-                                        <tr><th>Account No:</th><td>40062282417 (FCRA CURRENT ACCOUNT)</td></tr>
-                                        <tr><th>Bank Address:</th><td>FCRA Cell, 4th Floor, SBI, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</td></tr>
-                                        <tr><th>IFSC Code:</th><td>SBIN0000691</td></tr>
-                                        <tr><th>Swift Code:</th><td>SBININBB104</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                <h2 class="section-title">Feed the Students</h2>
+                <p class="section-subtitle">
+                    Your Open hearted Contribution may make a difference in lives of Hundreds of Students who reside and study at our Institutional program campus.
+                </p>
+
+                <div class="text-center mb-8">
+                    <div style="background: linear-gradient(to right, var(--orange-100), var(--orange-200)); padding: 2rem; border-radius: 12px; max-width: 600px; margin: 0 auto;">
+                        <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color); margin-bottom: 0.5rem;">Food for Education</h3>
+                        <p style="font-size: 1.125rem; color: var(--primary-text);">Help Create a Hunger free world</p>
                     </div>
                 </div>
-                
-                <div class="alert alert-warning mt-4" role="alert">
-                  <h5 class="alert-heading fw-bold">Important Request!</h5>
-                  <p class="mb-0">After making a direct bank transfer, please send a screenshot with your full address and PAN details to us via WhatsApp at <strong>+91 9437828822</strong> or email at <strong>SOLIDNGO5@gmail.com</strong> to receive your tax receipt.</p>
+
+                <div class="text-center mb-8">
+                    <div class="max-w-sm">
+                        <label for="currencySelect2" class="form-label">Select Currency:</label>
+                        <select id="currencySelect2" class="form-select" onchange="updateCurrency2()">
+                            <option value="INR">Indian Rupees (INR)</option>
+                            <option value="USD">US Dollar (USD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="KHR">Cambodian Riel (KHR)</option>
+                            <option value="GBP">British Pound (GBP)</option>
+                            <option value="AUD">Australian Dollar (AUD)</option>
+                            <option value="CAD">Canadian Dollar (CAD)</option>
+                            <option value="JPY">Japanese Yen (JPY)</option>
+                            <option value="CNY">Chinese Yuan (CNY)</option>
+                            <option value="SGD">Singapore Dollar (SGD)</option>
+                            <option value="ZAR">South African Rand (ZAR)</option>
+                            <option value="BRL">Brazilian Real (BRL)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="background: rgba(245, 124, 0, 0.1); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; text-align: center; color: var(--accent-color); margin-bottom: 1.5rem;">
+                        Sponsor the kitchen and Cafeteria with place for dinning
+                    </h3>
+                    <p style="text-align: center; margin-bottom: 2rem;">
+                        for Kitchen construction and Dinning place for 500 Students I support
+                    </p>
+
+                    <div style="overflow-x: auto;">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="5800">₹5,800</td>
+                                    <td style="font-size: 0.875rem;">Monthly meal support for one student</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(5800)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="29000">₹29,000</td>
+                                    <td style="font-size: 0.875rem;">Kitchen equipment and supplies</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(29000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="58000">₹58,000</td>
+                                    <td style="font-size: 0.875rem;">Monthly food for 10 students</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(58000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="100000">₹1,00,000</td>
+                                    <td style="font-size: 0.875rem;">Kitchen infrastructure support</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(100000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="150000">₹1,50,000</td>
+                                    <td style="font-size: 0.875rem;">Cafeteria seating and dining setup</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(150000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="250000">₹2,50,000</td>
+                                    <td style="font-size: 0.875rem;">Complete kitchen renovation</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(250000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="500000">₹5,00,000</td>
+                                    <td style="font-size: 0.875rem;">New kitchen construction phase</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(500000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">I support</td>
+                                    <td class="amount-cell amount2" data-inr2="1000000">₹10,00,000</td>
+                                    <td style="font-size: 0.875rem;">Complete kitchen and cafeteria with dining place for 500 students</td>
+                                    <td><button class="btn btn-donate" onclick="handleDonate2(1000000)">Donate</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 500;">Donate any Amount</td>
+                                    <td>
+                                        <input type="number" id="customAmount2" class="form-input" placeholder="Enter Amount" min="0" step="0.01" style="width: 150px;">
+                                    </td>
+                                    <td style="font-size: 0.875rem;">Custom contribution amount</td>
+                                    <td><button class="btn btn-donate" onclick="handleCustomDonate2()">Donate</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="text-center highlight">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color); margin-bottom: 1rem;">What people say about SOLID Hunger for life Program</h3>
+                    <div style="background: var(--card-bg); border-radius: 8px; padding: 1.5rem; max-width: 600px; margin: 0 auto; box-shadow: var(--card-shadow);">
+                        <p style="font-size: 1.125rem; font-style: italic;">
+                            "SOLID is doing great job of feeding adolescents and hungry people. It's the most genuine activity and a sincere effort to feed the needy."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="payment" class="section">
+            <div class="container">
+                <h2 class="section-title">Other Ways to Give</h2>
+                <p class="section-subtitle">
+                    We welcome direct bank transfers and various payment methods. All donations are eligible for 80G tax benefits.
+                </p>
+
+                <div class="max-w-4xl">
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                                <span>Domestic Donations (NEFT/RTGS/UPI)</span>
+                            </div>
+                            <div class="accordion-content active">
+                                <div style="background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                                    <h4 style="font-weight: 600; color: var(--accent-color); margin-bottom: 1rem;">HDFC Bank Details</h4>
+                                    <div class="bank-details">
+                                        <span class="label">Bank Name:</span>
+                                        <span class="value">HDFC Bank</span>
+                                        <span class="label">Account Name:</span>
+                                        <span class="value">Karun Shanti (KASH) Campus</span>
+                                        <span class="label">Account Number:</span>
+                                        <span class="value">[Account Number]</span>
+                                        <span class="label">IFSC Code:</span>
+                                        <span class="value">[IFSC Code]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
+                                <span>UPI Payments (Google Pay, BHIM, Phone Pe, PayTM)</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div style="background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                                    <p style="margin-bottom: 1rem;">
+                                        You can donate using any UPI app including Google Pay, BHIM, PhonePe, PayTM and others.
+                                    </p>
+                                    <div style="background: rgba(245, 124, 0, 0.1); padding: 1rem; border-radius: 8px;">
+                                        <p style="font-size: 0.875rem;">
+                                            <strong>UPI ID:</strong> [UPI ID will be provided]
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="6" y2="12"></line>
+                                    <line x1="18" y1="12" x2="22" y2="12"></line>
+                                    <line x1="12" y1="2" x2="12" y2="6"></line>
+                                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                                </svg>
+                                <span>Foreign/International Donations (FCRA)</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div style="background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                                    <h4 style="font-weight: 600; color: var(--accent-color); margin-bottom: 1rem;">State Bank of India - FCRA Account</h4>
+                                    <div class="bank-details">
+                                        <span class="label">Bank Name:</span>
+                                        <span class="value">State Bank of India</span>
+                                        <span class="label">Account Name:</span>
+                                        <span class="value">Solidarity For Developing Communities</span>
+                                        <span class="label">Account No:</span>
+                                        <span class="value">40062282417 (FCRA CURRENT ACCOUNT)</span>
+                                        <span class="label">Bank Address:</span>
+                                        <span class="value">FCRA Cell, 4th Floor, State Bank of India, New Delhi Main Branch, 11, Sansad Marg, New Delhi-110001</span>
+                                        <span class="label">Branch Code:</span>
+                                        <span class="value">00691</span>
+                                        <span class="label">IFSC Code:</span>
+                                        <span class="value">SBIN0000691</span>
+                                        <span class="label">Swift Code:</span>
+                                        <span class="value">SBININBB104</span>
+                                        <span class="label">Account Opening Date:</span>
+                                        <span class="value">08.03.2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <strong>Important Request!</strong> After making a direct bank transfer, please send a screenshot with your full address and PAN details to us via WhatsApp at <strong>+91 9437828822</strong> or email at <strong>SOLIDNGO5@gmail.com</strong> to receive your tax receipt.
+                    </div>
+
+                    <div class="grid grid-1 grid-md-2 mt-8">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem;">
+                            <h3 style="font-weight: 600; color: var(--accent-color); margin-bottom: 0.75rem;">Tax Benefits</h3>
+                            <p style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                <strong>AVAIL 80G BENEFITS ON ALL DONATIONS MADE TO SOLID-KASH</strong>
+                            </p>
+                            <p style="font-size: 0.75rem;">
+                                EXEMPTION ORDER REF NO: AAFTS2598QF20212 / DT: 23 SEPT 2021 FROM AY 2022-23<br />
+                                EXPIRES ON: AY 2026-27
+                            </p>
+                        </div>
+
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem;">
+                            <h3 style="font-weight: 600; color: var(--accent-color); margin-bottom: 0.75rem;">International Donations</h3>
+                            <p style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                <strong>INTERNATIONAL DONATION MADE TO SOLID-KASH</strong>
+                            </p>
+                            <p style="font-size: 0.75rem;">
+                                MADE UNDER FOREIGN CONTRIBUTION REGULATION ACT APPROVAL REGISTRATION NO: 104910070/FROM AY 1 APRIL 2022 EXPIRES ON: AY 2026-27
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <div style="background: linear-gradient(to right, var(--orange-100), var(--orange-200)); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                            <p style="font-size: 0.875rem; color: var(--primary-text);">
+                                <strong>For CSR related Query, Please call - +91 9178178129 on WhatsApp</strong>
+                            </p>
+                        </div>
+                        <div style="background: linear-gradient(to right, var(--orange-100), var(--orange-200)); border-radius: 8px; padding: 1rem;">
+                            <p style="font-size: 0.875rem; color: var(--primary-text);">
+                                <strong>For Foreign/International donation Please click here</strong>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
-    
+
     <footer class="footer">
         <div class="container">
-            <div class="row gy-4">
-                <div class="col-lg-4">
-                    <h5>KASH FOUNDATION</h5>
-                    <p>Empowering marginalized students through quality education and holistic development. Join us in building a brighter future.</p>
+            <div class="grid grid-1 grid-md-2 grid-lg-3" style="grid-template-columns: 2fr 1fr 1fr 1.5fr;">
+                <div class="footer-section">
+                    <h3>KASH FOUNDATION</h3>
+                    <p style="line-height: 1.6; margin-bottom: 1rem;">
+                        Empowering marginalized students through quality education and holistic development. 
+                        Join us in building a brighter future.
+                    </p>
                 </div>
-                <div class="col-lg-2 col-md-4 col-6">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#sponsor">Sponsor</a></li>
+
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#sponsor">Sponsor a Student</a></li>
                         <li><a href="#causes">Our Causes</a></li>
-                        <li><a href="FAQ.html">FAQ</a></li>
+                        <li><a href="#payment">Ways to Give</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-3 col-md-4 col-6">
-                    <h5>Our Causes</h5>
-                    <ul class="list-unstyled">
+
+                <div class="footer-section">
+                    <h4>Our Causes</h4>
+                    <ul class="footer-links">
                         <li><a href="donationBox.html">Library Fund</a></li>
                         <li><a href="donationBox3.html">Building Fund</a></li>
                         <li><a href="donationBox4.html">Sports Fund</a></li>
+                        <li><a href="donationBox1.html">CCTV Security</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5>Contact Us</h5>
-                    <ul class="list-unstyled">
-                         <li>Hillpatna, Berhampur</li>
-                         <li>Odisha, India, 760005</li>
-                         <li class="mt-2"><strong>Email:</strong> <a href="mailto:SOLIDNGO5@gmail.com">SOLIDNGO5@gmail.com</a></li>
-                         <li><strong>Phone:</strong> <a href="tel:+919437828822">+91 9437828822</a></li>
-                    </ul>
+
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <div style="color: #94a3b8;">
+                        <p>Hillpatna, Berhampur</p>
+                        <p>District-Ganjam, Odisha, India</p>
+                        <p>Pin-760005</p>
+                        <p style="margin-top: 0.75rem;">
+                            <strong style="color: white;">Email:</strong><br />
+                            <a href="mailto:SOLIDNGO5@gmail.com">SOLIDNGO5@gmail.com</a>
+                        </p>
+                        <p>
+                            <strong style="color: white;">Phone:</strong><br />
+                            <a href="tel:+919437828822">+91 9437828822</a>
+                        </p>
+                    </div>
                 </div>
             </div>
-            <hr class="mt-4">
-            <p class="text-center text-muted small mb-0">&copy; 2025 KASH Foundation. All Rights Reserved.</p>
+
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2025 KASH Foundation. All Rights Reserved. | 
+                    <span style="margin-left: 0.5rem;">
+                        SOLID-KASH is a registered organization working for the betterment of society.
+                    </span>
+                </p>
+            </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Exchange rates and currency symbols
         const exchangeRates = {
-            INR: 1, USD: 0.012, EUR: 0.011, GBP: 0.0095, AUD: 0.018
-        };
-        const currencySymbols = {
-            INR: '₹', USD: '$', EUR: '€', GBP: '£', AUD: 'A$'
+            INR: 1,
+            USD: 0.012,
+            EUR: 0.011,
+            GBP: 0.0095,
+            AUD: 0.018,
+            CAD: 0.015,
+            JPY: 1.8,
+            CNY: 0.085,
+            SGD: 0.016,
+            ZAR: 0.22,
+            BRL: 0.062,
+            KHR: 48.5
         };
 
+        const currencySymbols = {
+            INR: '₹',
+            USD: '$',
+            EUR: '€',
+            GBP: '£',
+            AUD: 'A$',
+            CAD: 'C$',
+            JPY: '¥',
+            CNY: '¥',
+            SGD: 'S$',
+            ZAR: 'R',
+            BRL: 'R$',
+            KHR: '៛'
+        };
+
+        // Currency conversion functions
+        function convertAmount(inrAmount, currency) {
+            return Math.round(inrAmount * (exchangeRates[currency] || 1));
+        }
+
+        function formatAmount(amount, currency) {
+            if (currency === 'INR') {
+                return new Intl.NumberFormat('en-IN').format(amount);
+            }
+            return new Intl.NumberFormat('en-US').format(amount);
+        }
+
+        // Update currency for sponsor student section
         function updateCurrency() {
             const currency = document.getElementById('currencySelect').value;
-            const symbol = currencySymbols[currency] || currency;
-            document.querySelectorAll('.donation-card .amount').forEach(el => {
-                const inrAmount = parseFloat(el.getAttribute('data-inr'));
-                const convertedAmount = (inrAmount * (exchangeRates[currency] || 1));
-                
-                const formatter = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: currency,
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                });
-
-                if (currency === 'INR') {
-                     el.textContent = symbol + new Intl.NumberFormat('en-IN').format(convertedAmount);
-                } else {
-                     el.textContent = formatter.format(convertedAmount).replace(currency, symbol).trim();
-                }
+            const symbol = currencySymbols[currency];
+            
+            document.querySelectorAll('.amount[data-inr]').forEach(el => {
+                const inrAmount = parseInt(el.getAttribute('data-inr'));
+                const convertedAmount = convertAmount(inrAmount, currency);
+                el.textContent = symbol + formatAmount(convertedAmount, currency);
             });
         }
 
-        function redirectToDonationBox(button, cause) {
-            const card = button.closest('.donation-card');
-            const inrAmount = card.querySelector('.amount').getAttribute('data-inr');
-            const currency = document.getElementById('currencySelect').value;
-            window.location.href = `donationBoxGeneral.html?amount=${inrAmount}&currency=${currency}&donationFor=${encodeURIComponent(cause)}`;
+        // Update currency for feed students section
+        function updateCurrency2() {
+            const currency = document.getElementById('currencySelect2').value;
+            const symbol = currencySymbols[currency];
+            
+            document.querySelectorAll('.amount2[data-inr2]').forEach(el => {
+                const inrAmount = parseInt(el.getAttribute('data-inr2'));
+                const convertedAmount = convertAmount(inrAmount, currency);
+                el.textContent = symbol + formatAmount(convertedAmount, currency);
+            });
         }
 
-        function redirectCustomAmount() {
+        // Donation handlers
+        function handleDonate(inrAmount, title) {
+            const currency = document.getElementById('currencySelect').value;
+            const convertedAmount = convertAmount(inrAmount, currency);
+            window.open(`donationBox.html?amount=${convertedAmount}&currency=${currency}&cause=${encodeURIComponent(title)}`, '_blank');
+        }
+
+        function handleDonate2(inrAmount) {
+            const currency = document.getElementById('currencySelect2').value;
+            const convertedAmount = convertAmount(inrAmount, currency);
+            window.open(`donationBox.html?amount=${convertedAmount}&currency=${currency}&cause=Feed the Students`, '_blank');
+        }
+
+        function handleCustomDonate() {
             const amount = document.getElementById('customAmount').value;
-            if (amount && amount > 0) {
+            if (amount && parseFloat(amount) > 0) {
                 const currency = document.getElementById('currencySelect').value;
-                window.location.href = `donationBoxGeneral.html?amount=${amount}&currency=${currency}&donationFor=General Donation`;
+                window.open(`donationBox.html?amount=${amount}&currency=${currency}&cause=General Donation`, '_blank');
             } else {
                 alert('Please enter a valid amount.');
             }
         }
-        
-        window.onload = () => {
+
+        function handleCustomDonate2() {
+            const amount = document.getElementById('customAmount2').value;
+            if (amount && parseFloat(amount) > 0) {
+                const currency = document.getElementById('currencySelect2').value;
+                window.open(`donationBox.html?amount=${amount}&currency=${currency}&cause=Feed the Students - Custom`, '_blank');
+            } else {
+                alert('Please enter a valid amount.');
+            }
+        }
+
+        // Accordion functionality
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const allHeaders = document.querySelectorAll('.accordion-header');
+            const allContents = document.querySelectorAll('.accordion-content');
+
+            // Close all other accordions
+            allHeaders.forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('active');
+                }
+            });
+            allContents.forEach(c => {
+                if (c !== content) {
+                    c.classList.remove('active');
+                }
+            });
+
+            // Toggle current accordion
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
             updateCurrency();
-        };
+            updateCurrency2();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>

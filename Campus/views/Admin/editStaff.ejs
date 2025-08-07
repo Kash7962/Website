@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Staff</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSP-friendly embedded styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    button {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+   #errorPopupContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.4);
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  #errorPopupContainer * {
+    box-sizing: border-box;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  #errorPopupBox {
+    max-width: 400px;
+    width: 90%;
+    padding: 30px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  #errorPopupBox h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #e74c3c;
+  }
+
+  #errorPopupBox h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  #errorMessage {
+    font-size: 1rem;
+    color: #666;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border-left: 4px solid #e74c3c;
+    text-align: left;
+    word-wrap: break-word;
+  }
+
+  #closeErrorPopup {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 24px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  #closeErrorPopup:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+
+   #flashMessageContainer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    padding: 0 1rem;
+    pointer-events: none;
+  }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    pointer-events: all;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .flash-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+  }
+
+  .flash-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .academic-item {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  .academic-item input {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  #addAcademicDetailBtn {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #addAcademicDetailBtn:hover {
+    background: #0056b3;
+  }
+
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+  <h1>Edit Staff Details</h1>
+  <form id="editStaffForm">
+
+    <% const keys = ['name', 'email', 'phone', 'department', 'salary', 'designations', 'yearsOfExperience', 'joiningDate', 'employmentType', 'presentAddress']; %>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" name="name" value="<%= staff.name %>" required />
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" value="<%= staff.email %>" required />
+    </div>
+
+    <div class="form-group">
+      <label>Phone (in +91 format)</label>
+      <input type="text" name="phone" value="<%= staff.phone %>" required />
+    </div>
+
+    <div class="form-group">
+      <label>Department</label>
+      <select name="department" required>
+        <% ['Academic', 'Residential', 'Kitchen', 'Library', 'Sports'].forEach(dept => { %>
+          <option value="<%= dept %>" <%= staff.department === dept ? 'selected' : '' %>><%= dept %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Authorized?</label>
+      <select name="isAuthorized">
+        <option value="true" <%= staff.isAuthorized ? 'selected' : '' %>>Yes</option>
+        <option value="false" <%= !staff.isAuthorized ? 'selected' : '' %>>No</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Salary</label>
+      <input type="number" name="salary" value="<%= staff.salary || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Qualifications (comma separated)</label>
+      <input type="text" name="qualifications" value="<%= staff.qualifications?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Subjects (comma separated)</label>
+      <input type="text" name="subjects" value="<%= staff.subjects?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Designation</label>
+      <input type="text" name="designation" value="<%= staff.designation || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Class Assigned (comma separated)</label>
+      <input type="text" name="classAssigned" value="<%= staff.classAssigned?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Joining Date</label>
+      <input type="date" name="joiningDate" value="<%= staff.joiningDate ? staff.joiningDate.toISOString().split('T')[0] : '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Employment Type</label>
+      <select name="employmentType">
+        <% ['Permanent', 'Contract', 'Part-Time'].forEach(type => { %>
+          <option value="<%= type %>" <%= staff.employmentType === type ? 'selected' : '' %>><%= type %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Skills (comma separated)</label>
+      <input type="text" name="skills" value="<%= staff.skills?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Certifications (comma separated)</label>
+      <input type="text" name="certifications" value="<%= staff.certifications?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Achievements (comma separated)</label>
+      <input type="text" name="achievements" value="<%= staff.achievements?.join(', ') || '' %>" />
+    </div>
+    <div class="form-group">
+
+  <label>Academic Details</label>
+  <div id="academicDetailsContainer">
+  <% staff.academicDetails.forEach((detail, index) => { %>
+    <div class="academic-item" id="academicRow<%= index %>">
+      <input type="text" name="academicDetails[<%= index %>][examination]" value="<%= detail.examination %>" />
+      <input type="text" name="academicDetails[<%= index %>][boardOrUniversity]" value="<%= detail.boardOrUniversity %>" />
+      <input type="number" name="academicDetails[<%= index %>][yearOfPassing]" value="<%= detail.yearOfPassing %>" />
+      <input type="text" name="academicDetails[<%= index %>][divisionOrGrade]" value="<%= detail.divisionOrGrade %>" />
+      <button type="button" class="delete-academic-btn">🗑️ Delete</button>
+    </div>
+  <% }) %>
+</div>
+
+  <button type="button" id="addAcademicDetailBtn">+ Add More</button>
+    </div>
+    <div class="form-group">
+  <label>Research Scholars Supervised</label>
+  <input type="number" name="researchScholars[completedPhD]" placeholder="Completed PhD" value="<%= staff.researchScholars?.completedPhD || 0 %>" />
+  <input type="number" name="researchScholars[continuingPhD]" placeholder="Continuing PhD" value="<%= staff.researchScholars?.continuingPhD || 0 %>" />
+  <input type="number" name="researchScholars[completedMPhil]" placeholder="Completed MPhil" value="<%= staff.researchScholars?.completedMPhil || 0 %>" />
+  <input type="number" name="researchScholars[continuingMPhil]" placeholder="Continuing MPhil" value="<%= staff.researchScholars?.continuingMPhil || 0 %>" />
+</div>
+<div class="form-group">
+  <label>Awards Received (comma separated)</label>
+  <input type="text" name="awardsReceived" value="<%= staff.awardsReceived?.join(', ') || '' %>" />
+</div>
+
+    <div class="form-group">
+      <label>Research Projects Completed (comma separated)</label>
+      <input type="text" name="researchProjectsCompleted" value="<%= staff.researchProjectsCompleted?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Ongoing Projects (comma separated)</label>
+      <input type="text" name="ongoingProjects" value="<%= staff.ongoingProjects?.join(', ') || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Books Published</label>
+      <input type="number" name="booksPublished" value="<%= staff.booksPublished || 0 %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Research Papers - Published</label>
+      <input type="number" name="researchPapersPublished" value="<%= staff.researchPapers?.published || 0 %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Research Papers - Communicated</label>
+      <input type="number" name="researchPapersCommunicated" value="<%= staff.researchPapers?.communicated || 0 %>" />
+    </div>
+    
+    <div class="form-group">
+      <label>Present Address</label>
+      <textarea name="presentAddress"><%= staff.presentAddress || '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Alternate Phone (+91 format)</label>
+      <input type="text" name="altPhone" value="<%= staff.contactInfo?.altPhone || '' %>" />
+    </div>
+
+    <div class="form-group">
+      <label>Alternate Email</label>
+      <input type="email" name="emailAlt" value="<%= staff.contactInfo?.emailAlt || '' %>" autocomplete="off" />
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-save">Update</button>
+      <button type="button" id="deleteBtn" class="btn-delete">Delete</button>
+    </div>
+  </form>
+
+  <!-- CSP-compliant JS -->
+  <script>
+     window.onload = async () => {
+      const token = localStorage.getItem('token');
+      // if (!token) {
+      //   showFlashMessage('error', 'No token found. Please log in.');
+      //   return;
+      // }
+
+       try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                    try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const role = payload.role;
+
+                    if (role !== 'Super Admin' && role !== 'Admin') {
+                    showFlashMessage('error', 'Unauthorized access.');
+                    setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                    }
+                } catch (err) {
+                    console.error('Failed to decode JWT:', err);
+                    showFlashMessage('error', 'Invalid token.');
+                }
+                 };
+
+    async function handleServerError(res) {
+    const contentType = res.headers.get('Content-Type') || '';
+
+    if (contentType.includes('text/html')) {
+      const html = await res.text();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+
+      const popup = tempDiv.querySelector('#errorPopupContainer');
+      const scripts = tempDiv.querySelectorAll('script');
+
+      if (popup) {
+        document.body.prepend(popup);
+        scripts.forEach((script) => {
+          const newScript = document.createElement('script');
+          if (script.src) newScript.src = script.src;
+          else newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } else {
+        showFlashMessage('error', 'An unknown error occurred.');
+      }
+    } else {
+      showFlashMessage('error', 'Server error: unexpected content type.');
+    }
+  }
+
+    function showFlashMessage(type, message, duration = 4000) {
+      const container = document.getElementById('flashMessageContainer');
+      const msg = document.createElement('div');
+      msg.classList.add('flash-message', type === 'success' ? 'flash-success' : 'flash-error');
+      msg.textContent = message;
+      container.appendChild(msg);
+      setTimeout(() => msg.remove(), duration);
+    }
+
+    document.getElementById('editStaffForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      // Convert comma-separated fields to arrays
+      ['qualifications', 'subjects', 'classAssigned', 'skills', 'certifications', 'achievements', 'researchProjectsCompleted', 'ongoingProjects', 'awardsReceived'].forEach(key => {
+        if (data[key]) {
+          data[key] = data[key].split(',').map(v => v.trim()).filter(Boolean);
+        }
+      });
+
+      data.researchPapers = {
+        published: parseInt(data.researchPapersPublished || 0),
+        communicated: parseInt(data.researchPapersCommunicated || 0),
+      };
+
+      data.contactInfo = {
+        altPhone: data.altPhone?.trim() || '',
+        emailAlt: data.emailAlt?.trim() === '@' ? '' : data.emailAlt?.trim() || '',
+        };
+
+        delete data.altPhone;
+        delete data.emailAlt;
+        data.academicDetails = [];
+        const academicInputs = document.querySelectorAll('.academic-item');
+        academicInputs.forEach(item => {
+        const inputs = item.querySelectorAll('input');
+        const detail = {
+            examination: inputs[0].value.trim(),
+            boardOrUniversity: inputs[1].value.trim(),
+            yearOfPassing: parseInt(inputs[2].value),
+            divisionOrGrade: inputs[3].value.trim()
+        };
+        if (detail.examination) data.academicDetails.push(detail);
+        });
+
+        data.researchScholars = {
+        completedPhD: parseInt(data['researchScholars[completedPhD]'] || 0),
+        continuingPhD: parseInt(data['researchScholars[continuingPhD]'] || 0),
+        completedMPhil: parseInt(data['researchScholars[completedMPhil]'] || 0),
+        continuingMPhil: parseInt(data['researchScholars[continuingMPhil]'] || 0)
+        };
+        delete data['researchScholars[completedPhD]'];
+        delete data['researchScholars[continuingPhD]'];
+        delete data['researchScholars[completedMPhil]'];
+        delete data['researchScholars[continuingMPhil]'];
+
+
+      try {
+        const res = await fetch('/Admin/staff/update/<%= staff._id %>', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) return await handleServerError(res);
+        showFlashMessage('success', 'Staff details updated.');
+         setTimeout(() => window.history.back(), 1500);
+      } catch (err) {
+        showFlashMessage('error', 'Something went wrong.');
+      }
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to delete this staff?')) return;
+
+      try {
+        const res = await fetch('/Admin/staff/delete/<%= staff._id %>', { method: 'DELETE' });
+        if (!res.ok) return await handleServerError(res);
+        showFlashMessage('success', 'Staff deleted.');
+        setTimeout(() => window.location.href = '/Admin/staff/get', 1500);
+      } catch (err) {
+        showFlashMessage('error', 'Failed to delete.');
+      }
+    });
+
+    // Delete button for dynamically added rows
+        document.getElementById('addAcademicDetailBtn').addEventListener('click', () => {
+        const container = document.getElementById('academicDetailsContainer');
+        const index = container.children.length;
+
+        const rowId = `academicRow${index}`;
+        const deleteBtnId = `deleteRow${index}`;
+
+        const div = document.createElement('div');
+        div.classList.add('academic-item');
+        div.id = rowId;
+
+        div.innerHTML = `
+            <input type="text" name="academicDetails[${index}][examination]" placeholder="Examination" />
+            <input type="text" name="academicDetails[${index}][boardOrUniversity]" placeholder="Board/University" />
+            <input type="number" name="academicDetails[${index}][yearOfPassing]" placeholder="Year of Passing" />
+            <input type="text" name="academicDetails[${index}][divisionOrGrade]" placeholder="Division/Grade" />
+            <button type="button" id="${deleteBtnId}" class="delete-academic-btn">🗑️ Delete</button>
+        `;
+
+        container.appendChild(div);
+
+        // Attach delete handler to the new button
+        document.getElementById(deleteBtnId).addEventListener('click', () => {
+            const row = document.getElementById(rowId);
+            if (row) row.remove();
+        });
+        });
+
+        // Delete button for pre-existing rows (rendered from EJS)
+        window.addEventListener('DOMContentLoaded', () => {
+        const allDeleteBtns = document.querySelectorAll('.delete-academic-btn');
+        allDeleteBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+            const row = btn.closest('.academic-item');
+            if (row) row.remove();
+            });
+        });
+        });
+
+    
+
+  </script>
+</body>
+</html>

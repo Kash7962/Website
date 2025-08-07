@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    #errorPopupContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    #errorPopupContainer.fade-out {
+      animation: fadeOut 0.6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.9); }
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #e74c3c;
+      margin: 0;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      margin: 10px 0;
+      font-weight: 700;
+      color: #333;
+    }
+
+    #errorPopupBox h1,
+    #errorPopupBox h2,
+    #errorPopupBox #errorMessage {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: slideFadeIn 0.6s ease forwards;
+    }
+
+    #errorPopupBox h2 {
+      animation-delay: 0.1s;
+    }
+
+    #errorPopupBox #errorMessage {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: slideFadeIn 0.6s ease forwards;
+      animation-delay: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Error Popup Modal -->
+  <div id="errorPopupContainer">
+    <div id="errorPopupBox">
+      <h1>Oops!</h1>
+      <h2>Something went wrong!!!</h2>
+      <p id="errorMessage"><%= message || 'An unexpected error occurred. Please try again later.' %></p>
+      <a id="closeErrorPopup">Close</a>
+    </div>
+  </div>
+
+  <!-- Script to attach behavior -->
+  <script>
+    (function () {
+      function attachErrorPopupEvents() {
+        const closeBtn = document.getElementById('closeErrorPopup');
+        const container = document.getElementById('errorPopupContainer');
+
+        if (closeBtn && container) {
+          closeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            container.classList.add('fade-out');
+
+            // Wait for animation before removing
+            setTimeout(() => {
+              container.remove();
+            }, 600); // match fadeOut duration
+          });
+
+          closeBtn.addEventListener('mouseenter', () => {
+            closeBtn.style.backgroundColor = '#2980b9';
+            closeBtn.style.transform = 'translateY(-2px)';
+          });
+
+          closeBtn.addEventListener('mouseleave', () => {
+            closeBtn.style.backgroundColor = '#3498db';
+            closeBtn.style.transform = 'translateY(0)';
+          });
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachErrorPopupEvents);
+      } else {
+        setTimeout(attachErrorPopupEvents, 10);
+      }
+    })();
+  </script>
+</body>
+</html>

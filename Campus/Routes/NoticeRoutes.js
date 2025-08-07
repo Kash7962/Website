@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getNotices, getEvents, getPrograms } = require('../Controllers/ManagementController');
+const { getNotices, getEvents, getPrograms } = require('../Controllers/AdminController');
 
 // Public route
 router.get('/getNotices', getNotices);
