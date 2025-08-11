@@ -19,6 +19,7 @@ const AdminRoutes = require('./Routes/AdminRoutes.js');
 const cron = require('node-cron');
 // const { deleteExpiredLeaves } = require('./Controllers/LeaveController');
 const NoticeRoutes = require('./Routes/NoticeRoutes.js');
+const PaymentRoutes = require('./Routes/PaymentRoutes.js');
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
 const db = mongoose.connection;
@@ -35,27 +36,35 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
+
       scriptSrc: [
         "'self'",
         "'unsafe-inline'",
         "https://unpkg.com",
         "https://cdnjs.cloudflare.com",
         "https://accounts.google.com",
-        "https://apis.google.com"
+        "https://apis.google.com",
+        "https://maps.googleapis.com",
+        "https://cdn.jsdelivr.net" // ✅ Added for Bootstrap JS
       ],
+
       styleSrc: [
         "'self'",
         "'unsafe-inline'",
         "https://fonts.googleapis.com",
         "https://unpkg.com",
         "https://accounts.google.com",
-        "https://cdnjs.cloudflare.com"
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.jsdelivr.net" // ✅ Added for Bootstrap CSS
       ],
+
       fontSrc: [
         "'self'",
         "https://fonts.gstatic.com",
-        "https://cdnjs.cloudflare.com"
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com"
       ],
+
       imgSrc: [
         "'self'",
         "data:",
@@ -66,6 +75,7 @@ app.use(
         "https://upload.wikimedia.org",
         "https://images.pexels.com"
       ],
+
       frameSrc: [
         "'self'",
         "https://accounts.google.com",
@@ -74,6 +84,7 @@ app.use(
         "https://www.youtube.com",
         "https://www.youtube-nocookie.com"
       ],
+
       connectSrc: [
         "'self'",
         "https://unpkg.com",
@@ -81,8 +92,10 @@ app.use(
         "https://accounts.google.com",
         "https://clientservices.googleapis.com",
         "https://oauth2.googleapis.com",
-        "https://people.googleapis.com"
+        "https://people.googleapis.com",
+        "https://maps.googleapis.com"
       ],
+
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
@@ -93,11 +106,14 @@ app.use(
 
 
 
+
 // Additional Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 // app.use(session({
 //   secret: process.env.SESSION_SECRET || 'your-secret-key',
 //   resave: false,
@@ -120,6 +136,7 @@ app.use('/Manage', StaffManageRoutes);
 // app.use('/Staff/Leave', LeaveRoutes);
 app.use('/Admin', AdminRoutes);
 app.use('/Notices', NoticeRoutes);
+app.use('/Payment', PaymentRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

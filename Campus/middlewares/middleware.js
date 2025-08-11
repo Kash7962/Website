@@ -12,11 +12,13 @@ const verifyToken = async (req, res, next) => {
     return res.status(401).render('error/error', { message: 'Access denied!' });
   }
   // console.log("cookieToken:", cookieToken);
+  // console.log("bearerToken:", bearerToken);
   // Function to verify token and handle expiry
   const tryVerify = async (token) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // console.log(decoded?.role)
+    
+      // console.log(decoded?.department)
       return { success: true, decoded };
       
     } catch (err) {

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students Payments</title>
+
+  <!-- CSP-Friendly Embedded Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+    th {
+      background: #f2f2f2;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    .btn {
+      padding: 0.5rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-setDue {
+        background-color: #2563eb; /* nicer blue (Tailwind’s blue-600) */
+        color: white;
+        }
+
+        .btn-payment {
+        background-color: #22c55e; /* fresh green (Tailwind’s green-500) */
+        color: white;
+        }
+    #flashMessageContainer {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .flash-message {
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+    .flash-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .flash-error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h1>Students Payments Page</h1>
+
+  <% if (students.length === 0) { %>
+    <p style="text-align:center;">No students pending enrollment.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Course</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>DOB</th>
+          <th>Guardian</th>
+          <th>Class</th>
+          <th>Address</th>
+          <th>Fees Due</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% students.forEach(student => { %>
+          <tr>
+            <td><%= student.firstName %> <%= student.middleName || '' %> <%= student.lastName %></td>
+            <td><%= student.course || 'N/A' %></td>
+            <td><%= student.studentEmail %></td>
+            <td><%= student.studentPhone %></td>
+            <td><%= student.dob ? student.dob.toDateString() : '' %></td>
+            <td><%= student.guardian1Name %> (<%= student.guardian1Relation %>)</td>
+            <td><%= student.classAssigned %></td>
+            <td><%= student.feesDue %></td>
+            <td>
+              <%= student.address1 %>,
+              <%= student.city || '' %>,
+              <%= student.state %> - <%= student.zipcode %>
+            </td>
+            <td>
+              <button class="btn btn-setDue" data-id="<%= student._id %>">Set Due</button>
+              <button class="btn btn-payment" data-id="<%= student._id %>">Set Payment</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <!-- Scripts -->
+  <script>
+    async function handleServerError(res) {
+      const contentType = res.headers.get('Content-Type') || '';
+      if (contentType.includes('text/html')) {
+        const html = await res.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const popup = tempDiv.querySelector('#errorPopupContainer');
+        if (popup) {
+          document.body.prepend(popup);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function showFlashMessage(type, message) {
+      const container = document.getElementById('flashMessageContainer');
+      container.innerHTML = `<div class="flash-message flash-${type}">${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Redirect to joining form on enroll
+    //   document.querySelectorAll('.btn-enroll').forEach(btn => {
+    //     btn.addEventListener('click', () => {
+    //       const id = btn.dataset.id;
+    //       window.location.href = `'/Payment/manage/${id}`;
+    //     });
+    //   });
+
+      // Delete button handler
+        document.querySelectorAll('.btn-payment').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          window.location.href = `/Payment/manage/${id}`;
+        });
+      });
+
+        document.querySelectorAll('.btn-setDue').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          window.location.href = `/Payment/set-due/${id}`;
+        });
+      });
+
+    });
+  </script>
+</body>
+</html>

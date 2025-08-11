@@ -552,12 +552,17 @@
         <div class="sidebar" id="sidebar">
             <div class="brand">Teaching Dashboard</div>
             <nav>
-                <a href="/Staff/Teaching/profile" class="active">👤 Manage Profile</a>
-                <a href="/Staff/Teaching/manage-courses">📚 Manage Courses</a>
+                <a href="/Staff/dashboard/" class="active">🏠 Dashboard</a>
+                <!-- <a href="/Staff/Teaching/profile">👤 Manage Profile</a> -->
+                <!-- <a href="/Staff/Teaching/manage-courses">📚 Manage Courses</a>
                 <a href="/Staff/Teaching/students">👥 Students</a>
                 <a href="/Staff/Teaching/assignments">📝 Assignment</a>
                 <a href="#">💬 Communication Tools</a>
-                <a href="/Staff/Leave/dashboard">✈️ Leave Requests</a>
+                <a href="/Staff/Leave/dashboard">✈️ Leave Requests</a> -->
+                <a href="/Manage/pending-enrollment" data-permission="enroll_students">🎓 Enroll Students</a>
+                <a href="/Manage/studentsEnrolled" data-permission="edit_students">📝 Edit Students</a>
+                <a href="/Manage/payment" data-permission="students_payment">💰 Manage Payments</a>
+                <!-- <a href="/Manage/join" data-permission="direct_join_students">➕🎓 Direct Join Students</a> -->
             </nav>
         </div>
 
@@ -569,6 +574,7 @@
                 <div class="search-logout">
                     <input type="text" placeholder="Search..." />
                     <button id="changePasswordBtn">Change Password</button>
+                    <button id="profile">Profile</button>
                     <button id="logoutBtn">Log Out</button>
                 </div>
             </div>
@@ -710,6 +716,7 @@
         }
         window.onload = async function () {
              const token = localStorage.getItem('token');
+            //  console.log(token)
             // if (!token){
             //     showFlashMessage('error', 'Authentication failed. Redirecting to login page.');
             //         // alert('Authentication failed. Redirecting to login page.');
@@ -768,7 +775,7 @@
                     // console.log(role);
                     const allowedDepartments = ['Academic', 'Residential', 'Library', 'Kitchen', 'Sports'];
 
-                    if (!allowedDepartments.includes(department)) {
+                    if (!allowedDepartments.includes(role)) {
                         showFlashMessage('error', 'You are not authorized to access this page.');
                         setTimeout(() => window.location.href = '/Staff/login', 1500);
                         return;
@@ -787,10 +794,10 @@
                 }
 
                 const logoutBtn = document.getElementById('logoutBtn');
-            if (!logoutBtn) {
-                console.warn('Logout button not found');
-                return;
-            }
+                if (!logoutBtn) {
+                    console.warn('Logout button not found');
+                    return;
+                }
         
             logoutBtn.addEventListener('click', async function () {
                 console.log('Logout button clicked');
@@ -849,12 +856,98 @@
                     alert('Logout failed. Please try again.');
                 }
             });
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                    console.error('No token found');
+                    return;
+                    }
+                    // console.log('Token:', token);
+                    // Decode JWT to get staffId
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const staffId = payload._id;
+                    
+                    const res = await fetch('/Manage/get-permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ staffId })
+                    });
+
+                    if (!res.ok) {
+                    handleServerError(res);
+                    return;
+                    }
+
+                    const data = await res.json();
+                    const permissions = data.permissions || [];
+                    // console.log('Permissions:', permissions);
+                    // Hide all menu items not in permissions
+                    document.querySelectorAll('[data-permission]').forEach(item => {
+                    const requiredPerm = item.getAttribute('data-permission');
+                    if (!permissions.includes(requiredPerm)) {
+                        item.style.display = 'none';
+                    }
+                    });
+
+                } catch (err) {
+                    console.error('Error fetching permissions:', err);
+                }
+       
 
             }
          
-        document.getElementById('changePasswordBtn').addEventListener('click', () => {
-            window.location.href = '/Staff/change-password';
-        });
+                document.getElementById('changePasswordBtn').addEventListener('click', () => {
+                    window.location.href = '/Staff/change-password';
+                });
+
+                function showFlashMessage(type, message, duration = 4000) {
+                const container = document.getElementById('flashMessageContainer');
+                const msg = document.createElement('div');
+                msg.classList.add('flash-message');
+                msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+                msg.textContent = message;
+
+                container.appendChild(msg);
+
+                setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateY(-10px)';
+                setTimeout(() => msg.remove(), 500);
+                }, duration);
+            }
+
+            document.getElementById('profile').addEventListener('click', () => {
+                    window.location.href = '/Admin/profile';
+                });
+
+            async function handleServerError(res) {
+            const contentType = res.headers.get('Content-Type') || '';
+
+            if (contentType.includes('text/html')) {
+            const html = await res.text();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            const popup = tempDiv.querySelector('#errorPopupContainer');
+            const scripts = tempDiv.querySelectorAll('script');
+
+            if (popup) {
+                document.body.prepend(popup);
+                scripts.forEach((script) => {
+                const newScript = document.createElement('script');
+                if (script.src) newScript.src = script.src;
+                else newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+                });
+            } else {
+                showFlashMessage('error', 'An unknown error occurred.');
+            }
+            } else {
+            showFlashMessage('error', 'Server error: unexpected content type.');
+            }
+        }
     </script>
 </body>
 </html>

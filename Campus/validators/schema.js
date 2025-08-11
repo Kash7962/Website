@@ -1,5 +1,56 @@
 const { body, validationResult } = require('express-validator');
 
+const matricValidators = [
+  body('lastSchoolAttended').optional({ checkFalsy: true }).trim().escape(),
+  body('matricBoard').optional({ checkFalsy: true }).trim().escape(),
+  body('matricRollNo').optional({ checkFalsy: true }).trim().escape(),
+  body('matricYear')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1950, max: new Date().getFullYear() })
+    .withMessage('Matric year must be valid.')
+    .toInt(),
+
+  body('matricMarks')
+    .optional({ checkFalsy: true })
+    .custom(val => {
+      if (typeof val !== 'object' || val === null || Array.isArray(val)) {
+        throw new Error('matricMarks must be an object');
+      }
+      return true;
+    }),
+
+  body('matricMarks.*')
+    .optional({ checkFalsy: true })
+    .isFloat({ min: 0 })
+    .withMessage('Each subject mark must be >= 0')
+    .toFloat(),
+
+  body('matricTotal')
+    .optional({ checkFalsy: true })
+    .isFloat({ min: 0 })
+    .toFloat(),
+
+  body('matricPercentage')
+    .optional({ checkFalsy: true })
+    .isFloat({ min: 0, max: 100 })
+    .toFloat(),
+
+  // Optional total consistency check
+  body().custom(bodyValue => {
+    const marksObj = bodyValue.matricMarks;
+    const providedTotal = bodyValue.matricTotal;
+
+    if (marksObj && Object.keys(marksObj).length && providedTotal !== undefined && providedTotal !== '') {
+      const marks = Object.values(marksObj).map(Number);
+      const sum = marks.reduce((a, b) => a + b, 0);
+      if (Math.abs(sum - Number(providedTotal)) > 0.01) {
+        throw new Error('Matric total does not match sum of subject marks');
+      }
+    }
+    return true;
+  })
+];
+
 const studentValidator = [
   // --- Course ---
   body('course')
@@ -63,21 +114,8 @@ const studentValidator = [
   body('zipcode').trim().escape().matches(/^\d{5,10}$/).withMessage('Zipcode must be 5-10 digits'),
   body('country').optional({ checkFalsy: true }).trim().escape(),
 
-  // --- Education History ---
-  body('lastSchoolAttended').optional({ checkFalsy: true }).trim().escape(),
-  body('matricBoard').optional({ checkFalsy: true }).trim().escape(),
-  body('matricRollNo').optional({ checkFalsy: true }).trim().escape(),
-  body('matricYear').optional({ checkFalsy: true }).isInt({ min: 1950, max: new Date().getFullYear() }),
-  body('matricMarks').optional({ checkFalsy: true }).isObject(),
-  body('matricMarks.MIL').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.English').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.TLH').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.Science').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.Math').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.Physics').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.Chemistry').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.total').optional({ checkFalsy: true }).isNumeric(),
-  body('matricMarks.percentage').optional({ checkFalsy: true }).isFloat({ min: 0, max: 100 }),
+  // --- Education History (matricValidators inserted here) ---
+  ...matricValidators,
 
   // --- Institutional Details ---
   body('registration_number').optional({ checkFalsy: true }).trim().escape(),
@@ -93,7 +131,7 @@ const studentValidator = [
   // --- Status Booleans ---
   body('isEnrolled').optional({ checkFalsy: true }).isBoolean(),
   body('isPromoted').optional({ checkFalsy: true }).isBoolean(),
-  body('isGraduated').optional({ checkFalsy: true }).isBoolean(),
+  body('isAlumni').optional({ checkFalsy: true }).isBoolean(),
 
   // --- Hostel / Transport ---
   body('isHostelResident').optional({ checkFalsy: true }).isBoolean(),

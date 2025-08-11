@@ -9,6 +9,7 @@ const { Admin } = require('../models/admin')
 const jwt = require('jsonwebtoken');
 const { StaffAccess } = require('../models/permissions');
 const mongoose = require('mongoose');
+const bcryptjs = require('bcryptjs');
 
 // Get all non-enrolled students
 
@@ -221,7 +222,10 @@ const deleteSchedule = async (req, res) => {
 // Create Admin
 const createAdmin = async (req, res) => {
   try {
-    const newAdmin = new Admin(req.body);
+    let newAdmin = req.body;
+    const hashedPassword = await bcryptjs.hash(newAdmin.password, 10);
+    newAdmin.password = hashedPassword
+    newAdmin = new Admin(newAdmin);
     await newAdmin.save();
     res.status(201).json({ message: 'Admin registered successfully.' });
   } catch (err) {

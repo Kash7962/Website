@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Payments — <%= student.firstName %> <%= student.lastName || '' %></title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Embedded CSS (not inline attributes). Keep it minimal and CSP-friendly */
+    :root { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+    body { margin:0; padding:18px; background:#f7fafc; color:#111827; }
+    .container { max-width:1100px; margin:0 auto; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+    h1 { font-size:1.25rem; margin:0; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.06); padding:16px; }
+    form .row { display:flex; gap:12px; margin-bottom:10px; }
+    input[type="text"], input[type="number"], input[type="date"], input[type="file"] { width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:8px; }
+    button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#2563eb; color:white; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    th,td { padding:10px; text-align:left; border-bottom:1px solid #eef2f7; }
+    .muted { color:#6b7280; font-size:0.95rem; }
+    .actions button { margin-right:6px; }
+    /* Flash messages */
+    #flashMessageContainer { position:fixed; top:16px; right:16px; z-index:1200; }
+    .flash { padding:10px 14px; border-radius:10px; margin-top:8px; color:#fff; box-shadow:0 6px 18px rgba(2,6,23,0.08); }
+    .flash.success { background:#16a34a; } .flash.error { background:#dc2626; } .flash.info { background:#2563eb; }
+    /* Modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; z-index:1000; }
+    .modal.open { display:flex; }
+    .modal .panel { width:520px; max-width:95%; background:#fff; border-radius:12px; padding:16px; }
+    .small { font-size:0.9rem; color:#374151; }
+  </style>
+</head>
+<body>
+  <!-- required container for flash messages -->
+  <div id="flashMessageContainer"></div>
+
+  <div class="container">
+    <header>
+      <div>
+        <h1>Payments — <span class="muted"><%= student.firstName %> <%= student.lastName || '' %></span></h1>
+        <div class="muted">Student ID: <%= student._id %> · Current fees due: ₹ <span id="feesDueDisplay"><%= student.feesDue || 0 %></span></div>
+      </div>
+      <div>
+        <a href="/Manage/payment" class="muted">Back to students</a>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="addPaymentTitle">
+      <h2 id="addPaymentTitle" class="small">Add Payment</h2>
+      <form id="addPaymentForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="studentId" value="<%= student._id %>" />
+        <div class="row">
+          <input id="amountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
+          <input id="paymentDate" name="paymentDate" type="date" />
+        </div>
+        <div class="row">
+          <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
+          <div style="min-width:140px;">
+            <button id="submitAddPayment" type="submit">Record payment</button>
+          </div>
+        </div>
+        <div class="muted">Receipts optional — accepted: JPG, PNG, PDF (≤5MB)</div>
+      </form>
+    </section>
+
+    <section style="margin-top:14px;" class="card">
+      <h3 class="small">Previous payments</h3>
+      <table id="paymentsTable" aria-live="polite">
+        <thead>
+          <tr><th>Date</th><th>Amount (₹)</th><th>Receipt</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% if (!payments || payments.length === 0) { %>
+            <tr><td colspan="4" class="muted">No payments recorded yet</td></tr>
+          <% } else { %>
+            <% payments.forEach(p => { %>
+              <tr data-id="<%= p._id %>">
+                <td><%= p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : '-' %></td>
+                <td>₹ <%= p.amountPaid %></td>
+                <td>
+                  <% if (p.receiptFile) { %>
+                    <a href="<%= p.receiptFile %>" target="_blank" rel="noopener noreferrer">View</a>
+                  <% } else { %>
+                    <span class="muted">—</span>
+                  <% } %>
+                </td>
+                <td class="actions">
+                  <button class="editBtn" type="button">Edit</button>
+                  <button class="deleteBtn" type="button">Delete</button>
+                </td>
+              </tr>
+            <% }) } %>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="editModal" class="modal" aria-hidden="true">
+    <div class="panel">
+      <h4>Edit payment</h4>
+      <form id="editPaymentForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="paymentId" id="editPaymentId" />
+        <div class="row">
+          <input id="editAmountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
+          <input id="editPaymentDate" name="paymentDate" type="date" />
+        </div>
+        <div class="row">
+          <input id="editReceiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
+          <div>
+            <button id="submitEditPayment" type="submit">Save changes</button>
+            <button id="closeEdit" type="button" style="background:#6b7280;">Close</button>
+          </div>
+        </div>
+        <div class="muted">If you upload a new receipt it will replace the previous one.</div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ---------- token check ----------
+    // window.onload = async () => {
+    //   try {
+    //     const r = await fetch('/Auth/verify-token');
+    //     if (!r.ok) {
+    //       // Redirect to login if verify fails
+    //       window.location.href = '/Staff/login';
+    //       return;
+    //     }
+    //   } catch (e) {
+    //     console.error('verify-token error', e);
+    //   }
+    // };
+
+    // ---------- small helpers ----------
+    function showFlashMessage(type = 'info', message = '') {
+      const container = document.getElementById('flashMessageContainer');
+      const d = document.createElement('div');
+      d.className = 'flash ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : 'info');
+      d.textContent = message;
+      container.appendChild(d);
+      setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 300); }, 3500);
+    }
+
+    // handleServerError tries to show friendly message for HTML or JSON errors
+    async function handleServerError(res) {
+      let msg = 'Server error';
+      try {
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+          const j = await res.json();
+          msg = j.error || j.message || JSON.stringify(j);
+        } else {
+          const text = await res.text();
+          // If the server returned an error page, show first 200 chars
+          msg = text.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 200) || 'Server returned an error';
+        }
+      } catch (e) {
+        msg = 'Server error';
+      }
+      showFlashMessage('error', msg);
+      return;
+    }
+
+    // ---------- Add payment ----------
+    const addForm = document.getElementById('addPaymentForm');
+    addForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(addForm);
+      const btn = document.getElementById('submitAddPayment');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/Payment/create', { method: 'POST', body: fd });
+        if (!res.ok) { await handleServerError(res); btn.disabled = false; return; }
+        const data = await res.json();
+        showFlashMessage('success', data.message || 'Payment recorded');
+        // best to reload to get fresh feesDue from server
+        setTimeout(() => location.reload(), 600);
+      } catch (err) {
+        console.error(err);
+        showFlashMessage('error', 'Network error while recording payment');
+      } finally { btn.disabled = false; }
+    });
+
+    // ---------- Edit / Delete handlers (delegated) ----------
+    const table = document.getElementById('paymentsTable');
+    table.addEventListener('click', async (ev) => {
+      const tr = ev.target.closest('tr[data-id]');
+      if (!tr) return;
+      const paymentId = tr.getAttribute('data-id');
+
+      if (ev.target.matches('.editBtn')) {
+        // fetch single payment details from the DOM row
+        const cells = tr.children;
+        const dateText = cells[0].textContent.trim();
+        const amountText = cells[1].textContent.replace(/[^\d.-]/g,'').trim();
+
+        // populate modal
+        document.getElementById('editPaymentId').value = paymentId;
+        document.getElementById('editAmountPaid').value = amountText || '';
+        // try to convert dateText to yyyy-mm-dd if present
+        if (dateText && dateText !== '-') {
+          const d = new Date(dateText);
+          if (!isNaN(d)) {
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth()+1).padStart(2,'0');
+            const dd = String(d.getDate()).padStart(2,'0');
+            document.getElementById('editPaymentDate').value = `${yyyy}-${mm}-${dd}`;
+          }
+        } else {
+          document.getElementById('editPaymentDate').value = '';
+        }
+
+        document.getElementById('editModal').classList.add('open');
+        document.getElementById('editModal').setAttribute('aria-hidden','false');
+        return;
+      }
+
+      if (ev.target.matches('.deleteBtn')) {
+        if (!confirm('Delete this payment? This will add the amount back to the student\'s due.')) return;
+        try {
+          const res = await fetch('/Payment/' + paymentId, { method: 'DELETE' });
+          if (!res.ok) { await handleServerError(res); return; }
+          const j = await res.json();
+          showFlashMessage('success', j.message || 'Deleted');
+          setTimeout(() => location.reload(), 500);
+        } catch (err) {
+          console.error(err);
+          showFlashMessage('error', 'Network error while deleting');
+        }
+      }
+    });
+
+    // ---------- Edit modal actions ----------
+    document.getElementById('closeEdit').addEventListener('click', () => {
+      document.getElementById('editModal').classList.remove('open');
+      document.getElementById('editModal').setAttribute('aria-hidden','true');
+      document.getElementById('editPaymentForm').reset();
+    });
+
+    document.getElementById('editPaymentForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const paymentId = document.getElementById('editPaymentId').value;
+      if (!paymentId) return showFlashMessage('error', 'Missing payment id');
+
+      const fd = new FormData(document.getElementById('editPaymentForm'));
+      try {
+        const res = await fetch('/Payment/' + paymentId, { method: 'PUT', body: fd });
+        if (!res.ok) { await handleServerError(res); return; }
+        const j = await res.json();
+        showFlashMessage('success', j.message || 'Updated');
+        setTimeout(() => location.reload(), 500);
+      } catch (err) {
+        console.error(err);
+        showFlashMessage('error', 'Network error while updating');
+      }
+    });
+  </script>
+</body>
+</html>

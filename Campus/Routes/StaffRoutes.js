@@ -33,7 +33,7 @@ router.get('/login', (req, res) => {
 
 router.get('/dashboard', (req, res) => {
   // Assuming you have a dashboard view
-  res.render('Dashboards/d', { title: 'Dashboard Staff' });
+  res.render('Dashboards/staff', { title: 'Dashboard Staff' });
 });
 
 router.post('/google-login', googleLogin);

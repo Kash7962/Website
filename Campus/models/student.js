@@ -23,6 +23,12 @@ const studentSchema = new mongoose.Schema({
   subCaste: { type: String },
   religion: { type: String },
   bplAplStatus: { type: String },
+  bloodGroup: {
+  type: String,
+  // required: true,
+  enum: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+  trim: true,
+},
   profileImage: { type: String }, // URL to student photo
 
   // Guardian / Family Info
@@ -55,15 +61,13 @@ const studentSchema = new mongoose.Schema({
   matricRollNo: { type: String },
   matricYear: { type: Number },
   matricMarks: {
-    MIL: Number,
-    English: Number,
-    TLH: Number,
-    Science: Number,
-    Math: Number,
-    Physics: Number,
-    Chemistry: Number,
-    total: Number,
-    percentage: Number
+    subjects: {
+      type: Map,
+      of: Number, // Dynamic subjects with marks
+      default: {}
+    },
+    total: { type: Number, default: 0 },
+    percentage: { type: Number, default: 0 }
   },
 
   // Institutional Details
@@ -78,7 +82,7 @@ const studentSchema = new mongoose.Schema({
   currentSemester: { type: String },
   isEnrolled: { type: Boolean, default: false },
   isPromoted: { type: Boolean, default: false },
-  isGraduated: { type: Boolean, default: false },
+  isAlumni: { type: Boolean, default: false },
 
   // Scholarship / Hostel / Transport
   isHostelResident: { type: Boolean, default: false },
@@ -102,7 +106,8 @@ const studentSchema = new mongoose.Schema({
   isAadhaarLinkedToBank: { type: Boolean },
 
   // Login
-  password: { type: String }
+  password: { type: String },
+  isActive: { type: Boolean, default: false }
 
 }, { timestamps: true });
 

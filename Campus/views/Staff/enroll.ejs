@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students Pending Enrollment</title>
+
+  <!-- CSP-Friendly Embedded Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+    th {
+      background: #f2f2f2;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    .btn {
+      padding: 0.5rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-enroll {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+    #flashMessageContainer {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .flash-message {
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+    .flash-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .flash-error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h1>Students Pending Enrollment</h1>
+
+  <% if (students.length === 0) { %>
+    <p style="text-align:center;">No students pending enrollment.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Course</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>DOB</th>
+          <th>Guardian</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% students.forEach(student => { %>
+          <tr>
+            <td><%= student.firstName %> <%= student.middleName || '' %> <%= student.lastName %></td>
+            <td><%= student.course || 'N/A' %></td>
+            <td><%= student.studentEmail %></td>
+            <td><%= student.studentPhone %></td>
+            <td><%= student.dob ? student.dob.toDateString() : '' %></td>
+            <td><%= student.guardian1Name %> (<%= student.guardian1Relation %>)</td>
+            <td>
+              <%= student.address1 %>,
+              <%= student.city || '' %>,
+              <%= student.state %> - <%= student.zipcode %>
+            </td>
+            <td>
+              <button class="btn btn-enroll" data-id="<%= student._id %>">Enroll</button>
+              <button class="btn btn-delete" data-id="<%= student._id %>">Delete</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <!-- Scripts -->
+  <script>
+    async function handleServerError(res) {
+      const contentType = res.headers.get('Content-Type') || '';
+      if (contentType.includes('text/html')) {
+        const html = await res.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const popup = tempDiv.querySelector('#errorPopupContainer');
+        if (popup) {
+          document.body.prepend(popup);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function showFlashMessage(type, message) {
+      const container = document.getElementById('flashMessageContainer');
+      container.innerHTML = `<div class="flash-message flash-${type}">${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Redirect to joining form on enroll
+      document.querySelectorAll('.btn-enroll').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          window.location.href = `/Manage/join/${id}`;
+        });
+      });
+
+      // Delete button handler
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          if (!confirm('Are you sure you want to delete this student?')) return;
+          const res = await fetch(`/Manage/delete/${id}`, { method: 'DELETE' });
+          if (await handleServerError(res)) return;
+          if (res.ok) {
+            showFlashMessage('success', 'Student deleted successfully.');
+            setTimeout(() => location.reload(), 1000);
+          } else {
+            showFlashMessage('error', 'Failed to delete student.');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

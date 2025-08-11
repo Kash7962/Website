@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit & Finalize Student Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 2rem; }
+    .container { max-width: 1000px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2, h3 { color: #1f2937; margin-bottom: 1rem; grid-column: 1 / -1; }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    label { font-weight: 600; margin-bottom: 0.3rem; display: block; }
+    input, select, textarea { width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #d1d5db; }
+    button { grid-column: 1 / -1; padding: 0.75rem; background: #2563eb; color: white; font-weight: 600; border: none; border-radius: 8px; margin-top: 1.5rem; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+
+    /* Error popup */
+     #errorPopupContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.4);
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      #errorPopupContainer * {
+        box-sizing: border-box;
+        font-family: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      #errorPopupBox {
+        max-width: 400px;
+        width: 90%;
+        padding: 30px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      #errorPopupBox h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #e74c3c;
+      }
+
+      #errorPopupBox h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin: 10px 0;
+      }
+
+      #errorMessage {
+        font-size: 1rem;
+        color: #666;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #e74c3c;
+        text-align: left;
+        word-wrap: break-word;
+      }
+
+      #closeErrorPopup {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 24px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      #closeErrorPopup:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+
+    /* Flash message */
+    #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dynamic rows styling */
+    .row-inline { display:flex; gap: 0.5rem; align-items: center; }
+    .matric-row, .family-row { grid-column: 1 / -1; display:flex; gap:0.5rem; align-items:center; }
+    .matric-row input[type="text"] { flex: 2; }
+    .matric-row input[type="number"] { flex: 1; max-width: 160px; }
+    .family-row input[type="text"], .family-row input[type="number"] { flex: 1; min-width: 120px; }
+    .small-btn { padding: 0.45rem 0.6rem; border-radius:6px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; }
+    .remove-btn { background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; }
+    .add-btn { background:#ecfeff; border:1px solid #67e8f9; color:#075985; font-weight:700; }
+
+    .section-actions { grid-column: 1 / -1; display:flex; gap:0.5rem; align-items:center; justify-content:flex-end; margin-top: -0.25rem; }
+  </style>
+</head>
+<body>
+
+<div id="flashMessageContainer"></div>
+
+<div class="container">
+  <h2>Complete & Verify Student Record</h2>
+  <form id="finalizeStudentForm" action="/Manage/join/<%= student._id %>" method="POST" enctype="multipart/form-data">
+     <h3>Personal Information</h3>
+    <label>First Name</label>
+    <input type="text" name="firstName" value="<%= student.firstName %>" required>
+
+    <label>Middle Name</label>
+    <input type="text" name="middleName" value="<%= student.middleName %>">
+
+    <label>Last Name</label>
+    <input type="text" name="lastName" value="<%= student.lastName %>" required>
+
+    <label>Gender</label>
+    <select name="gender" required>
+      <option value="male" <%= student.gender === 'male' ? 'selected' : '' %>>Male</option>
+      <option value="female" <%= student.gender === 'female' ? 'selected' : '' %>>Female</option>
+    </select>
+
+    <label>Date of Birth</label>
+    <input type="date" name="dob" value="<%= student.dob?.toISOString().split('T')[0] %>" required>
+    <!-- Blood group (insert near Personal Information) -->
+    <label>Blood Group</label>
+    <select name="bloodGroup">
+      <option value="" <%= !student.bloodGroup ? 'selected' : '' %>>Select</option>
+      <option value="A+" <%= student.bloodGroup === 'A+' ? 'selected' : '' %>>A+</option>
+      <option value="A-" <%= student.bloodGroup === 'A-' ? 'selected' : '' %>>A-</option>
+      <option value="B+" <%= student.bloodGroup === 'B+' ? 'selected' : '' %>>B+</option>
+      <option value="B-" <%= student.bloodGroup === 'B-' ? 'selected' : '' %>>B-</option>
+      <option value="O+" <%= student.bloodGroup === 'O+' ? 'selected' : '' %>>O+</option>
+      <option value="O-" <%= student.bloodGroup === 'O-' ? 'selected' : '' %>>O-</option>
+      <option value="AB+" <%= student.bloodGroup === 'AB+' ? 'selected' : '' %>>AB+</option>
+      <option value="AB-" <%= student.bloodGroup === 'AB-' ? 'selected' : '' %>>AB-</option>
+    </select>
+
+    <!-- Hobbies & Interests -->
+    <h3>Hobbies & Interests</h3>
+
+    <label>Hobby</label>
+    <input type="text" name="hobby" value="<%= student.hobby || '' %>" placeholder="e.g. Football, Singing">
+
+    <label>Interest</label>
+    <input type="text" name="interest" value="<%= student.interest || '' %>" placeholder="e.g. Science, Coding">
+    
+    <label>Student Email</label>
+    <input type="email" name="studentEmail" value="<%= student.studentEmail %>">
+
+    <label>Phone</label>
+    <input type="tel" name="studentPhone" value="<%= student.studentPhone %>" required>
+
+    <label>Aadhaar Number</label>
+    <input type="text" name="aadhaarNumber" value="<%= student.aadhaarNumber %>">
+
+    <label>Caste</label>
+    <input type="text" name="caste" value="<%= student.caste %>">
+
+    <label>Sub Caste</label>
+    <input type="text" name="subCaste" value="<%= student.subCaste %>">
+
+    <label>Religion</label>
+    <input type="text" name="religion" value="<%= student.religion %>">
+
+    <label>BPL/APL Status</label>
+    <select name="bplAplStatus">
+      <option value="">Select</option>
+      <option value="BPL" <%= student.bplAplStatus === 'BPL' ? 'selected' : '' %>>BPL</option>
+      <option value="APL" <%= student.bplAplStatus === 'APL' ? 'selected' : '' %>>APL</option>
+    </select>
+
+    <!-- Guardian Info -->
+    <h3>Guardian Details</h3>
+    <label>Guardian 1 Name</label>
+    <input type="text" name="guardian1Name" value="<%= student.guardian1Name %>" required>
+
+    <label>Relation</label>
+    <select name="guardian1Relation" required>
+      <option value="">Select</option>
+      <option value="Father" <%= student.guardian1Relation === 'Father' ? 'selected' : '' %>>Father</option>
+      <option value="Mother" <%= student.guardian1Relation === 'Mother' ? 'selected' : '' %>>Mother</option>
+      <option value="Brother" <%= student.guardian1Relation === 'Brother' ? 'selected' : '' %>>Brother</option>
+      <option value="Sister" <%= student.guardian1Relation === 'Sister' ? 'selected' : '' %>>Sister</option>
+      <option value="Other" <%= student.guardian1Relation === 'Other' ? 'selected' : '' %>>Other</option>
+    </select>
+
+    <label>Guardian 1 Phone</label>
+    <input type="tel" name="guardian1Phone" value="<%= student.guardian1Phone %>" required>
+
+    <label>Guardian 1 Email</label>
+    <input type="email" name="guardian1Email" value="<%= student.guardian1Email %>">
+
+    <label>Guardian 1 Occupation</label>
+    <input type="text" name="guardian1Occupation" value="<%= student.guardian1Occupation %>">
+
+    <label>Guardian 1 Income</label>
+    <input type="number" name="guardian1Income" value="<%= student.guardian1Income %>">
+
+    <label>Guardian 2 Name</label>
+    <input type="text" name="guardian2Name" value="<%= student.guardian2Name %>">
+
+    <label>Guardian 2 Relation</label>
+    <input type="text" name="guardian2Relation" value="<%= student.guardian2Relation %>">
+
+    <label>Guardian 2 Occupation</label>
+    <input type="text" name="guardian2Occupation" value="<%= student.guardian2Occupation %>">
+
+    <label>Guardian 2 Income</label>
+    <input type="number" name="guardian2Income" value="<%= student.guardian2Income %>">
+
+    <!-- Address -->
+    <h3>Address</h3>
+    <label>Address Line 1</label>
+    <input type="text" name="address1" value="<%= student.address1 %>" required>
+
+    <label>Address Line 2</label>
+    <input type="text" name="address2" value="<%= student.address2 %>">
+
+    <label>City</label>
+    <input type="text" name="city" value="<%= student.city %>">
+
+    <label>Block</label>
+    <input type="text" name="block" value="<%= student.block %>">
+
+    <label>District</label>
+    <input type="text" name="district" value="<%= student.district %>" required>
+
+    <label>State</label>
+    <input type="text" name="state" value="<%= student.state %>" required>
+
+    <label>Zipcode</label>
+    <input type="text" name="zipcode" value="<%= student.zipcode %>" required>
+
+    <label>Country</label>
+    <input type="text" name="country" value="<%= student.country || 'India' %>">
+
+    <!-- Institutional Fields -->
+    <h3>Institutional Information</h3>
+    <label>Registration Number</label>
+    <input type="text" name="registration_number" value="<%= student.registration_number %>">
+
+    <label>Enrollment Number</label>
+    <input type="text" name="enrollmentNumber" value="<%= student.enrollmentNumber %>">
+
+    <label>Class Assigned</label>
+    <input type="text" name="classAssigned" value="<%= student.classAssigned %>">
+
+    <label>Course</label>
+    <input type="text" name="course" value="<%= student.course %>">
+
+    <label>Academic Year</label>
+    <input type="text" name="academicYear" value="<%= student.academicYear %>">
+
+    <label>Academic Session</label>
+    <input type="text" name="academicSession" value="<%= student.academicSession %>">
+
+    <label>Batch</label>
+    <input type="text" name="batch" value="<%= student.batch %>">
+
+    <label>Joining Date</label>
+    <input type="date" name="joiningDate" value="<%= student.joiningDate?.toISOString().split('T')[0] %>">
+
+    <label>Current Semester</label>
+    <input type="text" name="currentSemester" value="<%= student.currentSemester %>">
+
+    <label>Subjects (comma separated)</label>
+    <input type="text" name="subjects" value="<%= student.subjects?.join(', ') %>">
+
+    <!-- Previous School & Matric Details -->
+    <h3>Previous School & Matric Details</h3>
+
+    <label>Last School Attended</label>
+    <input type="text" name="lastSchoolAttended" value="<%= student.lastSchoolAttended %>">
+
+    <label>Matric Board</label>
+    <input type="text" name="matricBoard" value="<%= student.matricBoard %>">
+
+    <label>Matric Roll Number</label>
+    <input type="text" name="matricRollNo" value="<%= student.matricRollNo %>">
+
+    <label>Matric Year</label>
+    <input type="number" name="matricYear" value="<%= student.matricYear %>">
+
+  <h4 style="grid-column: 1 / -1; margin-top: 1rem;">Matric Marks</h4>
+
+    <div id="matricMarksContainer" class="matric-marks-container" style="grid-column:1 / -1;">
+      <% 
+        // Build a plain object of subjects -> marks regardless of Map or plain object
+        let matricSubjects = {};
+        if (student && student.matricMarks && student.matricMarks.subjects) {
+          const subj = student.matricMarks.subjects;
+          if (typeof subj.forEach === 'function') {
+            // subj is a Map
+            subj.forEach(function(value, key) { matricSubjects[key] = value; });
+          } else {
+            // subj may be a plain object
+            matricSubjects = Object.assign({}, subj);
+          }
+        }
+        const subjectKeys = Object.keys(matricSubjects);
+      %>
+
+      <% if (subjectKeys.length) { %>
+        <% subjectKeys.forEach(function(subject) { %>
+          <div class="matric-row">
+            <input type="text" class="matric-subject" placeholder="Subject" value="<%= subject %>">
+            <!-- mark input MUST have a name so server receives it -->
+            <input type="number" step="0.01" class="matric-mark" placeholder="Marks" name="matricMarks[<%= subject %>]" value="<%= matricSubjects[subject] %>">
+            <button type="button" class="small-btn remove-btn remove-matric">Remove</button>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="matric-row">
+          <input type="text" class="matric-subject" placeholder="Subject">
+          <input type="number" step="0.01" class="matric-mark" placeholder="Marks">
+          <button type="button" class="small-btn remove-btn remove-matric">Remove</button>
+        </div>
+      <% } %>
+
+      <!-- Total and Percentage fields: read values from the nested schema -->
+      <div class="matric-summary" style="margin-top: 1rem;">
+        <label>Total Marks:</label>
+        <input type="number" step="0.01" name="matricTotal" value="<%= (student && student.matricMarks && student.matricMarks.total) ? student.matricMarks.total : 0 %>">
+
+        <label style="margin-left: 1rem;">Percentage:</label>
+        <input type="number" step="0.01" name="matricPercentage" value="<%= (student && student.matricMarks && student.matricMarks.percentage) ? student.matricMarks.percentage : 0 %>">
+      </div>
+    </div>
+
+    <div class="section-actions">
+      <button type="button" id="addMatricBtn" class="small-btn add-btn">+ Add Matric Mark</button>
+    </div>
+
+    <!-- Family Members -->
+    <h3>Family Members</h3>
+
+    <div id="familyMembersContainer" class="family-members-container" style="grid-column:1 / -1;">
+      <% if (student.familyMembers && student.familyMembers.length) { %>
+        <% student.familyMembers.forEach(function(member, idx) { %>
+          <div class="family-row">
+            <input type="text" name="familyMembers[<%= idx %>][name]" placeholder="Name" value="<%= member.name || '' %>">
+            <input type="number" name="familyMembers[<%= idx %>][age]" placeholder="Age" value="<%= member.age || '' %>">
+            <input type="text" name="familyMembers[<%= idx %>][relation]" placeholder="Relation" value="<%= member.relation || '' %>">
+            <input type="text" name="familyMembers[<%= idx %>][education]" placeholder="Education" value="<%= member.education || '' %>">
+            <input type="text" name="familyMembers[<%= idx %>][otherInfo]" placeholder="Other Info" value="<%= member.otherInfo || '' %>">
+            <button type="button" class="small-btn remove-btn remove-family">Remove</button>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <!-- Start with one empty family member -->
+        <div class="family-row">
+          <input type="text" name="familyMembers[0][name]" placeholder="Name">
+          <input type="number" name="familyMembers[0][age]" placeholder="Age">
+          <input type="text" name="familyMembers[0][relation]" placeholder="Relation">
+          <input type="text" name="familyMembers[0][education]" placeholder="Education">
+          <input type="text" name="familyMembers[0][otherInfo]" placeholder="Other Info">
+          <button type="button" class="small-btn remove-btn remove-family">Remove</button>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="section-actions">
+      <button type="button" id="addFamilyBtn" class="small-btn add-btn">+ Add Family Member</button>
+    </div>
+
+    <label>Total Family Members</label>
+    <input type="number" name="totalFamilyMembers" value="<%= student.totalFamilyMembers %>">
+
+    <!-- Hostel/Transport -->
+    <h3>Hostel & Transport</h3>
+    <label>Is Hostel Resident?</label>
+    <select name="isHostelResident">
+      <option value="false" <%= !student.isHostelResident ? 'selected' : '' %>>No</option>
+      <option value="true" <%= student.isHostelResident ? 'selected' : '' %>>Yes</option>
+    </select>
+
+    <label>Hostel Joining Date</label>
+    <input type="date" name="hostelJoiningDate" value="<%= student.hostelJoiningDate?.toISOString().split('T')[0] %>">
+
+    <label>Hostel Duration (months)</label>
+    <input type="number" name="hostelDurationMonths" value="<%= student.hostelDurationMonths %>">
+
+    <label>Hostel within Campus?</label>
+    <select name="hostelWithinCampus">
+      <option value="false" <%= !student.hostelWithinCampus ? 'selected' : '' %>>No</option>
+      <option value="true" <%= student.hostelWithinCampus ? 'selected' : '' %>>Yes</option>
+    </select>
+
+    <label>Requires Transport?</label>
+    <select name="isTransportResident">
+      <option value="false" <%= !student.isTransportResident ? 'selected' : '' %>>No</option>
+      <option value="true" <%= student.isTransportResident ? 'selected' : '' %>>Yes</option>
+    </select>
+
+    <!-- Bank Info -->
+    <h3>Bank Details</h3>
+    <label>Bank Account Number</label>
+    <input type="text" name="bankAccountNumber" value="<%= student.bankAccountNumber %>">
+
+    <label>IFSC Code</label>
+    <input type="text" name="ifscCode" value="<%= student.ifscCode %>">
+
+    <label>Bank Name</label>
+    <input type="text" name="bankName" value="<%= student.bankName %>">
+
+    <label>Bank Branch</label>
+    <input type="text" name="bankBranch" value="<%= student.bankBranch %>">
+
+    <label>Aadhaar Linked to Bank?</label>
+    <select name="isAadhaarLinkedToBank">
+      <option value="false" <%= !student.isAadhaarLinkedToBank ? 'selected' : '' %>>No</option>
+      <option value="true" <%= student.isAadhaarLinkedToBank ? 'selected' : '' %>>Yes</option>
+    </select>
+
+    <!-- Uploads -->
+    <h3>Upload</h3>
+    <label>Student Photo</label>
+    <input type="file" name="profileImage" accept="image/*">
+
+    <label>Upload Supporting Documents (PDF/Image)</label>
+    <input type="file" name="documents" multiple>
+
+    <button type="submit">Save & Finalize</button>
+  </form>
+</div>
+
+<script>
+  // ---------- utility ----------
+  // sanitize subject key for HTML name and also match server sanitization (replace . and $ and brackets)
+  function safeKeyForBrackets(s) {
+    if (s == null) return '';
+    return String(s).replace(/[\.\$\[\]]/g, '_').trim();
+  }
+
+  // ---------- matric marks dynamic ----------
+  (function() {
+    const container = document.getElementById('matricMarksContainer');
+    const addBtn = document.getElementById('addMatricBtn');
+
+    function createMatricRow(subject = '', mark = '') {
+      const row = document.createElement('div');
+      row.className = 'matric-row';
+
+      const subjInput = document.createElement('input');
+      subjInput.type = 'text';
+      subjInput.className = 'matric-subject';
+      subjInput.placeholder = 'Subject';
+      subjInput.value = subject;
+
+      const markInput = document.createElement('input');
+      markInput.type = 'number';
+      markInput.step = '0.01';
+      markInput.className = 'matric-mark';
+      markInput.placeholder = 'Marks';
+      markInput.value = mark;
+
+      // set name if subject is present (sanitized)
+      const setMarkName = () => {
+        const safe = safeKeyForBrackets(subjInput.value);
+        if (safe) {
+          markInput.name = `matricMarks[${safe}]`;
+        } else {
+          markInput.removeAttribute('name');
+        }
+      };
+
+      subjInput.addEventListener('input', setMarkName);
+      setMarkName();
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'small-btn remove-btn remove-matric';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => row.remove());
+
+      row.appendChild(subjInput);
+      row.appendChild(markInput);
+      row.appendChild(removeBtn);
+      return row;
+    }
+
+    // attach remove listeners to existing rows and ensure subject input updates mark name
+    function initExistingMatricRows() {
+      const rows = container.querySelectorAll('.matric-row');
+      rows.forEach((row) => {
+        const subj = row.querySelector('.matric-subject');
+        const mark = row.querySelector('.matric-mark');
+        if (!subj || !mark) return;
+
+        // If mark doesn't have name but subject has value, set it:
+        if (!mark.name && subj.value) {
+          mark.name = `matricMarks[${safeKeyForBrackets(subj.value)}]`;
+        }
+
+        subj.addEventListener('input', () => {
+          const safe = safeKeyForBrackets(subj.value);
+          if (safe) mark.name = `matricMarks[${safe}]`;
+          else mark.removeAttribute('name');
+        });
+
+        // Remove button
+        const rem = row.querySelector('.remove-matric');
+        if (rem) {
+          rem.addEventListener('click', () => row.remove());
+        }
+      });
+    }
+
+    addBtn.addEventListener('click', () => {
+      const newRow = createMatricRow('', '');
+      container.appendChild(newRow);
+      // focus subject
+      newRow.querySelector('.matric-subject').focus();
+    });
+
+    // initialize
+    initExistingMatricRows();
+  })();
+
+  // ---------- family members dynamic ----------
+  (function() {
+    const container = document.getElementById('familyMembersContainer');
+    const addBtn = document.getElementById('addFamilyBtn');
+
+    function createFamilyRow(index, data = {}) {
+      const row = document.createElement('div');
+      row.className = 'family-row';
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = 'Name';
+      nameInput.name = `familyMembers[${index}][name]`;
+      nameInput.value = data.name || '';
+
+      const ageInput = document.createElement('input');
+      ageInput.type = 'number';
+      ageInput.placeholder = 'Age';
+      ageInput.name = `familyMembers[${index}][age]`;
+      ageInput.value = data.age || '';
+
+      const relInput = document.createElement('input');
+      relInput.type = 'text';
+      relInput.placeholder = 'Relation';
+      relInput.name = `familyMembers[${index}][relation]`;
+      relInput.value = data.relation || '';
+
+      const eduInput = document.createElement('input');
+      eduInput.type = 'text';
+      eduInput.placeholder = 'Education';
+      eduInput.name = `familyMembers[${index}][education]`;
+      eduInput.value = data.education || '';
+
+      const otherInput = document.createElement('input');
+      otherInput.type = 'text';
+      otherInput.placeholder = 'Other Info';
+      otherInput.name = `familyMembers[${index}][otherInfo]`;
+      otherInput.value = data.otherInfo || '';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'small-btn remove-btn remove-family';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        reindexFamilyRows();
+      });
+
+      row.appendChild(nameInput);
+      row.appendChild(ageInput);
+      row.appendChild(relInput);
+      row.appendChild(eduInput);
+      row.appendChild(otherInput);
+      row.appendChild(removeBtn);
+
+      return row;
+    }
+
+    function reindexFamilyRows() {
+      const rows = container.querySelectorAll('.family-row');
+      rows.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach((inp) => {
+          const placeholder = inp.placeholder || '';
+          let field = '';
+          if (/name/i.test(placeholder)) field = 'name';
+          else if (/age/i.test(placeholder)) field = 'age';
+          else if (/relation/i.test(placeholder)) field = 'relation';
+          else if (/education/i.test(placeholder)) field = 'education';
+          else if (/other/i.test(placeholder)) field = 'otherInfo';
+          if (field) inp.name = `familyMembers[${idx}][${field}]`;
+        });
+      });
+    }
+
+    function initExistingFamilyRows() {
+      const rows = container.querySelectorAll('.family-row');
+      rows.forEach((row) => {
+        const rem = row.querySelector('.remove-family');
+        if (rem) rem.addEventListener('click', () => {
+          row.remove();
+          reindexFamilyRows();
+        });
+      });
+      reindexFamilyRows();
+    }
+
+    addBtn.addEventListener('click', () => {
+      const idx = container.querySelectorAll('.family-row').length;
+      const newRow = createFamilyRow(idx, {});
+      container.appendChild(newRow);
+      reindexFamilyRows();
+      newRow.querySelector('input').focus();
+    });
+
+    initExistingFamilyRows();
+  })();
+
+  // ---------- form submit + server-error handling ----------
+  const form = document.getElementById('finalizeStudentForm');
+
+  // guard for popup close element (server error pages may inject these)
+  const errorContainer = document.getElementById('errorPopupContainer');
+  const errorMessage = document.getElementById('errorMessage');
+  const closePopup = document.getElementById('closeErrorPopup');
+  if (closePopup) {
+    closePopup.addEventListener('click', () => {
+      if (errorContainer) errorContainer.style.display = 'none';
+    });
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    try {
+      // debugging-friendly print of entries (not all environments show FormData)
+      try { console.log('FormData entries:', Array.from(formData.entries())); } catch(_) {}
+
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get('Content-Type') || '';
+
+        if (contentType.includes('text/html')) {
+          const html = await response.text();
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const popup = tempDiv.querySelector('#errorPopupContainer');
+          const scripts = tempDiv.querySelectorAll('script');
+
+          if (popup) {
+            // prepend the popup from server to current document
+            document.body.prepend(popup);
+
+            // Re-execute any inline scripts inside the error page
+            scripts.forEach((script) => {
+              const newScript = document.createElement('script');
+              if (script.src) {
+                newScript.src = script.src;
+                // ensure we don't block main thread for external scripts
+                newScript.async = true;
+              } else {
+                newScript.textContent = script.textContent;
+              }
+              document.body.appendChild(newScript);
+            });
+          } else {
+            showFlashMessage('error', 'An unknown error occurred.');
+          }
+
+          return;
+        }
+
+        showFlashMessage('error', 'Unexpected content type.');
+        return;
+      } else {
+        showFlashMessage('success', 'Admission successful.');
+        setTimeout(() => window.location.href = '/Manage/pending-enrollment', 1500);
+      }
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error', 'Failed to submit form. Please try again.');
+    }
+  });
+
+  function showFlashMessage(type, message, duration = 4000) {
+    const container = document.getElementById('flashMessageContainer');
+    const msg = document.createElement('div');
+    msg.classList.add('flash-message');
+    msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+    msg.textContent = message;
+
+    container.appendChild(msg);
+
+    setTimeout(() => {
+      msg.style.opacity = '0';
+      msg.style.transform = 'translateY(-10px)';
+      setTimeout(() => msg.remove(), 500);
+    }, duration);
+  }
+
+</script>
+</body>
+</html>
