@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Documents — <%= studentId %></title>
+
+  <!-- Embedded CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+    #flashMessageContainer {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: 100%;
+      max-width: 600px;
+      padding: 0.5rem;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header.page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header.page-header h1 {
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    form {
+      display: grid;
+      gap: 0.75rem;
+    }
+    label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .btn-danger {
+      background: #dc3545;
+    }
+    .btn-danger:hover {
+      background: #a71d2a;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .doc-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .doc-preview img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    .doc-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <!-- Flash message container -->
+  <div id="flashMessageContainer" aria-live="polite"></div>
+
+  <main class="container">
+    <header class="page-header">
+      <h1>Student Documents</h1>
+      <div>Student ID: <code><%= studentId %></code></div>
+    </header>
+
+    <!-- Upload section -->
+    <section class="card">
+      <h2>Upload New Document</h2>
+      <form id="uploadForm"
+            action="/Manage/<%= studentId %>/upload"
+            method="POST"
+            enctype="multipart/form-data">
+        <div>
+          <label for="docName">Document Name</label>
+          <input id="docName" name="name" type="text" maxlength="120" required />
+        </div>
+        <div>
+          <label for="docType">Type</label>
+          <select id="docType" name="type" required>
+            <option value="photo">Photo</option>
+            <option value="pdf">PDF</option>
+          </select>
+        </div>
+        <div>
+          <label for="docFile">File (Image or PDF)</label>
+          <input id="docFile" name="documents" type="file" accept="image/*,application/pdf" required />
+        </div>
+        <div>
+          <button type="submit">Upload</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Documents list -->
+    <section>
+      <h2>Uploaded Documents</h2>
+      <% if (!documents || documents.length === 0) { %>
+        <p>No documents uploaded yet.</p>
+      <% } else { %>
+        <div class="grid">
+          <% documents.forEach(function(doc){ %>
+            <article class="card doc-card">
+              <header>
+                <div><strong><%= doc.name %></strong></div>
+                <div style="font-size:0.9rem; opacity:0.7;">
+                  <%= new Date(doc.uploadedAt).toLocaleString('en-IN') %>
+                </div>
+              </header>
+              <div class="doc-preview">
+                <% if (doc.type === 'photo') { %>
+                  <a href="<%= doc.url %>" target="_blank" rel="noopener">
+                    <img src="<%= doc.url %>" alt="Document - <%= doc.name %>"/>
+                  </a>
+                <% } else { %>
+                  <a href="<%= doc.url %>" target="_blank" rel="noopener">View PDF</a>
+                <% } %>
+              </div>
+              <footer class="doc-actions">
+                <a href="<%= doc.url %>" download class="btn">Download</a>
+                <form class="deleteForm"
+                      action="/Manage/documents/<%= studentId %>/delete/<%= doc._id %>"
+                      method="POST">
+                  <button type="submit" class="btn-danger"
+                          data-delete-url="/Manage/documents/<%= studentId %>/delete/<%= doc._id %>">
+                    Delete
+                  </button>
+                </form>
+              </footer>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Embedded JS -->
+  <script>
+    window.addEventListener('load', () => {
+      // Auto-set type based on file
+      const fileInput = document.getElementById('docFile');
+      const typeSelect = document.getElementById('docType');
+      fileInput.addEventListener('change', () => {
+        const f = fileInput.files[0];
+        if (!f) return;
+        if (f.type.startsWith('image/')) typeSelect.value = 'photo';
+        else if (f.type === 'application/pdf') typeSelect.value = 'pdf';
+      });
+
+      // Upload via fetch
+      const uploadForm = document.getElementById('uploadForm');
+      uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(uploadForm);
+        try {
+          const res = await fetch(uploadForm.action, {
+            method: 'POST',
+            body: fd,
+          });
+          // console.log(res);
+          if (!res.ok) throw new Error(await res.text() || 'Upload failed');
+          window.location.reload();
+        } catch (err) {
+          alert(err.message || 'Upload failed');
+        }
+      });
+
+      // Delete via fetch + confirm
+      document.querySelectorAll('.deleteForm').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const btn = form.querySelector('button[data-delete-url]');
+          const url = btn ? btn.getAttribute('data-delete-url') : form.action;
+          if (!confirm('Delete this document permanently?')) return;
+          try {
+            const res = await fetch(url, { method: 'POST', credentials: 'include' });
+            if (!res.ok) throw new Error(await res.text() || 'Delete failed');
+            window.location.reload();
+          } catch (err) {
+            alert(err.message || 'Delete failed');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

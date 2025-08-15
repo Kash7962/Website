@@ -1,26 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, } = require('../Controllers/StaffManageController');
-const {verifyToken} = require('../middlewares/middleware');
+const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, uploadDocument, deleteDocument, getResult, } = require('../Controllers/StaffManageController');
 const upload = require('../config/multer_course');
 const upload2 = require('../config/multer_assignment');
-const { validateCourseUpload, staffValidator, assignmentValidator, studentValidator,  } = require('../validators/schema')
+const { validateCourseUpload, staffValidator, assignmentValidator, studentValidator, documentValidator,  } = require('../validators/schema')
 const upload3 = require('../config/multer_joining'); 
+const { verifyCookieToken } = require('../middlewares/middleware');
 
-
-router.get('/manage-courses',verifyToken, getAllCourses);
+router.get('/manage-courses',verifyCookieToken, getAllCourses);
 
 // Upload a course material
-router.post('/upload-course', verifyToken, validateCourseUpload, upload.single('file'), uploadCourse);
+router.post('/upload-course', verifyCookieToken, validateCourseUpload, upload.single('file'), uploadCourse);
 
 // Delete a course material
-router.post('/manage-courses/delete', verifyToken, deleteCourse);
+router.post('/manage-courses/delete', verifyCookieToken, deleteCourse);
 
 // Route: View all assignments uploaded by the logged-in teacher
-router.get('/assignments', verifyToken, viewAssignments);
+router.get('/assignments', verifyCookieToken, viewAssignments);
 
 // Route: Upload new assignment
-router.post('/assignments', verifyToken,(req, res, next) => {
+router.post('/assignments', verifyCookieToken,(req, res, next) => {
     req.uploadContext = 'assignment'; // This sets destination to uploads/teaching/assignment
     next();
   },
@@ -30,17 +29,17 @@ router.post('/assignments', verifyToken,(req, res, next) => {
 );
 
 // Route: Delete an assignment by ID (if uploaded by the current user)
-router.post('/assignments/delete/:id', verifyToken, deleteAssignment);
+router.post('/assignments/delete/:id', verifyCookieToken, deleteAssignment);
 
-router.post('/get-permissions', getStaffPermissions);
+router.post('/get-permissions', verifyCookieToken, getStaffPermissions);
 
 // View all students pending enrollment
-router.get('/pending-enrollment', getPendingEnrollment);
+router.get('/pending-enrollment', verifyCookieToken, getPendingEnrollment);
 
 // Delete a student
-router.delete('/delete/:id', deleteEnrollment);
+router.delete('/delete/:id', verifyCookieToken, deleteEnrollment);
 
-router.get('/join/:id', getFinalizeForm);
+router.get('/join/:id', verifyCookieToken, getFinalizeForm);
 
 router.post(
   '/join/:id',
@@ -48,15 +47,17 @@ router.post(
     { name: 'profileImage', maxCount: 1 },
     { name: 'documents', maxCount: 10 }
   ]),
+  verifyCookieToken,
+  documentValidator,
   studentValidator,
   postFinalizeForm
 );
 
-router.get('/studentsEnrolled', getStudents)
+router.get('/studentsEnrolled', verifyCookieToken, getStudents)
 
-router.get('/editStudents/:id', getEditForm);
+router.get('/editStudents/:id', verifyCookieToken, getEditForm);
 
-router.get('/payment', getPaymentPage)
+router.get('/payment', verifyCookieToken, getPaymentPage)
 // // GET direct join form
 // router.get('/join', getJoinForm);
 
@@ -70,5 +71,26 @@ router.get('/payment', getPaymentPage)
 //   postDirectJoin
 // );
 
+router.get('/documents', verifyCookieToken, getDocument);
+
+// GET /documents/:studentId
+router.get('/documents/:studentId', verifyCookieToken, getDocumentsByStudent);
+
+// Upload new document
+// POST /documents/:studentId/upload
+// Multer field name must match "documents" from the EJS form
+router.post(
+  '/:studentId/upload',
+   upload3.single('documents'),
+   verifyCookieToken,
+  documentValidator,
+  uploadDocument
+);
+
+// Delete a document
+// POST /documents/:studentId/delete/:docId
+router.post('/documents/:studentId/delete/:docId', verifyCookieToken, deleteDocument);
+
+router.get('/results', verifyCookieToken, getResult);
 
 module.exports = router;

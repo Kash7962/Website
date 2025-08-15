@@ -222,14 +222,12 @@
                             Enroll Students
                         </label>
                     </div>
-                <div class="permissions-grid">
                     <div class="permission-item">
                         <label>
                             <input type="checkbox" name="permissions[]" value="edit_students" <%= permissions.includes('edit_students') ? 'checked' : '' %> />
                             Edit Students
                         </label>
                     </div>
-                <div class="permissions-grid">
                     <div class="permission-item">
                         <label>
                             <input type="checkbox" name="permissions[]" value="students_payment" <%= permissions.includes('students_payment') ? 'checked' : '' %> />
@@ -238,34 +236,17 @@
                     </div>
                     <div class="permission-item">
                         <label>
-                            <input type="checkbox" name="permissions[]" value="create_exam" <%= permissions.includes('create_exam') ? 'checked' : '' %> />
-                            Create Exam
+                            <input type="checkbox" name="permissions[]" value="document_students" <%= permissions.includes('document_students') ? 'checked' : '' %> />
+                            Manage Students Documents
                         </label>
                     </div>
                     <div class="permission-item">
                         <label>
-                            <input type="checkbox" name="permissions[]" value="view_results" <%= permissions.includes('view_results') ? 'checked' : '' %> />
-                            View Results
+                            <input type="checkbox" name="permissions[]" value="result_students" <%= permissions.includes('result_students') ? 'checked' : '' %> />
+                            Manage Students Results
                         </label>
                     </div>
-                    <div class="permission-item">
-                        <label>
-                            <input type="checkbox" name="permissions[]" value="edit_profile" <%= permissions.includes('edit_profile') ? 'checked' : '' %> />
-                            Edit Profile
-                        </label>
-                    </div>
-                    <div class="permission-item">
-                        <label>
-                            <input type="checkbox" name="permissions[]" value="manage_attendance" <%= permissions.includes('manage_attendance') ? 'checked' : '' %> />
-                            Manage Attendance
-                        </label>
-                    </div>
-                    <div class="permission-item">
-                        <label>
-                            <input type="checkbox" name="permissions[]" value="view_library" <%= permissions.includes('view_library') ? 'checked' : '' %> />
-                            View Library
-                        </label>
-                    </div>
+                    
                     </div>
             </div>
 

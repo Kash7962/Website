@@ -544,13 +544,16 @@
                 font-size: 0.9rem;
             }
         }
+        #sdBtn {
+            display: none; /* hidden initially */
+        }
     </style>
 </head>
 <body>
      <div id="flashMessageContainer" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;"></div>
     <div class="dashboard">
         <div class="sidebar" id="sidebar">
-            <div class="brand">Teaching Dashboard</div>
+            <div class="brand">Staff Dashboard</div>
             <nav>
                 <a href="/Staff/dashboard/" class="active">🏠 Dashboard</a>
                 <!-- <a href="/Staff/Teaching/profile">👤 Manage Profile</a> -->
@@ -559,9 +562,11 @@
                 <a href="/Staff/Teaching/assignments">📝 Assignment</a>
                 <a href="#">💬 Communication Tools</a>
                 <a href="/Staff/Leave/dashboard">✈️ Leave Requests</a> -->
-                <a href="/Manage/pending-enrollment" data-permission="enroll_students">🎓 Enroll Students</a>
-                <a href="/Manage/studentsEnrolled" data-permission="edit_students">📝 Edit Students</a>
-                <a href="/Manage/payment" data-permission="students_payment">💰 Manage Payments</a>
+                <a href="/Manage/pending-enrollment" data-permission="enroll_students" id="sdBtn">🎓 Enroll Students</a>
+                <a href="/Manage/studentsEnrolled" data-permission="edit_students" id="sdBtn">📝 Edit Students</a>
+                <a href="/Manage/payment" data-permission="students_payment" id="sdBtn">💰 Manage Payments</a>
+                <a href="/Manage/documents" data-permission="document_students" id="sdBtn">📂 Manage Documents</a>
+                <a href="/Manage/results" data-permission="result_students" id="sdBtn">📊 Manage Results</a>
                 <!-- <a href="/Manage/join" data-permission="direct_join_students">➕🎓 Direct Join Students</a> -->
             </nav>
         </div>
@@ -580,12 +585,12 @@
             </div>
 
             <div class="main">
-                <div class="welcome-message" style="margin-bottom: 2rem;">
+                <!-- <div class="welcome-message" style="margin-bottom: 2rem;">
                     <h2 id="welcomeText" style="font-size: 1.8rem; color: #1e3a8a;">Welcome, [Teacher Name]</h2>
                     <p style="font-size: 1rem; color: #475569; margin-top: 0.5rem;">Here is your professional overview.</p>
-                </div>
+                </div> -->
 
-                <div class="cards">
+                <!-- <div class="cards">
                     <div class="card">
                         <p>Full Name</p>
                         <p class="amount" id="teacherName">--</p>
@@ -602,7 +607,7 @@
                         <p>Designation</p>
                         <p class="amount" id="teacherDesignation">--</p>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="table-container">
                     <h3 style="margin-bottom: 15px;">Recent Notifications / Updates</h3>
@@ -886,8 +891,8 @@
                     // Hide all menu items not in permissions
                     document.querySelectorAll('[data-permission]').forEach(item => {
                     const requiredPerm = item.getAttribute('data-permission');
-                    if (!permissions.includes(requiredPerm)) {
-                        item.style.display = 'none';
+                    if (permissions.includes(requiredPerm)) {
+                        item.style.display = 'block';
                     }
                     });
 

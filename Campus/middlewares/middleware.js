@@ -69,4 +69,65 @@ const verifyToken = async (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken };
+
+const verifyCookieToken = async (req, res, next) => {
+  const cookieToken = req.cookies.token;
+
+  // If no cookie token, deny access
+  if (!cookieToken) {
+    return res.status(401).render('error/error', { message: 'Access denied!' });
+  }
+
+  // Function to verify token and handle expiry
+  const tryVerify = async (token) => {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return { success: true, decoded };
+    } catch (err) {
+      console.error('Cookie token verification failed:', err);
+
+      if (err.name === 'TokenExpiredError') {
+        try {
+          const decoded2 = jwt.verify(token, process.env.JWT_SECRET);
+          if (decoded2?.role === 'Super Admin' || decoded2?.role === 'Admin') {
+            await Session_Admin.findOneAndUpdate(
+              { token },
+              {
+                logoutTime: new Date(),
+                isActive: false
+              }
+            );
+          } else {
+            await Session_Staff.findOneAndUpdate(
+              { token },
+              {
+                logoutTime: new Date(),
+                isActive: false
+              }
+            );
+          }
+        } catch (dbErr) {
+          console.error('Failed to update session on cookie token expiry:', dbErr);
+        }
+      }
+
+      return { success: false };
+    }
+  };
+
+  // Verify the cookie token only
+  const cookieResult = await tryVerify(cookieToken);
+
+  if (!cookieResult.success) {
+    return res.status(403).render('error/error', {
+      message: 'Invalid or expired session. Please login again.'
+    });
+  }
+
+  // If token is valid, attach user data to req
+  req.user = cookieResult.decoded;
+  next();
+};
+
+
+module.exports = { verifyToken, verifyCookieToken };

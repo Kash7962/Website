@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <title>All Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Students Pending Enrollment</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- STYLES FOR CONSISTENT LOOK AND FEEL --- */
         :root {
-            --primary-color: #1e40af;
+            --primary-color: #2563eb;
             --primary-dark: #1c3d90;
-            --secondary-bg: #f8fafc;
+            --secondary-color: #fef7ed;
             --text-dark: #1e293b;
-            --text-light: #475569;  
+            --text-light: #475569;
             --border-color: #e2e8f0;
             --card-shadow: 0 4px 12px rgba(0,0,0,0.06);
             --danger-color: #dc2626;
@@ -141,27 +142,26 @@
         }
         
         /* Main Page Styles */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box; margin: 0; padding: 0;
+        }
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--secondary-bg);
-            color: var(--text-dark);
+            background-color: var(--secondary-color);
+            color: #333;
         }
         .container {
             max-width: 1200px;
             margin: auto;
             padding: 2rem;
         }
-        .page-header {
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.5rem;
-        }
         h1 {
             font-family: 'Inter', sans-serif;
             font-size: 2rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
         /* Table Styles */
@@ -198,10 +198,6 @@
         .styled-table tbody tr:last-child td {
             border-bottom: none;
         }
-        .actions-cell {
-            display: flex;
-            gap: 0.5rem;
-        }
 
         /* Button Styles */
         .btn {
@@ -217,37 +213,39 @@
             transition: all 0.2s ease;
             font-size: 0.85rem;
         }
-        .btn-primary {
-            background-color: #3b82f6; color: white;
+        .btn-manage {
+            background-color: #3b82f6;
+            color: white;
         }
-        .btn-primary:hover {
+        .btn-manage:hover {
             background-color: #2563eb;
         }
-        .btn-delete {
-            background-color: var(--danger-light); color: var(--danger-color);
-        }
-        .btn-delete:hover {
-            background-color: #fecaca; color: var(--danger-dark);
-        }
+        /* ADDED FOR MODAL */
         .btn-danger-solid {
-             background-color: var(--danger-color); color: white;
+            background-color: var(--danger-color);
+            color: white;
         }
         .btn-danger-solid:hover {
             background-color: var(--danger-dark);
         }
         .btn-secondary {
-            background-color: #e2e8f0; color: var(--text-light); border-color: #cbd5e0;
+            background-color: #e2e8f0;
+            color: var(--text-light);
+            border-color: #cbd5e0;
         }
         .btn-secondary:hover {
-            background-color: #cbd5e0; color: var(--text-dark);
+            background-color: #cbd5e0;
         }
 
-        /* Custom Confirmation Modal */
+        @media (max-width: 992px) {
+            /* Responsive table styles remain unchanged */
+        }
+        
+        /* --- STYLES FOR CUSTOM CONFIRMATION MODAL --- */
         .modal-backdrop {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(4px);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000;
             opacity: 0; visibility: hidden;
@@ -284,13 +282,11 @@
 <body>
     <div id="flashMessageContainer"></div>
     <main class="container">
-        <header class="page-header">
-            <h1>Students Pending Enrollment</h1>
-        </header>
+        <h1 style="color: #2563eb;">Students Documents Page</h1>
 
         <div class="table-container">
             <% if (students.length === 0) { %>
-                <p style="text-align:center; padding: 2rem;">No students are currently pending enrollment.</p>
+                <p style="text-align:center; padding: 2rem;">No students listed.</p>
             <% } else { %>
                 <table class="styled-table">
                     <thead>
@@ -299,6 +295,9 @@
                             <th>Course</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>DOB</th>
+                            <th>Guardian</th>
+                            <th>Class</th>
                             <!-- <th>Address</th> -->
                             <th>Actions</th>
                         </tr>
@@ -306,14 +305,20 @@
                     <tbody>
                         <% students.forEach(student => { %>
                             <tr>
-                                <td><%= student.firstName %> <%= student.lastName %></td>
-                                <td><%= student.course || 'N/A' %></td>
-                                <td><%= student.studentEmail %></td>
-                                <td><%= student.studentPhone %></td>
-                                <!-- <td><%= `${student.address1}, ${student.city || ''}` %></td> -->
-                                <td class="actions-cell">
-                                    <button class="btn btn-primary btn-enroll" data-id="<%= student._id %>">Enroll</button>
-                                    <button class="btn btn-delete" data-id="<%= student._id %>">Delete</button>
+                                <td data-label="Name"><%= student.firstName %> <%= student.middleName || '' %> <%= student.lastName %></td>
+                                <td data-label="Course"><%= student.course || 'N/A' %></td>
+                                <td data-label="Email"><%= student.studentEmail %></td>
+                                <td data-label="Phone"><%= student.studentPhone %></td>
+                                <td data-label="DOB"><%= student.dob ? student.dob.toDateString() : '' %></td>
+                                <td data-label="Guardian"><%= student.guardian1Name %> (<%= student.guardian1Relation %>)</td>
+                                <td data-label="Class"><%= student.classAssigned %></td>
+                                <!-- <td data-label="Address">
+                                    <%= student.address1 %>,
+                                    <%= student.city || '' %>,
+                                    <%= student.state %> - <%= student.zipcode %>
+                                </td> -->
+                                <td data-label="Actions" style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-manage" data-id="<%= student._id %>">Manage Documents</button>
                                 </td>
                             </tr>
                         <% }) %>
@@ -322,17 +327,6 @@
             <% } %>
         </div>
     </main>
-
-    <div id="confirmationModal" class="modal-backdrop">
-        <div class="modal-content">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete this student? This action cannot be undone.</p>
-            <div class="modal-actions">
-                <button id="cancelDeleteBtn" class="btn btn-secondary">Cancel</button>
-                <button id="confirmDeleteBtn" class="btn btn-danger-solid">Delete</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         window.onload = async function() {
@@ -345,7 +339,6 @@
                             'Authorization': `Bearer ${token}`
                         }
                     }); 
-                    // console.log('Token verification response:', res);
                     if (!res.ok){
 
                         const contentType = res.headers.get('Content-Type') || '';
@@ -386,142 +379,101 @@
                     } catch (err) {
                     showFlashMessage('error', 'An unknown error occurred.');
                     }
-                    try {
-                    const token = localStorage.getItem('token');
-                    if (!token) {
-                    console.error('No token found');
-                    return;
-                    }
-                    // console.log('Token:', token);
-                    // Decode JWT to get staffId
-                    const payload = JSON.parse(atob(token.split('.')[1]));
-                    const staffId = payload._id;
-                    
-                    const res = await fetch('/Manage/get-permissions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ staffId })
-                    });
-
-                    if (!res.ok) {
-                    handleServerError(res);
-                    return;
-                    }
-
-                    const data = await res.json();
-                    const permissions = data.permissions || [];
-                    // console.log('Permissions:', permissions);
-                    // Hide all menu items not in permissions
-                    
-                    if (!permissions.includes('enroll_students')) {
-                        showFlashMessage('error', 'You do not have permission to access this page.');
-                        setTimeout(() => {
-                            window.location.href = '/Staff/dashboard';
-                        }, 1500);
-                    }
-
-                } catch (err) {
-                    console.error('Error fetching permissions:', err);
-                }
-                    
-            };
-
-        async function handleServerError(res) {
-            const contentType = res.headers.get('Content-Type') || '';
-
-            if (contentType.includes('text/html')) {
-            const html = await res.text();
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            const popup = tempDiv.querySelector('#errorPopupContainer');
-            const scripts = tempDiv.querySelectorAll('script');
-
-            if (popup) {
-                document.body.prepend(popup);
-                scripts.forEach((script) => {
-                const newScript = document.createElement('script');
-                if (script.src) newScript.src = script.src;
-                else newScript.textContent = script.textContent;
-                document.body.appendChild(newScript);
-                });
-            } else {
-                showFlashMessage('error', 'An unknown error occurred.');
-            }
-            } else {
-            showFlashMessage('error', 'Server error: unexpected content type.');
-            }
-        } 
-
-        function showFlashMessage(type, message, duration = 4000) {
-            const container = document.getElementById('flashMessageContainer');
-            const msg = document.createElement('div');
-            msg.classList.add('flash-message');
-            msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
-            msg.textContent = message;
-
-            container.appendChild(msg);
-
-            setTimeout(() => {
-            msg.style.opacity = '0';
-            msg.style.transform = 'translateY(-10px)';
-            setTimeout(() => msg.remove(), 500);
-            }, duration);
-        } 
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('confirmationModal');
-            const confirmBtn = document.getElementById('confirmDeleteBtn');
-            const cancelBtn = document.getElementById('cancelDeleteBtn');
-            let studentIdToDelete = null;
-
-            // Enroll button redirects
-            document.querySelectorAll('.btn-enroll').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    window.location.href = `/Manage/join/${btn.dataset.id}`;
-                });
-            });
-
-            // Delete button opens the custom modal
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    studentIdToDelete = btn.dataset.id;
-                    modal.classList.add('visible');
-                });
-            });
-
-            // Modal cancel button
-            cancelBtn.addEventListener('click', () => {
-                modal.classList.remove('visible');
-                studentIdToDelete = null;
-            });
-            
-            // Modal confirm button
-            confirmBtn.addEventListener('click', async () => {
-                if (!studentIdToDelete) return;
-                try {
-                    const res = await fetch(`/Manage/delete/${studentIdToDelete}`, { method: 'DELETE' });
-                    if (!res.ok) {
-                        await handleServerError(res);
+                        try {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                        console.error('No token found');
                         return;
+                        }
+                        // console.log('Token:', token);
+                        // Decode JWT to get staffId
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const staffId = payload._id;
+                        
+                        const res = await fetch('/Manage/get-permissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ staffId })
+                        });
+
+                        if (!res.ok) {
+                        handleServerError(res);
+                        return;
+                        }
+
+                        const data = await res.json();
+                        const permissions = data.permissions || [];
+                        // console.log('Permissions:', permissions);
+                        // Hide all menu items not in permissions
+                        
+                        if (!permissions.includes('document_students')) {
+                            showFlashMessage('error', 'You do not have permission to access this page.');
+                            setTimeout(() => {
+                                window.location.href = '/Staff/dashboard';
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Error fetching permissions:', err);
                     }
-                    if (res.ok) {
-                        showFlashMessage('success', 'Student deleted successfully.');
-                        setTimeout(() => location.reload(), 1200);
-                    } else {
-                        const data = await res.json().catch(() => ({}));
-                        showFlashMessage('error', data.message || 'Failed to delete student.');
-                    }
-                } catch(err) {
-                    showFlashMessage('error', 'A network error occurred.');
-                } finally {
-                    modal.classList.remove('visible');
-                    studentIdToDelete = null;
                 }
+
+            async function handleServerError(res) {
+                const contentType = res.headers.get('Content-Type') || '';
+
+                if (contentType.includes('text/html')) {
+                const html = await res.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+
+                const popup = tempDiv.querySelector('#errorPopupContainer');
+                const scripts = tempDiv.querySelectorAll('script');
+
+                if (popup) {
+                    document.body.prepend(popup);
+                    scripts.forEach((script) => {
+                    const newScript = document.createElement('script');
+                    if (script.src) newScript.src = script.src;
+                    else newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                    });
+                } else {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                }
+                } else {
+                showFlashMessage('error', 'Server error: unexpected content type.');
+                }
+            } 
+
+            function showFlashMessage(type, message, duration = 4000) {
+                const container = document.getElementById('flashMessageContainer');
+                const msg = document.createElement('div');
+                msg.classList.add('flash-message');
+                msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+                msg.textContent = message;
+
+                container.appendChild(msg);
+
+                setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateY(-10px)';
+                setTimeout(() => msg.remove(), 500);
+                }, duration);
+            } 
+
+            // --- UPDATED SCRIPT TO USE THE MODAL ---
+            document.addEventListener('DOMContentLoaded', () => {
+
+                // Edit button logic remains the same
+                document.querySelectorAll('.btn-manage').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        window.location.href = `/Manage/documents/${id}`;
+                    });
+                });
             });
-        });
+
     </script>
 </body>
 </html>

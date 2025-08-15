@@ -20,6 +20,7 @@ const cron = require('node-cron');
 // const { deleteExpiredLeaves } = require('./Controllers/LeaveController');
 const NoticeRoutes = require('./Routes/NoticeRoutes.js');
 const PaymentRoutes = require('./Routes/PaymentRoutes.js');
+const ResultRoutes = require('./Routes/ResultRoutes.js');
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
 const db = mongoose.connection;
@@ -137,6 +138,7 @@ app.use('/Manage', StaffManageRoutes);
 app.use('/Admin', AdminRoutes);
 app.use('/Notices', NoticeRoutes);
 app.use('/Payment', PaymentRoutes);
+app.use('/Result', ResultRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

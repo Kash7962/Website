@@ -8,7 +8,7 @@ if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const studentId = req.params.id; // taken from route /finalize-student/:id
+    const studentId = req.params.id || req.params.studentId; // taken from route /finalize-student/:id
     const studentFolder = path.join(__dirname, '../uploads/students', studentId);
 
     // Create if doesn't exist

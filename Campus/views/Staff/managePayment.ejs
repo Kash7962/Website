@@ -1,261 +1,631 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Manage Payments — <%= student.firstName %> <%= student.lastName || '' %></title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    /* Embedded CSS (not inline attributes). Keep it minimal and CSP-friendly */
-    :root { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
-    body { margin:0; padding:18px; background:#f7fafc; color:#111827; }
-    .container { max-width:1100px; margin:0 auto; }
-    header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
-    h1 { font-size:1.25rem; margin:0; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.06); padding:16px; }
-    form .row { display:flex; gap:12px; margin-bottom:10px; }
-    input[type="text"], input[type="number"], input[type="date"], input[type="file"] { width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:8px; }
-    button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#2563eb; color:white; }
-    table { width:100%; border-collapse:collapse; margin-top:12px; }
-    th,td { padding:10px; text-align:left; border-bottom:1px solid #eef2f7; }
-    .muted { color:#6b7280; font-size:0.95rem; }
-    .actions button { margin-right:6px; }
-    /* Flash messages */
-    #flashMessageContainer { position:fixed; top:16px; right:16px; z-index:1200; }
-    .flash { padding:10px 14px; border-radius:10px; margin-top:8px; color:#fff; box-shadow:0 6px 18px rgba(2,6,23,0.08); }
-    .flash.success { background:#16a34a; } .flash.error { background:#dc2626; } .flash.info { background:#2563eb; }
-    /* Modal */
-    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; z-index:1000; }
-    .modal.open { display:flex; }
-    .modal .panel { width:520px; max-width:95%; background:#fff; border-radius:12px; padding:16px; }
-    .small { font-size:0.9rem; color:#374151; }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Manage Payments — <%= student.firstName %> <%= student.lastName || '' %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --primary-dark: #1c3d90;
+            --danger-color: #dc2626;
+            --danger-dark: #b91c1c;
+            --danger-light: #fee2e2;
+            --secondary-bg: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            --radius: 8px;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: var(--secondary-bg);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        header .sub-header {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        header .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        header .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        form .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        form .row > * {
+            flex: 1 1 200px;
+        }
+        
+        input[type="text"], input[type="number"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-info {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: -0.5rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid transparent;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--primary-dark); }
+        
+        .btn-secondary { background-color: #f1f5f9; color: var(--text-light); }
+        .btn-secondary:hover:not(:disabled) { background-color: #e2e8f0; }
+        
+        .btn-danger-outline { background-color: transparent; color: var(--danger-color); border-color: #fecaca; }
+        .btn-danger-outline:hover:not(:disabled) { background-color: var(--danger-light); color: var(--danger-dark); border-color: var(--danger-color); }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        th { font-size: 0.8rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; }
+        td .btn { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+        td a { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        td a:hover { text-decoration: underline; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed; inset: 0; z-index: 1000;
+            align-items: center; justify-content: center;
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.open { display: flex; opacity: 1; }
+        .modal .panel {
+            width: 520px; max-width: 95%;
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.open .panel { transform: scale(1); }
+        .modal h4 { margin: 0 0 1rem 0; font-size: 1.25rem; font-weight: 600; }
+
+        /* Flash Messages */
+         #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+            #flashMessageContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .flash-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <!-- required container for flash messages -->
-  <div id="flashMessageContainer"></div>
+    <div id="flashMessageContainer"></div>
 
-  <div class="container">
-    <header>
-      <div>
-        <h1>Payments — <span class="muted"><%= student.firstName %> <%= student.lastName || '' %></span></h1>
-        <div class="muted">Student ID: <%= student._id %> · Current fees due: ₹ <span id="feesDueDisplay"><%= student.feesDue || 0 %></span></div>
-      </div>
-      <div>
-        <a href="/Manage/payment" class="muted">Back to students</a>
-      </div>
-    </header>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Manage Payments</h1>
+                <div class="sub-header">For <%= student.firstName %> <%= student.lastName || '' %> (ID: <%= student._id %>)</div>
+                <div class="sub-header">Current Fees Due: <strong>₹<span id="feesDueDisplay"><%= student.feesDue ? student.feesDue.toLocaleString('en-IN') : 0 %></span></strong></div>
+            </div>
+            <div>
+                <a href="/Staff/dashboard" class="back-link">← Back to Students</a>
+            </div>
+        </header>
 
-    <section class="card" aria-labelledby="addPaymentTitle">
-      <h2 id="addPaymentTitle" class="small">Add Payment</h2>
-      <form id="addPaymentForm" enctype="multipart/form-data" novalidate>
-        <input type="hidden" name="studentId" value="<%= student._id %>" />
-        <div class="row">
-          <input id="amountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
-          <input id="paymentDate" name="paymentDate" type="date" />
-        </div>
-        <div class="row">
-          <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
-          <div style="min-width:140px;">
-            <button id="submitAddPayment" type="submit">Record payment</button>
-          </div>
-        </div>
-        <div class="muted">Receipts optional — accepted: JPG, PNG, PDF (≤5MB)</div>
-      </form>
-    </section>
+        <section class="card" aria-labelledby="addPaymentTitle">
+            <h2 id="addPaymentTitle" class="card-title">Add New Payment</h2>
+            <form id="addPaymentForm" enctype="multipart/form-data" novalidate>
+                <input type="hidden" name="studentId" value="<%= student._id %>" />
+                <div class="row">
+                    <input id="amountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
+                    <input id="paymentDate" name="paymentDate" type="date" />
+                </div>
+                <div class="row">
+                    <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
+                    <div style="flex: 0 1 auto; min-width: 160px;">
+                        <button id="submitAddPayment" type="submit" class="btn btn-primary" style="width: 100%;">Record Payment</button>
+                    </div>
+                </div>
+                <div class="form-info">Receipts optional — accepted: JPG, PNG, PDF (≤5MB)</div>
+            </form>
+        </section>
 
-    <section style="margin-top:14px;" class="card">
-      <h3 class="small">Previous payments</h3>
-      <table id="paymentsTable" aria-live="polite">
-        <thead>
-          <tr><th>Date</th><th>Amount (₹)</th><th>Receipt</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          <% if (!payments || payments.length === 0) { %>
-            <tr><td colspan="4" class="muted">No payments recorded yet</td></tr>
-          <% } else { %>
-            <% payments.forEach(p => { %>
-              <tr data-id="<%= p._id %>">
-                <td><%= p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : '-' %></td>
-                <td>₹ <%= p.amountPaid %></td>
-                <td>
-                  <% if (p.receiptFile) { %>
-                    <a href="<%= p.receiptFile %>" target="_blank" rel="noopener noreferrer">View</a>
-                  <% } else { %>
-                    <span class="muted">—</span>
-                  <% } %>
-                </td>
-                <td class="actions">
-                  <button class="editBtn" type="button">Edit</button>
-                  <button class="deleteBtn" type="button">Delete</button>
-                </td>
-              </tr>
-            <% }) } %>
-        </tbody>
-      </table>
-    </section>
-  </div>
-
-  <!-- Edit modal -->
-  <div id="editModal" class="modal" aria-hidden="true">
-    <div class="panel">
-      <h4>Edit payment</h4>
-      <form id="editPaymentForm" enctype="multipart/form-data" novalidate>
-        <input type="hidden" name="paymentId" id="editPaymentId" />
-        <div class="row">
-          <input id="editAmountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
-          <input id="editPaymentDate" name="paymentDate" type="date" />
-        </div>
-        <div class="row">
-          <input id="editReceiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
-          <div>
-            <button id="submitEditPayment" type="submit">Save changes</button>
-            <button id="closeEdit" type="button" style="background:#6b7280;">Close</button>
-          </div>
-        </div>
-        <div class="muted">If you upload a new receipt it will replace the previous one.</div>
-      </form>
+        <section class="card">
+            <h3 class="card-title">Payment History</h3>
+            <table id="paymentsTable" aria-live="polite">
+                <thead>
+                    <tr><th>Date</th><th>Amount</th><th>Receipt</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    <% if (!payments || payments.length === 0) { %>
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-light); padding: 2rem;">No payments recorded yet</td></tr>
+                    <% } else { %>
+                        <% payments.forEach(p => { %>
+                            <tr data-id="<%= p._id %>">
+                                <td><%= p.paymentDate ? new Date(p.paymentDate).toLocaleDateString('en-IN') : '—' %></td>
+                                <td>₹<%= p.amountPaid.toLocaleString('en-IN') %></td>
+                                <td>
+                                    <% if (p.receiptFile) { %>
+                                        <a href="<%= p.receiptFile %>" target="_blank" rel="noopener noreferrer">View</a>
+                                    <% } else { %>
+                                        <span style="color: var(--text-light);">—</span>
+                                    <% } %>
+                                </td>
+                                <td class="actions" style="display: flex; gap: 0.5rem;">
+                                    <button class="editBtn btn btn-secondary" type="button">Edit</button>
+                                    <button class="deleteBtn btn btn-danger-outline" type="button">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) } %>
+                </tbody>
+            </table>
+        </section>
     </div>
-  </div>
 
-  <script>
-    // ---------- token check ----------
-    // window.onload = async () => {
-    //   try {
-    //     const r = await fetch('/Auth/verify-token');
-    //     if (!r.ok) {
-    //       // Redirect to login if verify fails
-    //       window.location.href = '/Staff/login';
-    //       return;
-    //     }
-    //   } catch (e) {
-    //     console.error('verify-token error', e);
-    //   }
-    // };
+    <div id="editModal" class="modal" aria-hidden="true">
+        <div class="panel">
+            <h4>Edit Payment</h4>
+            <form id="editPaymentForm" enctype="multipart/form-data" novalidate>
+                <input type="hidden" name="paymentId" id="editPaymentId" />
+                <div class="row">
+                    <input id="editAmountPaid" name="amountPaid" type="number" step="0.01" placeholder="Amount (₹)" required />
+                    <input id="editPaymentDate" name="paymentDate" type="date" />
+                </div>
+                <div class="row">
+                    <input id="editReceiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" />
+                </div>
+                <div class="form-info" style="margin-bottom: 1rem;">Uploading a new receipt will replace the old one.</div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button id="closeEdit" type="button" class="btn btn-secondary">Close</button>
+                    <button id="submitEditPayment" type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    // ---------- small helpers ----------
-    function showFlashMessage(type = 'info', message = '') {
-      const container = document.getElementById('flashMessageContainer');
-      const d = document.createElement('div');
-      d.className = 'flash ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : 'info');
-      d.textContent = message;
-      container.appendChild(d);
-      setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 300); }, 3500);
-    }
+    <script>
+        window.onload = async function() {
+            const token = localStorage.getItem('token');
+            try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
 
-    // handleServerError tries to show friendly message for HTML or JSON errors
-    async function handleServerError(res) {
-      let msg = 'Server error';
-      try {
-        const ct = res.headers.get('content-type') || '';
-        if (ct.includes('application/json')) {
-          const j = await res.json();
-          msg = j.error || j.message || JSON.stringify(j);
-        } else {
-          const text = await res.text();
-          // If the server returned an error page, show first 200 chars
-          msg = text.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 200) || 'Server returned an error';
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                            try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                    console.error('No token found');
+                    return;
+                    }
+                    // console.log('Token:', token);
+                    // Decode JWT to get staffId
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const staffId = payload._id;
+                    
+                    const res = await fetch('/Manage/get-permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ staffId })
+                    });
+
+                    if (!res.ok) {
+                    handleServerError(res);
+                    return;
+                    }
+
+                    const data = await res.json();
+                    const permissions = data.permissions || [];
+                    // console.log('Permissions:', permissions);
+                    // Hide all menu items not in permissions
+                    
+                    if (!permissions.includes('students_payment')) {
+                        showFlashMessage('error', 'You do not have permission to access this page.');
+                        setTimeout(() => {
+                            window.location.href = '/Staff/dashboard';
+                        }, 1500);
+                    }
+
+                } catch (err) {
+                    console.error('Error fetching permissions:', err);
+                }
         }
-      } catch (e) {
-        msg = 'Server error';
-      }
-      showFlashMessage('error', msg);
-      return;
-    }
+        async function handleServerError(res) {
+            const contentType = res.headers.get('Content-Type') || '';
 
-    // ---------- Add payment ----------
-    const addForm = document.getElementById('addPaymentForm');
-    addForm.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const fd = new FormData(addForm);
-      const btn = document.getElementById('submitAddPayment');
-      btn.disabled = true;
-      try {
-        const res = await fetch('/Payment/create', { method: 'POST', body: fd });
-        if (!res.ok) { await handleServerError(res); btn.disabled = false; return; }
-        const data = await res.json();
-        showFlashMessage('success', data.message || 'Payment recorded');
-        // best to reload to get fresh feesDue from server
-        setTimeout(() => location.reload(), 600);
-      } catch (err) {
-        console.error(err);
-        showFlashMessage('error', 'Network error while recording payment');
-      } finally { btn.disabled = false; }
-    });
+            if (contentType.includes('text/html')) {
+            const html = await res.text();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
 
-    // ---------- Edit / Delete handlers (delegated) ----------
-    const table = document.getElementById('paymentsTable');
-    table.addEventListener('click', async (ev) => {
-      const tr = ev.target.closest('tr[data-id]');
-      if (!tr) return;
-      const paymentId = tr.getAttribute('data-id');
+            const popup = tempDiv.querySelector('#errorPopupContainer');
+            const scripts = tempDiv.querySelectorAll('script');
 
-      if (ev.target.matches('.editBtn')) {
-        // fetch single payment details from the DOM row
-        const cells = tr.children;
-        const dateText = cells[0].textContent.trim();
-        const amountText = cells[1].textContent.replace(/[^\d.-]/g,'').trim();
+            if (popup) {
+                document.body.prepend(popup);
+                scripts.forEach((script) => {
+                const newScript = document.createElement('script');
+                if (script.src) newScript.src = script.src;
+                else newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+                });
+            } else {
+                showFlashMessage('error', 'An unknown error occurred.');
+            }
+            } else {
+            showFlashMessage('error', 'Server error: unexpected content type.');
+            }
+        } 
 
-        // populate modal
-        document.getElementById('editPaymentId').value = paymentId;
-        document.getElementById('editAmountPaid').value = amountText || '';
-        // try to convert dateText to yyyy-mm-dd if present
-        if (dateText && dateText !== '-') {
-          const d = new Date(dateText);
-          if (!isNaN(d)) {
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth()+1).padStart(2,'0');
-            const dd = String(d.getDate()).padStart(2,'0');
-            document.getElementById('editPaymentDate').value = `${yyyy}-${mm}-${dd}`;
-          }
-        } else {
-          document.getElementById('editPaymentDate').value = '';
-        }
+        function showFlashMessage(type, message, duration = 4000) {
+            const container = document.getElementById('flashMessageContainer');
+            const msg = document.createElement('div');
+            msg.classList.add('flash-message');
+            msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+            msg.textContent = message;
 
-        document.getElementById('editModal').classList.add('open');
-        document.getElementById('editModal').setAttribute('aria-hidden','false');
-        return;
-      }
+            container.appendChild(msg);
 
-      if (ev.target.matches('.deleteBtn')) {
-        if (!confirm('Delete this payment? This will add the amount back to the student\'s due.')) return;
-        try {
-          const res = await fetch('/Payment/' + paymentId, { method: 'DELETE' });
-          if (!res.ok) { await handleServerError(res); return; }
-          const j = await res.json();
-          showFlashMessage('success', j.message || 'Deleted');
-          setTimeout(() => location.reload(), 500);
-        } catch (err) {
-          console.error(err);
-          showFlashMessage('error', 'Network error while deleting');
-        }
-      }
-    });
+            setTimeout(() => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-10px)';
+            setTimeout(() => msg.remove(), 500);
+            }, duration);
+        } 
 
-    // ---------- Edit modal actions ----------
-    document.getElementById('closeEdit').addEventListener('click', () => {
-      document.getElementById('editModal').classList.remove('open');
-      document.getElementById('editModal').setAttribute('aria-hidden','true');
-      document.getElementById('editPaymentForm').reset();
-    });
+        const addForm = document.getElementById('addPaymentForm');
+        addForm.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const fd = new FormData(addForm);
+            const btn = document.getElementById('submitAddPayment');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/Payment/create', { method: 'POST', body: fd });
+                if (!res.ok) { await handleServerError(res); return; }
+                const data = await res.json();
+                showFlashMessage('success', data.message || 'Payment recorded successfully!');
+                setTimeout(() => location.reload(), 800);
+            } catch (err) {
+                console.error(err);
+                showFlashMessage('error', 'A network error occurred.');
+            } finally {
+                if (!document.querySelector('.flash.success')) {
+                    btn.disabled = false;
+                }
+            }
+        });
 
-    document.getElementById('editPaymentForm').addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const paymentId = document.getElementById('editPaymentId').value;
-      if (!paymentId) return showFlashMessage('error', 'Missing payment id');
+        const table = document.getElementById('paymentsTable');
+        table.addEventListener('click', async (ev) => {
+            const target = ev.target;
+            const tr = target.closest('tr[data-id]');
+            if (!tr) return;
 
-      const fd = new FormData(document.getElementById('editPaymentForm'));
-      try {
-        const res = await fetch('/Payment/' + paymentId, { method: 'PUT', body: fd });
-        if (!res.ok) { await handleServerError(res); return; }
-        const j = await res.json();
-        showFlashMessage('success', j.message || 'Updated');
-        setTimeout(() => location.reload(), 500);
-      } catch (err) {
-        console.error(err);
-        showFlashMessage('error', 'Network error while updating');
-      }
-    });
-  </script>
+            const paymentId = tr.getAttribute('data-id');
+
+            if (target.matches('.editBtn')) {
+                const cells = tr.children;
+                const dateText = cells[0].textContent.trim();
+                const amountText = cells[1].textContent.replace(/[^\d.]/g, '').trim();
+
+                document.getElementById('editPaymentId').value = paymentId;
+                document.getElementById('editAmountPaid').value = amountText || '';
+                
+                if (dateText && dateText !== '—') {
+                    const parts = dateText.split('/'); // Assuming dd/mm/yyyy
+                    const isoDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    document.getElementById('editPaymentDate').value = isoDate;
+                } else {
+                    document.getElementById('editPaymentDate').value = '';
+                }
+
+                document.getElementById('editModal').classList.add('open');
+                document.getElementById('editModal').setAttribute('aria-hidden', 'false');
+            }
+
+            if (target.matches('.deleteBtn')) {
+                if (!confirm('Are you sure you want to delete this payment?\nThis will add the amount back to the student\'s fees due.')) return;
+                try {
+                    const res = await fetch('/Payment/' + paymentId, { method: 'DELETE' });
+                    if (!res.ok) { await handleServerError(res); return; }
+                    const j = await res.json();
+                    showFlashMessage('success', j.message || 'Payment deleted.');
+                    setTimeout(() => location.reload(), 800);
+                } catch (err) {
+                    console.error(err);
+                    showFlashMessage('error', 'A network error occurred during deletion.');
+                }
+            }
+        });
+
+        const editModal = document.getElementById('editModal');
+        editModal.querySelector('#closeEdit').addEventListener('click', () => {
+            editModal.classList.remove('open');
+            editModal.setAttribute('aria-hidden', 'true');
+            editModal.querySelector('#editPaymentForm').reset();
+        });
+
+        editModal.querySelector('#editPaymentForm').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const form = ev.target;
+            const paymentId = form.paymentId.value;
+            if (!paymentId) return showFlashMessage('error', 'Missing payment ID.');
+
+            const fd = new FormData(form);
+            const btn = editModal.querySelector('#submitEditPayment');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/Payment/' + paymentId, { method: 'PUT', body: fd });
+                if (!res.ok) { await handleServerError(res); return; }
+                const j = await res.json();
+                showFlashMessage('success', j.message || 'Payment updated successfully!');
+                setTimeout(() => location.reload(), 800);
+            } catch (err) {
+                console.error(err);
+                showFlashMessage('error', 'A network error occurred while updating.');
+            } finally {
+                if (!document.querySelector('.flash.success')) {
+                    btn.disabled = false;
+                }
+            }
+        });
+    </script>
 </body>
 </html>

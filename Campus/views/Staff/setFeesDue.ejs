@@ -1,152 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Set Fees Due — <%= student.firstName %> <%= student.lastName || '' %></title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: #f7fafc; color: #111827; padding: 20px;
-      max-width: 600px; margin: auto;
-    }
-    h1 {
-      font-weight: 600;
-      margin-bottom: 18px;
-    }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 10px rgb(0 0 0 / 0.06);
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-bottom: 18px;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    button:disabled {
-      background-color: #93c5fd;
-      cursor: not-allowed;
-    }
-    #flashMessageContainer {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 1200;
-    }
-    .flash {
-      padding: 10px 14px;
-      border-radius: 10px;
-      margin-top: 8px;
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
-    }
-    .flash.success { background: #16a34a; }
-    .flash.error { background: #dc2626; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Set Fees Due — <%= student.firstName %> <%= student.lastName || '' %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --primary-dark: #1c3d90;
+            --secondary-bg: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary-bg);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            flex-grow: 1;
+            line-height: 1.2;
+        }
+
+        h1 .student-name {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .form-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid transparent;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+        }
+        .btn-primary:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #e2e8f0;
+        }
+
+        /* Flash Messages */
+          #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+            #flashMessageContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .flash-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div id="flashMessageContainer"></div>
+    <div id="flashMessageContainer"></div>
 
-  <h1>Set Fees Due for <%= student.firstName %> <%= student.lastName || '' %></h1>
+    <main class="container">
+        <header class="page-header">
+            <h1>
+                Set Fees Due
+                <span class="student-name">for <%= student.firstName %> <%= student.lastName || '' %></span>
+            </h1>
+            <a href="/Staff/dashboard" class="btn btn-secondary">← Back to Students</a>
+        </header>
 
-  <form id="setFeesDueForm" novalidate>
-    <label for="feesDueInput">Fees Due Amount (₹)</label>
-    <input
-      type="number"
-      id="feesDueInput"
-      name="feesDue"
-      min="0"
-      step="0.01"
-      required
-      value="<%= student.feesDue || 0 %>"
-    />
-    <input type="hidden" name="studentId" value="<%= student._id %>" />
-    <button type="submit" id="submitBtn">Update Fees Due</button>
-  </form>
+        <form id="setFeesDueForm" class="form-card" novalidate>
+            <label for="feesDueInput">Fees Due Amount (₹)</label>
+            <input
+                type="number"
+                id="feesDueInput"
+                name="feesDue"
+                min="0"
+                step="0.01"
+                required
+                value="<%= student.feesDue || 0 %>"
+                placeholder="e.g., 50000"
+            />
+            <input type="hidden" name="studentId" value="<%= student._id %>" />
+            <button type="submit" id="submitBtn" class="btn btn-primary">Update Fees Due</button>
+        </form>
+    </main>
 
-  <script>
-    function showFlashMessage(type = 'info', message = '') {
-      const container = document.getElementById('flashMessageContainer');
-      const d = document.createElement('div');
-      d.className = 'flash ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : 'info');
-      d.textContent = message;
-      container.appendChild(d);
-      setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 300); }, 3500);
-    }
+    <script>
+        window.onload = async function() {
+            const token = localStorage.getItem('token');
+            try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
 
-    async function handleServerError(res) {
-      let msg = 'Server error';
-      try {
-        const ct = res.headers.get('content-type') || '';
-        if (ct.includes('application/json')) {
-          const j = await res.json();
-          msg = j.error || j.message || JSON.stringify(j);
-        } else {
-          const text = await res.text();
-          msg = text.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 200) || 'Server returned an error';
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                          try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                    console.error('No token found');
+                    return;
+                    }
+                    // console.log('Token:', token);
+                    // Decode JWT to get staffId
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const staffId = payload._id;
+                    
+                    const res = await fetch('/Manage/get-permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ staffId })
+                    });
+
+                    if (!res.ok) {
+                    handleServerError(res);
+                    return;
+                    }
+
+                    const data = await res.json();
+                    const permissions = data.permissions || [];
+                    // console.log('Permissions:', permissions);
+                    // Hide all menu items not in permissions
+                    
+                    if (!permissions.includes('students_payment')) {
+                        showFlashMessage('error', 'You do not have permission to access this page.');
+                        setTimeout(() => {
+                            window.location.href = '/Staff/dashboard';
+                        }, 1500);
+                    }
+
+                } catch (err) {
+                    console.error('Error fetching permissions:', err);
+                }
         }
-      } catch {
-        msg = 'Server error';
-      }
-      showFlashMessage('error', msg);
-    }
+        async function handleServerError(res) {
+            const contentType = res.headers.get('Content-Type') || '';
 
-    document.getElementById('setFeesDueForm').addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
+            if (contentType.includes('text/html')) {
+            const html = await res.text();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
 
-      const feesDue = parseFloat(document.getElementById('feesDueInput').value);
-      if (isNaN(feesDue) || feesDue < 0) {
-        showFlashMessage('error', 'Please enter a valid non-negative amount');
-        btn.disabled = false;
-        return;
-      }
+            const popup = tempDiv.querySelector('#errorPopupContainer');
+            const scripts = tempDiv.querySelectorAll('script');
 
-      const studentId = ev.target.studentId.value;
+            if (popup) {
+                document.body.prepend(popup);
+                scripts.forEach((script) => {
+                const newScript = document.createElement('script');
+                if (script.src) newScript.src = script.src;
+                else newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+                });
+            } else {
+                showFlashMessage('error', 'An unknown error occurred.');
+            }
+            } else {
+            showFlashMessage('error', 'Server error: unexpected content type.');
+            }
+        } 
 
-      try {
-        const res = await fetch(`/Payment/set-due/${studentId}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ feesDue })
+        function showFlashMessage(type, message, duration = 4000) {
+            const container = document.getElementById('flashMessageContainer');
+            const msg = document.createElement('div');
+            msg.classList.add('flash-message');
+            msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+            msg.textContent = message;
+
+            container.appendChild(msg);
+
+            setTimeout(() => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-10px)';
+            setTimeout(() => msg.remove(), 500);
+            }, duration);
+        } 
+
+        document.getElementById('setFeesDueForm').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            const feesDue = parseFloat(document.getElementById('feesDueInput').value);
+            if (isNaN(feesDue) || feesDue < 0) {
+                showFlashMessage('error', 'Please enter a valid non-negative amount.');
+                btn.disabled = false;
+                return;
+            }
+
+            const studentId = ev.target.studentId.value;
+
+            try {
+                const res = await fetch(`/Payment/set-due/${studentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ feesDue })
+                });
+                
+                if (!res.ok) {
+                    await handleServerError(res);
+                } else {
+                    const data = await res.json();
+                    showFlashMessage('success', data.message || 'Fees Due updated successfully!');
+                    setTimeout(() => {
+                        // Redirect back to the main student list after success
+                        window.location.href = '/Manage/payment';
+                    }, 1500);
+                }
+            } catch (err) {
+                console.error(err);
+                showFlashMessage('error', 'A network error occurred. Please try again.');
+            } finally {
+                // Keep button disabled on success to prevent double-submission before redirect
+                if (!document.querySelector('.flash-success')) {
+                   btn.disabled = false;
+                }
+            }
         });
-        if (!res.ok) {
-          await handleServerError(res);
-          btn.disabled = false;
-          return;
-        }
-        const data = await res.json();
-        showFlashMessage('success', data.message || 'Fees Due updated successfully');
-      } catch (err) {
-        console.error(err);
-        showFlashMessage('error', 'Network error while updating Fees Due');
-      } finally {
-        btn.disabled = false;
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>

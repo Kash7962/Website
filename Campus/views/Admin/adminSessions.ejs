@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Sessions</title>
+  <% const nonceAttr = (typeof cspNonce !== 'undefined' && cspNonce) ? `nonce="${cspNonce}"` : ''; %>
+  <style nonce="<%= nonceAttr %>">
+    :root {
+      --bg: #0b1020;
+      --card: #111833;
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --border: #1f2a44;
+      --shadow: 0 6px 20px rgba(0,0,0,0.25);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      background: radial-gradient(1200px 600px at 15% 0%, rgba(79,70,229,0.15), transparent 60%),
+                  radial-gradient(1200px 600px at 85% 0%, rgba(34,197,94,0.15), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      font-size: clamp(20px, 3vw, 28px);
+    }
+
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #1a2347, #131a36);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform .12s ease, filter .12s ease, background .2s ease, border-color .2s ease;
+      user-select: none;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn:active { transform: translateY(0); filter: brightness(0.98); }
+    .btn--danger { background: linear-gradient(180deg, #2a0f12, #200b0d); border-color: #3a1013; }
+    .btn--primary { background: linear-gradient(180deg, #222b6b, #1a2053); border-color: #2f3aa0; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)), var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 1000px;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #101635;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      padding: 12px 10px;
+      white-space: nowrap;
+      z-index: 1;
+    }
+    tbody td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      vertical-align: top;
+    }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    .ua {
+      max-width: 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #0d1330;
+    }
+    .badge--active { color: var(--accent-2); border-color: rgba(34,197,94,0.45); }
+    .badge--inactive { color: var(--muted); }
+
+    .empty {
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    /* Flash messages */
+    #flashMessageContainer {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(92vw, 560px);
+      pointer-events: none;
+    }
+    .flash {
+      pointer-events: auto;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0d1330;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .2s ease, transform .2s ease;
+      word-break: break-word;
+    }
+    .flash.show { opacity: 1; transform: translateY(0); }
+    .flash.success { border-color: rgba(34,197,94,0.35); }
+    .flash.error { border-color: rgba(239,68,68,0.35); }
+    .count {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <!-- required container -->
+  <div id="flashMessageContainer" aria-live="polite"></div>
+
+  <div class="container">
+    <div class="toolbar">
+      <h1 class="title">Admin Sessions</h1>
+      <div class="btns">
+        <button id="refreshBtn" class="btn btn--primary" type="button">Refresh</button>
+        <button id="deleteAllBtn" class="btn btn--danger" type="button" title="Delete ALL admin sessions">Delete All Sessions</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="meta">
+        <div>Total sessions: <span id="sessionCount" class="count"><%= (sessions && sessions.length) ? sessions.length : 0 %></span></div>
+        <div>Updated: <%= new Date().toLocaleString() %></div>
+      </div>
+
+      <% if (sessions && sessions.length) { %>
+        <div class="table-wrap">
+          <table aria-label="Staff sessions table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Method</th>
+                <th>Active</th>
+                <th>IP</th>
+                <th>User Agent</th>
+                <th>Login Time</th>
+                <th>Logout Time</th>
+                <th>Token (start)</th>
+              </tr>
+            </thead>
+            <tbody id="sessionTbody">
+              <% sessions.forEach((s, i) => { %>
+                <tr data-id="<%= s._id %>">
+                  <td><%= i + 1 %></td>
+                  <td><%= s.name %></td>
+                  <td><%= s.email %></td>
+                  <td><%= s.role %></td>
+                  <td><span class="badge"><%= s.method %></span></td>
+                  <td>
+                    <% if (s.isActive) { %>
+                      <span class="badge badge--active">active</span>
+                    <% } else { %>
+                      <span class="badge badge--inactive">inactive</span>
+                    <% } %>
+                  </td>
+                  <td><%= s.ipAddress || '-' %></td>
+                  <td class="ua" title="<%= s.userAgent || '' %>"><%= s.userAgent || '-' %></td>
+                  <td><%= s.loginTime ? new Date(s.loginTime).toLocaleString() : '-' %></td>
+                  <td><%= s.logoutTime ? new Date(s.logoutTime).toLocaleString() : '-' %></td>
+                  <td><%= s.token ? (String(s.token).slice(0, 12) + '…') : '-' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty">No sessions found.</div>
+      <% } %>
+    </div>
+  </div>
+
+<script nonce="<%= nonceAttr %>">
+  const tbody = document.getElementById('sessionTbody');
+  const countEl = document.getElementById('sessionCount');
+  const deleteAllBtn = document.getElementById('deleteAllBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  deleteAllBtn.addEventListener('click', async () => {
+    if (!confirm('Delete ALL staff sessions? This cannot be undone.')) return;
+    try {
+      const res = await fetch('/Admin/Sessions_Admins/delete-all', { method: 'DELETE' });
+      if (res.ok) {
+        alert('All sessions deleted');
+        tbody.innerHTML = '';
+        countEl.textContent = '0';
+      } else {
+        alert('Error deleting sessions');
+      }
+    } catch (err) {
+      alert('Network error while deleting sessions');
+    }
+  });
+
+  refreshBtn.addEventListener('click', () => {
+    location.reload();
+  });
+</script>
+
+
+
+</body>
+</html>

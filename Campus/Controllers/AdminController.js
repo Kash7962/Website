@@ -10,7 +10,9 @@ const jwt = require('jsonwebtoken');
 const { StaffAccess } = require('../models/permissions');
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
-
+const Session_Staff = require('../models/session_staff');
+const {StudentSession} = require('../models/session_student');
+const Session_Admin = require('../models/session_admin');
 // Get all non-enrolled students
 
 const getNotices = async (req, res) => {
@@ -559,6 +561,69 @@ const assignOrUpdatePermissions = async (req, res) => {
   }
 };
 
+const getAllSessions = async (req, res) => {
+  try {
+    const sessions = await Session_Staff.find().sort({ createdAt: -1 }).lean();
+    // Pass cspNonce if you use CSP nonces; otherwise it's undefined and safely ignored by the view.
+    res.status(200).render('Admin/staffSessions', { sessions, cspNonce: res.locals.cspNonce });
+  } catch (err) {
+    console.error('Error loading staff sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to load staff sessions' });
+  }
+};
+
+const deleteAllSessions = async (req, res) => {
+  try {
+    const result = await Session_Staff.deleteMany({});
+    res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
+  } catch (err) {
+    console.error('Error deleting staff sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to delete staff sessions' });
+  }
+};
+
+const getStudentSessions = async (req, res) => {
+  try {
+    const sessions = await StudentSession.find().sort({ createdAt: -1 }).lean();
+    // Pass cspNonce if you use CSP nonces; otherwise it's undefined and safely ignored by the view.
+    res.status(200).render('Admin/studentSessions', { sessions, cspNonce: res.locals.cspNonce });
+  } catch (err) {
+    console.error('Error loading student sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to load student sessions' });
+  }
+};
+
+const deleteStudentSessions = async (req, res) => {
+  try {
+    const result = await StudentSession.deleteMany({});
+    res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
+  } catch (err) {
+    console.error('Error deleting student sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to delete student sessions' });
+  }
+};
+
+const getAdminSessions = async (req, res) => {
+  try {
+    const sessions = await Session_Admin.find().sort({ createdAt: -1 }).lean();
+    // Pass cspNonce if you use CSP nonces; otherwise it's undefined and safely ignored by the view.
+    res.status(200).render('Admin/adminSessions', { sessions, cspNonce: res.locals.cspNonce });
+  } catch (err) {
+    console.error('Error loading admin sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to load admin sessions' });
+  }
+};
+
+const deleteAdminSessions = async (req, res) => {
+  try {
+    const result = await Session_Admin.deleteMany({});
+    res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
+  } catch (err) {
+    console.error('Error deleting admin sessions:', err);
+    res.status(500).render('error/error', { message: 'Unable to delete admin sessions' });
+  }
+};
+
 module.exports = {
   getNotices,
   getAdminNotices,
@@ -589,4 +654,10 @@ module.exports = {
   deleteStaff,
   renderAssignPermissionsPage,
   assignOrUpdatePermissions,
+  getAllSessions,
+  deleteAllSessions,
+  getStudentSessions,
+  deleteStudentSessions,
+  getAdminSessions,
+  deleteAdminSessions,
 };

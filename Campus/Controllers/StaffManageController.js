@@ -1,13 +1,13 @@
-const { Staff } = require('../models/staff');
 const path = require('path');
 const fs = require('fs');
+const fsp = require('fs').promises;
 const CourseMaterial = require('../models/course');
 const Assignment = require('../models/assignment');
 const { Student } = require('../models/student');
 const { StaffAccess } = require('../models/permissions');
 const mongoose = require('mongoose')
 const bcryptjs = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
+// const { body, validationResult } = require('express-validator');
 const Document = require('../models/documents')
 // const jwt = require('jsonwebtoken');
 
@@ -172,14 +172,37 @@ const getPendingEnrollment = async (req, res) => {
 const deleteEnrollment = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // --- Validate ID ---
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).render('error/error', {message: 'Invalid ID'});
+      return res.status(400).render('error/error', { message: 'Invalid ID' });
     }
+
+    // --- Check if student exists ---
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).render('error/error', { message: 'Student not found' });
+    }
+
+    // --- Path to student's uploads folder ---
+    const studentFolderPath = path.join(__dirname, '..', 'uploads', 'students', String(id));
+
+    // --- Delete student folder if exists ---
+    try {
+      await fsp.rm(studentFolderPath, { recursive: true, force: true });
+      // console.log(`Deleted uploads folder for student ${id}`);
+    } catch (fspErr) {
+      console.warn(`No uploads folder found for student ${id} or error deleting:`, fspErr.message);
+    }
+
+    // --- Delete student from DB ---
     await Student.findByIdAndDelete(id);
-    res.status(200).json({ message: 'Deleted successfully' });
+
+    return res.status(200).json({ message: 'Deleted successfully' });
+
   } catch (err) {
     console.error('Error deleting student:', err);
-    return res.status(500).render('error/error', {message: 'Server error'});
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 };
 
@@ -283,7 +306,13 @@ const postFinalizeForm = [
         const toHash = (student.studentEmail || req.body.studentEmail || `student-${Date.now()}`);
         hashedPasswordForUpdate = await bcryptjs.hash(toHash, 10);
       }
-
+      let enrolled;
+      if(req.body.isEnrolled === 'false'){
+        enrolled = false
+      }else{
+        enrolled = true
+      }
+      // console.log(req.body.isEnrolled)
       // ---------- prepare updateData ----------
       const updateData = {
         firstName: req.body.firstName?.trim(),
@@ -333,7 +362,10 @@ const postFinalizeForm = [
         joiningDate: req.body.joiningDate ? new Date(req.body.joiningDate) : student.joiningDate,
         currentSemester: req.body.currentSemester?.trim(),
         subjects: req.body.subjects ? req.body.subjects.split(',').map(s => s.trim()).filter(Boolean) : [],
-
+        lastSchoolAttended: req.body.lastSchoolAttended?.trim(),
+        matricBoard: req.body.matricBoard?.trim(),
+        matricRollNo: req.body.matricRollNo?.trim(),
+        matricYear: toNumber(req.body.matricYear),
         matricMarks: {
           subjects: matricSubjectsObj,
           total: matricTotal,
@@ -355,12 +387,13 @@ const postFinalizeForm = [
         bankBranch: req.body.bankBranch?.trim(),
         isAadhaarLinkedToBank: req.body.isAadhaarLinkedToBank === 'true',
 
-        
-        isEnrolled: req.body.isEnrolled === 'true' || true,
+        isEnrolled: enrolled,
+        // isEnrolled: req.body.isEnrolled === 'true' || true,
         isPromoted: req.body.isPromoted === 'true' || false,
         isAlumni: req.body.isAlumni === 'true' || false, 
         enrollmentDate: new Date(),
         isActive: req.body.isActive === 'true' || false,
+        // doc_name: req.body.doc_name?.trim(),
         
       };
 
@@ -396,7 +429,7 @@ const postFinalizeForm = [
           for (const f of req.files['documents']) {
             await Document.create({
               student: req.params.id,
-              name: f.originalname || f.filename,
+              name: req.body.doc_name || f.originalname || f.filename,
               type: f.mimetype === 'application/pdf' ? 'pdf' : 'photo',
               url: `/uploads/students/${req.params.id}/${f.filename}`
             });
@@ -414,19 +447,7 @@ const postFinalizeForm = [
   }
 ];
 
-// // --- middleware to create an id for multer to use (so upload goes to /uploads/students/:id) ---
-// const createStudentId = (req, res, next) => {
-//   try {
-//     const id = new mongoose.Types.ObjectId();
-//     req.params = req.params || {};
-//     req.params.id = String(id);
-//     req._newStudentId = String(id); // optional flag if you want to check later
-//     return next();
-//   } catch (err) {
-//     console.error('createStudentId error:', err);
-//     return res.status(500).render('error/error', { message: 'Server error' });
-//   }
-// };
+
 
 // --- GET form for direct join (fresh join) ---
 const getEditForm = async (req, res) => {
@@ -450,7 +471,7 @@ const getStudents = async (req, res) => {
     const students = await Student.find({ isEnrolled: true }).lean();
     res.render('Staff/students', { students }); 
   } catch (err) {
-    console.error('Error fetching pending students:', err);
+    console.error('Error fetching students:', err);
     return res.status(500).render('error/error', {message: 'Server error'});
   }
 };
@@ -465,277 +486,25 @@ const getPaymentPage = async (req, res) => {
   }
 };
 
-// // --- POST handler for direct join (expects multer to have stored files under uploads/students/:id) ---
-// const postDirectJoin = [
-//   async (req, res) => {
-//     // helpers (aligned with postFinalizeForm)
-//     const toNumber = (v) => {
-//       const n = Number(v);
-//       return Number.isFinite(n) ? n : undefined;
-//     };
+const getDocument = async (req, res) => {
+  try {
+    const students = await Student.find({ isEnrolled: true }).lean();
+    res.render('Staff/studentDocuments', { students }); 
+  } catch (err) {
+    console.error('Error fetching pending students:', err);
+    return res.status(500).render('error/error', {message: 'Server error'});
+  }
+};
 
-//     const sanitizeSubjectKey = (s) => {
-//       if (!s && s !== 0) return '';
-//       return String(s).trim().replace(/[.\$]/g, '_').slice(0, 100);
-//     };
-
-//     const normalizeMember = (m = {}) => ({
-//       name: (m.name || '').toString().trim() || undefined,
-//       age: toNumber(m.age) ?? undefined,
-//       relation: (m.relation || '').toString().trim() || undefined,
-//       education: (m.education || '').toString().trim() || undefined,
-//       otherInfo: (m.otherInfo || '').toString().trim() || undefined,
-//     });
-
-//     const normalizeFamilyMembersInput = (input) => {
-//       if (!input) return [];
-//       if (Array.isArray(input)) return input.map(normalizeMember);
-//       if (typeof input === 'object') {
-//         const keys = Object.keys(input);
-//         const numericKeys = keys.every(k => String(Number(k)) === k);
-//         if (numericKeys) {
-//           return keys
-//             .map(k => ({ index: Number(k), value: input[k] }))
-//             .sort((a, b) => a.index - b.index)
-//             .map(x => normalizeMember(x.value));
-//         }
-//         return [normalizeMember(input)];
-//       }
-//       return [];
-//     };
-
-//     const parseMatricMarksFromBody = (body) => {
-//       const raw = body.matricMarks || {};
-//       const subjects = {};
-//       if (typeof raw === 'object') {
-//         for (const key of Object.keys(raw)) {
-//           const clean = sanitizeSubjectKey(key);
-//           if (!clean) continue;
-//           const rawVal = raw[key];
-//           const mark = parseFloat(Array.isArray(rawVal) ? rawVal[0] : rawVal);
-//           subjects[clean] = Number.isFinite(mark) ? mark : 0;
-//         }
-//       }
-
-//       let total = toNumber(body.matricTotal);
-//       let percentage = toNumber(body.matricPercentage);
-//       const count = Object.keys(subjects).length;
-//       if (count > 0) {
-//         total = Object.values(subjects).reduce((s, v) => s + (Number(v) || 0), 0);
-//         percentage = Number(((total / count) || 0).toFixed(2));
-//       } else {
-//         total = total ?? 0;
-//         percentage = percentage ?? 0;
-//       }
-//       return { subjects, total, percentage };
-//     };
-
-//     const cleanupUploadedFolder = async (id) => {
-//       try {
-//         if (!id) return;
-//         const folder = path.join(__dirname, '..', 'uploads', 'students', String(id));
-//         if (!fs.existsSync(folder)) return;
-//         const files = await fs.promises.readdir(folder).catch(() => []);
-//         await Promise.all(files.map(f => fs.promises.unlink(path.join(folder, f)).catch(() => {})));
-//         await fs.promises.rmdir(folder).catch(() => {});
-//       } catch (e) {
-//         console.warn('cleanupUploadedFolder error:', e && e.message ? e.message : e);
-//       }
-//     };
-
-//     try {
-//       // validation result (express-validator)
-//       const errors = validationResult(req);
-//       if (!errors.isEmpty()) {
-//         if (req.params && req.params.id) await cleanupUploadedFolder(req.params.id);
-
-//         const errs = errors.array();
-//         const humanMessage = errs.map(e => `${e.param || 'field'}: ${e.msg}`).join('\n');
-
-//         return res.status(400).render('error/error', {
-//           title: 'Validation error',
-//           message: humanMessage,
-//           errors: errs
-//         });
-//       }
-
-//       // ensure id (created by createStudentId middleware)
-//       const studentId = req.params && req.params.id ? String(req.params.id) : null;
-//       if (!studentId) {
-//         if (req.files) await cleanupUploadedFolder(studentId);
-//         return res.status(400).render('error/error', { title: 'Bad request', message: 'Missing student id' });
-//       }
-
-//       // parse matric & family
-//       const matric = parseMatricMarksFromBody(req.body || {});
-//       const familyMembers = normalizeFamilyMembersInput(req.body.familyMembers);
-//       const parsedMembers = Number(req.body.totalFamilyMembers);
-//       const totalFamilyMembers = (
-//         !isNaN(parsedMembers) && req.body.totalFamilyMembers !== '' && req.body.totalFamilyMembers != null
-//       ) ? parsedMembers : (familyMembers?.length ?? 0);
-
-//       // prepare student object
-//       const subjectsArray = (req.body.subjects || '').split(',').map(s => s.trim()).filter(Boolean);
-
-//       const studentData = {
-//         _id: studentId,
-//         firstName: req.body.firstName?.trim(),
-//         middleName: req.body.middleName?.trim(),
-//         lastName: req.body.lastName?.trim(),
-//         gender: req.body.gender,
-//         dob: req.body.dob ? new Date(req.body.dob) : undefined,
-//         studentEmail: req.body.studentEmail?.trim(),
-//         studentPhone: req.body.studentPhone?.trim(),
-//         aadhaarNumber: req.body.aadhaarNumber?.trim(),
-//         caste: req.body.caste?.trim(),
-//         subCaste: req.body.subCaste?.trim(),
-//         religion: req.body.religion?.trim(),
-//         bplAplStatus: req.body.bplAplStatus,
-
-//         guardian1Name: req.body.guardian1Name?.trim(),
-//         guardian1Relation: req.body.guardian1Relation,
-//         guardian1Phone: req.body.guardian1Phone?.trim(),
-//         guardian1Email: req.body.guardian1Email?.trim(),
-//         guardian1Occupation: req.body.guardian1Occupation?.trim(),
-//         guardian1Income: toNumber(req.body.guardian1Income) ?? undefined,
-
-//         guardian2Name: req.body.guardian2Name?.trim(),
-//         guardian2Relation: req.body.guardian2Relation?.trim(),
-//         guardian2Occupation: req.body.guardian2Occupation?.trim(),
-//         guardian2Income: toNumber(req.body.guardian2Income) ?? undefined,
-
-//         address1: req.body.address1?.trim(),
-//         address2: req.body.address2?.trim(),
-//         city: req.body.city?.trim(),
-//         block: req.body.block?.trim(),
-//         district: req.body.district?.trim(),
-//         state: req.body.state?.trim(),
-//         zipcode: req.body.zipcode?.trim(),
-//         country: req.body.country?.trim() || 'India',
-
-//         registration_number: req.body.registration_number?.trim(),
-//         enrollmentNumber: req.body.enrollmentNumber?.trim(),
-//         classAssigned: req.body.classAssigned?.trim(),
-//         course: req.body.course?.trim(),
-//         academicYear: req.body.academicYear?.trim(),
-//         academicSession: req.body.academicSession?.trim(),
-//         batch: req.body.batch?.trim(),
-//         joiningDate: req.body.joiningDate ? new Date(req.body.joiningDate) : undefined,
-//         currentSemester: req.body.currentSemester?.trim(),
-//         subjects: subjectsArray,
-
-//         lastSchoolAttended: req.body.lastSchoolAttended?.trim(),
-//         matricBoard: req.body.matricBoard?.trim(),
-//         matricRollNo: req.body.matricRollNo?.trim(),
-//         matricYear: toNumber(req.body.matricYear),
-//         matricMarks: {
-//           subjects: matric.subjects || {},
-//           total: matric.total,
-//           percentage: matric.percentage
-//         },
-
-//         familyMembers,
-//         totalFamilyMembers,
-
-//         isHostelResident: req.body.isHostelResident === 'true',
-//         hostelJoiningDate: req.body.hostelJoiningDate ? new Date(req.body.hostelJoiningDate) : undefined,
-//         hostelDurationMonths: toNumber(req.body.hostelDurationMonths) ?? undefined,
-//         hostelWithinCampus: req.body.hostelWithinCampus === 'true',
-//         isTransportResident: req.body.isTransportResident === 'true',
-
-//         bankAccountNumber: req.body.bankAccountNumber?.trim(),
-//         ifscCode: req.body.ifscCode?.trim(),
-//         bankName: req.body.bankName?.trim(),
-//         bankBranch: req.body.bankBranch?.trim(),
-//         isAadhaarLinkedToBank: req.body.isAadhaarLinkedToBank === 'true',
-
-//         // mark enrolled + active
-//         isEnrolled: true,
-//         enrollmentDate: new Date(),
-//         isActive: true
-//       };
-
-//       // set password (hash) - fallback to email/phone
-//       const seed = req.body.password ? String(req.body.password) : (req.body.studentEmail || req.body.studentPhone || `student-${Date.now()}`);
-//       studentData.password = await bcryptjs.hash(String(seed), 10);
-
-//       // set profileImage path if multer saved it into folder
-//       if (req.files && req.files['profileImage'] && req.files['profileImage'][0]) {
-//         const f = req.files['profileImage'][0];
-//         studentData.profileImage = `/uploads/students/${studentId}/${f.filename}`;
-//       }
-
-//       // create and save student
-//       let newStudent;
-//       try {
-//         newStudent = new Student(studentData);
-//         await newStudent.save();
-//       } catch (saveErr) {
-//         // handle duplicate key gracefully
-//         if (saveErr && saveErr.code === 11000) {
-//           const dupFields = Object.keys(saveErr.keyValue || {}).join(', ');
-//           // cleanup uploaded files to avoid leftover files
-//           try { await cleanupUploadedFolder(studentId); } catch(e){}
-//           return res.status(400).render('error/error', { title: 'Duplicate value', message: `Duplicate value for ${dupFields}` });
-//         }
-//         throw saveErr;
-//       }
-
-//       // create Document entries for profile + supporting docs (non-fatal)
-//       const docList = [];
-//       if (req.files && req.files['profileImage'] && req.files['profileImage'][0]) {
-//         const f = req.files['profileImage'][0];
-//         docList.push({
-//           student: studentId,
-//           name: `${(studentData.firstName || '') + ' ' + (studentData.middleName || '') + ' ' + (studentData.lastName || '')} profile pic`.trim(),
-//           type: f.mimetype === 'application/pdf' ? 'pdf' : 'photo',
-//           url: `/uploads/students/${studentId}/${f.filename}`
-//         });
-//       }
-
-//       if (req.files && req.files['documents'] && Array.isArray(req.files['documents'])) {
-//         for (const f of req.files['documents']) {
-//           docList.push({
-//             student: studentId,
-//             name: f.originalname || f.filename,
-//             type: f.mimetype === 'application/pdf' ? 'pdf' : 'photo',
-//             url: `/uploads/students/${studentId}/${f.filename}`
-//           });
-//         }
-//       }
-
-//       if (docList.length) {
-//         try {
-//           await Document.insertMany(docList);
-//         } catch (docErr) {
-//           console.error('Document insert error (direct join):', docErr);
-//         }
-//       }
-
-//       // success — frontend expects JSON
-//       return res.status(200).json({ success: true, message: 'Student enrolled successfully', student: newStudent });
-//     } catch (err) {
-//       console.error('postDirectJoin error:', err);
-//       // cleanup uploaded files for this id (avoid orphan uploads)
-//       try { if (req.params && req.params.id) await cleanupUploadedFolder(req.params.id); } catch(e){}
-//       // if a student record was created partly, attempt to remove it
-//       try {
-//         if (req.params && req.params.id) await Student.findByIdAndDelete(req.params.id).catch(()=>{});
-//       } catch(e){}
-//       // safe string message
-//       return res.status(500).render('error/error', { title: 'Server error', message: 'Server error' });
-//     }
-//   }
-// ];
 
 const getDocumentsByStudent = async (req, res) => {
   try {
     const studentId = req.params.studentId;
     const documents = await Document.find({ student: studentId }).sort({ uploadedAt: -1 });
-    res.render('manageDocuments', { studentId, documents });
+    res.render('Staff/manageDocuments', { studentId, documents });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -743,11 +512,11 @@ const getDocumentsByStudent = async (req, res) => {
 const uploadDocument = async (req, res) => {
   try {
     const studentId = req.params.studentId;
-    if (!req.file) return res.status(400).send('No file uploaded');
+    if (!req.file) return res.status(400).render('error/error', {message: 'File not found'});
 
     const { name, type } = req.body;
     if (!name || !type || !['photo', 'pdf'].includes(type)) {
-      return res.status(400).send('Invalid input');
+      return res.status(400).render('error/error', {message: 'Invalid file type or name'});
     }
 
     // Save document record
@@ -758,11 +527,11 @@ const uploadDocument = async (req, res) => {
       url: `/uploads/students/${studentId}/${req.file.filename}`,
     });
     await doc.save();
-
-    res.redirect(`/documents/${studentId}`);
+    res.status(200).json({ message: 'Document uploaded successfully'});
+    // res.redirect(`/Manage/documents/${studentId}`);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).render('error/error', {message: 'Server error'});
   }
 };
 
@@ -772,27 +541,53 @@ const deleteDocument = async (req, res) => {
     const { studentId, docId } = req.params;
 
     const doc = await Document.findById(docId);
-    if (!doc) return res.status(404).send('Document not found');
+    if (!doc) {
+      return res.status(404).render('error/error', { message: 'Document not found' });
+    }
 
-    // Delete file from disk
-    const filePath = path.join(__dirname, '..', 'public', doc.url);
-    fs.unlink(filePath, (err) => {
-      if (err) console.error('Failed to delete file:', err);
-    });
+    // Convert stored URL to actual absolute file path
+    let filePath;
+    if (doc.url.startsWith('/uploads/')) {
+      filePath = path.join(__dirname, '..', doc.url); 
+    } else {
+      filePath = path.isAbsolute(doc.url)
+        ? doc.url
+        : path.join(__dirname, '..', doc.url);
+    }
 
-    // Delete DB record
+    // console.log('Deleting file:', filePath);
+
+    // Delete file if exists
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      // console.log('File deleted successfully');
+    } else {
+      console.warn('File not found on disk:', filePath);
+    }
+
+    // Remove DB record
     await Document.deleteOne({ _id: docId });
-
-    res.redirect(`/documents/${studentId}`);
+    res.status(200).json({ message: 'Document deleted successfully' });
+    // res.redirect(`/Manage/documents/${studentId}`);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+    console.error('Error deleting document:', err);
+    res.status(500).render('error/error', { message: 'Server error' });
   }
 };
 
+const getResult = async (req, res) => {
+  try {
+    const students = await Student.find({ isEnrolled: true }).lean();
+    res.render('Staff/studentResults', { students }); 
+  } catch (err) {
+    console.error('Error fetching students:', err);
+    return res.status(500).render('error/error', {message: 'Server error'});
+  }
+};
 
 module.exports = {
   uploadCourse, getAllCourses, deleteCourse, getStaffPermissions, getFinalizeForm,
   uploadAssignment, viewAssignments, deleteAssignment, getPendingEnrollment, deleteEnrollment,
-   postFinalizeForm, getEditForm, getStudents, getPaymentPage,
+   postFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, 
+   uploadDocument, deleteDocument, getResult,
 }; 
