@@ -49,13 +49,25 @@ const staffSchema = new mongoose.Schema({
     type: Number,
     min: 0,
   },
-
+ aadharNumber: {
+    type: String,
+    trim: true,
+  },
+  panNumber: {
+    type: String,
+    trim: true,
+  },
   // ============================
   // Optional Academic Info
   // ============================
   qualifications: {
     type: [String], // e.g., ['M.Sc', 'Ph.D']
     trim: true,
+  },
+  numberOfLeaves: {
+    type: Number,
+    default: 0,
+    min: 0,
   },
   yearsOfExperience: {
     type: Number,

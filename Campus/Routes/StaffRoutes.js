@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword } = require('../Controllers/StaffController');
+const { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword, getStaffProfile, } = require('../Controllers/StaffController');
 const { validateLogin, staffValidator } = require('../validators/schema');
 const { validationResult } = require('express-validator');
+const { verifyCookieToken } = require('../middlewares/middleware');
 
 // Registration route
 router.post('/register', staffValidator, (req, res, next) => {
@@ -31,7 +32,7 @@ router.get('/login', (req, res) => {
   res.render('Register_Login/loginForm', { title: 'Login' });
 });
 
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', verifyCookieToken, (req, res) => {
   // Assuming you have a dashboard view
   res.render('Dashboards/staff', { title: 'Dashboard Staff' });
 });
@@ -53,11 +54,13 @@ router.post('/forgot-password', forgotPassword);
 // Handle password reset using token
 router.post('/reset-password', resetPassword);
 
-router.put('/change-password', changePassword);
+router.put('/change-password', verifyCookieToken, changePassword);
 
-router.get('/change-password', (req, res) => {
+router.get('/change-password', verifyCookieToken, (req, res) => {
   res.render('Register_Login/changePassword', { title: 'Change Password' });
 });
+
+router.get('/profile', verifyCookieToken, getStaffProfile);
 
 router.post('/logout', logout)
   // Clear session or token logic here

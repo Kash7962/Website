@@ -27,3 +27,7 @@ module.exports.vision_mission = (req,res) => {
 module.exports.aboutCampus = (req,res) => {
     res.render('WhoWeAre/AboutCampus');
 }
+
+module.exports.PhotoGallery = (req,res) => {
+    res.render('WhoWeAre/PhotoGallery');
+}

@@ -336,6 +336,18 @@
                     <input type="number" name="salary" value="<%= staff.salary || '' %>" />
                 </div>
                 <div class="form-group">
+                    <label>Aadhar Number</label>
+                    <input type="text" name="aadharNumber" value="<%= staff.aadharNumber || '' %>" />
+                </div>
+                <div class="form-group">
+                    <label>PAN Number</label>
+                    <input type="text" name="panNumber" value="<%= staff.panNumber || '' %>" />
+                </div>
+                <div class="form-group">
+                    <label>No of Leaves Available</label>
+                    <input type="number" name="numberOfLeaves" value="<%= staff.numberOfLeaves || '' %>" />
+                </div>
+                <div class="form-group">
                     <label>Joining Date</label>
                     <input type="date" name="joiningDate" value="<%= staff.joiningDate ? staff.joiningDate.toISOString().split('T')[0] : '' %>" />
                 </div>

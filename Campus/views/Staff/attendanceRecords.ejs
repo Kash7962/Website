@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Attendance</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    #status { text-align: center; margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>📅 My Attendance Records</h2>
+  <p id="status">Loading attendance...</p>
+  
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Marked By</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    window.onload = async () => {
+      const statusEl = document.getElementById('status');
+      const tbody = document.querySelector('#attendanceTable tbody');
+
+      try {
+        // 🔹 Get JWT token from localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          statusEl.innerText = "❌ No token found. Please log in again.";
+          return;
+        }
+
+        // 🔹 Decode JWT to extract staffId (_id)
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const staffId = payload._id; // assuming _id is in the token
+
+        // 🔹 Fetch attendance records
+        const res = await fetch(`/Manage/attendance/get/${staffId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          statusEl.innerText = "❌ " + (data.error || "Failed to load records.");
+          return;
+        }
+
+        if (data.length === 0) {
+          statusEl.innerText = "ℹ️ No attendance records found.";
+          return;
+        }
+
+        statusEl.innerText = "";
+
+        // 🔹 Populate table
+        data.forEach(record => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${new Date(record.date).toLocaleDateString()}</td>
+            <td>${record.status}</td>
+            <td>${record.checkInTime ? new Date(record.checkInTime).toLocaleTimeString() : '-'}</td>
+            <td>${record.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString() : '-'}</td>
+            <td>${record.markedBy}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error(err);
+        statusEl.innerText = "❌ Error loading attendance.";
+      }
+    };
+  </script>
+</body>
+</html>

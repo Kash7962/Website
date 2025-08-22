@@ -13,6 +13,9 @@ const bcryptjs = require('bcryptjs');
 const Session_Staff = require('../models/session_staff');
 const {StudentSession} = require('../models/session_student');
 const Session_Admin = require('../models/session_admin');
+// const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
+const StaffAttendance = require('../models/staffAttendance');
 // Get all non-enrolled students
 
 const getNotices = async (req, res) => {
@@ -229,6 +232,20 @@ const createAdmin = async (req, res) => {
     newAdmin.password = hashedPassword
     newAdmin = new Admin(newAdmin);
     await newAdmin.save();
+     const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Admin registered`,
+              targetModel: 'Admin',
+              targetId: newAdmin._id,
+              targetname: newAdmin.name,
+              targetEmail: newAdmin.email ,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(201).json({ message: 'Admin registered successfully.' });
   } catch (err) {
     console.error(err);
@@ -267,7 +284,20 @@ const updateAdmin = async (req, res) => {
     if (!updatedAdmin) {
       return res.status(404).render('error/error', {message: 'Admin not found' });
     }
-
+     const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Admin updated`,
+              targetModel: 'Admin',
+              targetId: updateAdmin._id,
+              targetname: updatedAdmin.name,
+              targetEmail: updateAdmin.email ,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: 'Admin updated successfully', admin: updatedAdmin });
   } catch (err) {
     console.error(err);
@@ -283,8 +313,21 @@ const deleteAdmin = async (req, res) => {
 
     if (!deletedAdmin) {
        return res.status(404).render('error/error', {message: 'Admin not found' });
-    }
-
+    }    
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Admin deleted`,
+              targetModel: 'Admin',
+              targetId: deletedAdmin._id,
+              targetname: deletedAdmin.name,
+              targetEmail: deletedAdmin.email ,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: 'Admin deleted successfully' });
   } catch (err) {
     console.error(err);
@@ -332,7 +375,21 @@ const updateAdminProfile = async (req, res) => {
     ).select('-password');
 
     if (!updatedAdmin) return res.status(404).send('Admin not found');
-
+    // const staff = await Staff.findById(staffId);    
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Admin profile updated`,
+              // targetModel: 'Staff',
+              // targetId: staff._id,
+              // targetname: staff.name,
+              // targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).send('Profile updated successfully');
   } catch (err) {
     console.error('Error in updateAdminProfile:', err);
@@ -397,6 +454,9 @@ const updateStaff = async (req, res) => {
       department,
       isAuthorized,
       salary,
+      aadharNumber,
+      panNumber,
+      numberOfLeaves,
       qualifications,
       subjects,
       designation,
@@ -430,6 +490,9 @@ const updateStaff = async (req, res) => {
       classAssigned: Array.isArray(classAssigned) ? classAssigned.map(c => c.trim()) : [],
       joiningDate: joiningDate ? new Date(joiningDate) : null,
       employmentType,
+      aadharNumber: aadharNumber?.trim() || '',
+      panNumber: panNumber?.trim() || '',
+      numberOfLeaves: parseInt(numberOfLeaves) || 0,
       skills: Array.isArray(skills) ? skills.map(s => s.trim()) : [],
       certifications: Array.isArray(certifications) ? certifications.map(c => c.trim()) : [],
       achievements: Array.isArray(achievements) ? achievements.map(a => a.trim()) : [],
@@ -467,7 +530,21 @@ const updateStaff = async (req, res) => {
     if (!result) {
       return res.status(404).render('error/error', { message: 'Staff not found' });
     }
-
+        const staff = await Staff.findById(staffId);    
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Staff updated`,
+              targetModel: 'Staff',
+              targetId: staff._id,
+              targetname: staff.name,
+              targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: 'Staff updated successfully.' });
 
   } catch (err) {
@@ -481,12 +558,27 @@ const updateStaff = async (req, res) => {
 const deleteStaff = async (req, res) => {
   try {
     const staffId = req.params.id;
+    const staff = await Staff.findById(staffId);
     const deleted = await Staff.findByIdAndDelete(staffId);
 
     if (!deleted) {
       return res.status(404).render('error/error', {message: 'Staff not found' });
     }
-
+        
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Staff deleted`,
+              targetModel: 'Staff',
+              targetId: staff._id,
+              targetname: staff.name,
+              targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: 'Staff deleted successfully.' });
   } catch (err) {
     console.error('DELETE Staff Error:', err);
@@ -553,7 +645,21 @@ const assignOrUpdatePermissions = async (req, res) => {
       });
       await newAccess.save();
     }
-
+        const staff = await Staff.findById(staffId);    
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Permissions assigned/updated for staff: ${permissions.join(', ')}`,
+              targetModel: 'Staff',
+              targetId: staff._id,
+              targetname: staff.name,
+              targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     return res.status(200).json({ success: true, message: 'Permissions saved successfully.' });
   } catch (error) {
     console.error('Error assigning permissions:', error);
@@ -575,6 +681,20 @@ const getAllSessions = async (req, res) => {
 const deleteAllSessions = async (req, res) => {
   try {
     const result = await Session_Staff.deleteMany({});
+     const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Deleted all staff sessions`,
+              // targetModel: 'Staff',
+              // targetId: staff._id,
+              // targetname: staff.name,
+              // targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
   } catch (err) {
     console.error('Error deleting staff sessions:', err);
@@ -596,6 +716,20 @@ const getStudentSessions = async (req, res) => {
 const deleteStudentSessions = async (req, res) => {
   try {
     const result = await StudentSession.deleteMany({});
+     const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Deleted all student sessions`,
+              // targetModel: 'Staff',
+              // targetId: staff._id,
+              // targetname: staff.name,
+              // targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
   } catch (err) {
     console.error('Error deleting student sessions:', err);
@@ -617,10 +751,90 @@ const getAdminSessions = async (req, res) => {
 const deleteAdminSessions = async (req, res) => {
   try {
     const result = await Session_Admin.deleteMany({});
+    // const staff = await Staff.findById(staffId);    
+        const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Deleted all admin sessions`,
+              // targetModel: 'Staff',
+              // targetId: staff._id,
+              // targetname: staff.name,
+              // targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     res.status(200).json({ message: `Deleted ${result.deletedCount} session(s).` });
   } catch (err) {
     console.error('Error deleting admin sessions:', err);
     res.status(500).render('error/error', { message: 'Unable to delete admin sessions' });
+  }
+};
+
+const getActivityLogs = async (req, res) => {
+  try {
+    const logs = await ActivityLog.find().sort({ createdAt: -1 }).lean();
+    res.render('Admin/activityLogs', { logs, nonce: res.locals.nonce });
+  } catch (err) {
+    console.error('Error fetching activity logs:', err);
+    res.status(500).render('error/error', {message: 'Server Error'});
+  }
+};
+
+// Delete all activity logs
+const deleteAllActivityLogs = async (req, res) => {
+  try {
+    await ActivityLog.deleteMany({});
+    const user = await Admin.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Admin',
+              name: user.name,
+              email: user.email,
+              action: `Deleted all activity logs`,
+              // targetModel: 'Staff',
+              // targetId: staff._id,
+              // targetname: staff.name,
+              // targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
+    res.json({ success: true, message: 'All activity logs deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting logs:', err);
+    res.status(500).render('error/error', {message: 'Server Error'});
+  }
+};
+
+// ===============================
+// Get all attendance records (Admin)
+// ===============================
+const renderAdminAttendancePage = async (req, res) => {
+try {
+    const attendanceRecords = await StaffAttendance.find()
+      .populate('staff', 'name email')
+      .sort({ date: -1 });
+
+    res.render('Admin/attendanceStaffs', { attendanceRecords });
+  } catch (error) {
+    console.error('Error rendering admin attendance page:', error);
+    res.status(500).render('error/error', { message: 'Server Error while fetching attendance.' });
+  }
+};
+
+// ===============================
+// Delete an attendance record (if needed)
+// ===============================
+const deleteAttendance = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await StaffAttendance.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Attendance record deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server Error' });
   }
 };
 
@@ -660,4 +874,8 @@ module.exports = {
   deleteStudentSessions,
   getAdminSessions,
   deleteAdminSessions,
+  getActivityLogs,
+  deleteAllActivityLogs,
+  renderAdminAttendancePage,
+  deleteAttendance,
 };

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, uploadDocument, deleteDocument, getResult, } = require('../Controllers/StaffManageController');
+const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, uploadDocument, deleteDocument, getResult, getStaffList, getAttendanceByStaff, markAttendance, manualAttendance, renderStaffAttendancePage, } = require('../Controllers/StaffManageController');
 const upload = require('../config/multer_course');
 const upload2 = require('../config/multer_assignment');
-const { validateCourseUpload, staffValidator, assignmentValidator, studentValidator, documentValidator,  } = require('../validators/schema')
+const { validateCourseUpload, staffValidator, assignmentValidator, studentValidator, documentValidator, staffAttendanceValidator,  } = require('../validators/schema')
 const upload3 = require('../config/multer_joining'); 
 const { verifyCookieToken } = require('../middlewares/middleware');
 
@@ -92,5 +92,18 @@ router.post(
 router.post('/documents/:studentId/delete/:docId', verifyCookieToken, deleteDocument);
 
 router.get('/results', verifyCookieToken, getResult);
+
+router.get('/stafflist', verifyCookieToken, getStaffList);
+
+// Face or auto system attendance
+router.post('/attendance/mark', verifyCookieToken, staffAttendanceValidator, markAttendance);
+
+// Manual bypass attendance
+router.post('/attendance/manual', verifyCookieToken, staffAttendanceValidator, manualAttendance);
+
+// Fetch staff’s attendance
+router.get('/attendance/get/:staffId', verifyCookieToken, getAttendanceByStaff);
+
+router.get('/attendance/get', verifyCookieToken, renderStaffAttendancePage);
 
 module.exports = router;

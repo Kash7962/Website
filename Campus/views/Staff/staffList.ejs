@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .actions-top {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn-register {
+      background-color: #3b82f6;
+      color: #fff;
+      margin-right: 8px;
+    }
+    .btn-attendance {
+      background-color: #10b981;
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Staff List</h1>
+
+  <div class="actions-top">
+    <button class="btn btn-attendance" id="takeAttendanceBtn">Take Attendance</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% staffList.forEach(staff => { %>
+        <tr>
+          <td><%= staff.name %></td>
+          <td><%= staff.email %></td>
+          <td><%= staff.department %></td>
+          <td><%= staff.phone %></td>
+          <td>
+            <button 
+              class="btn btn-register" 
+              data-id="<%= staff._id %>" 
+              data-name="<%= staff.name %>" 
+              data-email="<%= staff.email %>">
+              Register Face
+            </button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const registerButtons = document.querySelectorAll('.btn-register');
+  const takeAttendanceBtn = document.getElementById('takeAttendanceBtn');
+
+  // Register Face per staff
+  registerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Get staff details from data attributes on the button
+      const staffId = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      const email = btn.getAttribute('data-email');
+
+      console.log('Registering face for:', name, email, staffId);
+
+      // 👉 Redirect with query params instead of fetch
+      window.location.href = `/Face/register?staffId=${encodeURIComponent(staffId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
+    });
+  });
+
+  // Take Attendance (render attendance page)
+  if (takeAttendanceBtn) {
+    takeAttendanceBtn.addEventListener('click', () => {
+      console.log('Starting face recognition for attendance...');
+      window.location.href = '/Face/faceAttendance';
+    });
+  }
+});
+
+
+  </script>
+</body>
+</html>

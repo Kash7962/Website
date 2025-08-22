@@ -14,13 +14,14 @@ const StudentRoutes = require('./Routes/StudentRoutes.js');
 const StaffRoutes = require('./Routes/StaffRoutes.js');
 const AuthRoutes = require('./Routes/AuthRoute.js');
 const StaffManageRoutes = require('./Routes/StaffManageRoutes.js');
-// const LeaveRoutes = require('./Routes/LeaveRoutes.js');
+const LeaveRoutes = require('./Routes/LeaveRoutes.js');
 const AdminRoutes = require('./Routes/AdminRoutes.js');
 const cron = require('node-cron');
 // const { deleteExpiredLeaves } = require('./Controllers/LeaveController');
 const NoticeRoutes = require('./Routes/NoticeRoutes.js');
 const PaymentRoutes = require('./Routes/PaymentRoutes.js');
 const ResultRoutes = require('./Routes/ResultRoutes.js');
+const FaceRoutes = require('./Routes/FaceRoutes.js')
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
 const db = mongoose.connection;
@@ -134,11 +135,12 @@ app.use('/Student', StudentRoutes);
 app.use('/Staff', StaffRoutes);
 app.use('/Auth', AuthRoutes);
 app.use('/Manage', StaffManageRoutes);
-// app.use('/Staff/Leave', LeaveRoutes);
+app.use('/Leaves', LeaveRoutes);
 app.use('/Admin', AdminRoutes);
 app.use('/Notices', NoticeRoutes);
 app.use('/Payment', PaymentRoutes);
 app.use('/Result', ResultRoutes);
+app.use('/Face', FaceRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Face</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 20px; }
+    video { border: 1px solid #ccc; border-radius: 10px; }
+    #status { margin-top: 10px; color: green; font-weight: bold; }
+    .info-box { margin: 10px; font-size: 16px; padding: 8px; background: #f9f9f9; border-radius: 6px; display: inline-block; }
+    button { margin-top: 15px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 6px; background: #4CAF50; color: white; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <h2>Staff Face Registration</h2>
+  
+  <!-- Show name and email (read-only) -->
+  <div class="info-box">👤 <%= name %></div>
+  <div class="info-box">✉️ <%= email %></div>
+
+  <br />
+  <video id="video" width="480" height="360" autoplay muted></video>
+  <br />
+
+  <!-- ✅ Enable the button -->
+  <button id="capture">Register Face</button>
+  <p id="status">Loading models...</p>
+
+  <script>
+    window.onload = async () => {
+      const video = document.getElementById('video');
+      const statusText = document.getElementById('status');
+      const staffName = "<%= name %>";
+      const staffEmail = "<%= email %>";
+      const staffId = "<%= staffId %>";
+
+      try {
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+          faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('/models')
+        ]);
+        statusText.innerText = "✅ Models loaded. Initializing camera...";
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+        video.srcObject = stream;
+        statusText.innerText = "Camera ready.";
+      } catch (err) {
+        console.error("Model or camera error", err);
+        statusText.innerText = "❌ Failed to load models or camera.";
+      }
+
+      // ✅ Make sure button exists before attaching event
+      const captureBtn = document.getElementById('capture');
+      if (captureBtn) {
+        captureBtn.addEventListener('click', async () => {
+          statusText.innerText = "Capturing face...";
+
+          const detection = await faceapi
+            .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+
+          if (!detection) {
+            statusText.innerText = "❌ Face not detected. Try again.";
+            return;
+          }
+
+          const encoding = Array.from(detection.descriptor);
+          try {
+            const response = await fetch('/Face/save-face', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: staffName, email: staffEmail, encoding, staffId })
+            });
+            const result = await response.json();
+            if (result.success) {
+              statusText.innerText = "✅ Face registered successfully!";
+            } else {
+              statusText.innerText = "❌ " + (result.error || "Error saving face to server.");
+            }
+          } catch (err) {
+            console.error("Fetch error", err);
+            statusText.innerText = "❌ Network or server error.";
+          }
+        });
+      }
+    };
+  </script>
+</body>
+</html>

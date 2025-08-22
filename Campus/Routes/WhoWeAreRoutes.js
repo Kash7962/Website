@@ -11,5 +11,6 @@ router.get('/KASH_Executive', WhoWeAreController.KASH_Executive);
 router.get('/PrincipalsDesk', WhoWeAreController.principals_desk);
 router.get('/Vision_Mission', WhoWeAreController.vision_mission);
 router.get('/about-campus', WhoWeAreController.aboutCampus);
+router.get('/PhotoGallery', WhoWeAreController.PhotoGallery);
     
 module.exports = router;

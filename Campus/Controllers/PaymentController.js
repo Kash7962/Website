@@ -6,6 +6,8 @@ const fsp = require('fs/promises'); // <-- promise based for async use
 const multer = require('multer');
 const Payment = require('../models/payment');
 const { Student } = require('../models/student');
+const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
 
 // ----------------- Multer (per-student receipts) -----------------
 const storage = multer.diskStorage({
@@ -72,6 +74,21 @@ exports.createPayment = async (req, res) => {
     }
 
     const payment = await Payment.create(paymentData); // post-save hook will deduct feesDue
+    // const student = await Student.findById(studentId);
+        const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `Payment created: ${payment._id}`,
+              targetModel: 'Student',
+              targetId: student._id,
+              targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              targetEmail: student.studentEmail,
+              registrationNumber: student.registration_number,
+              classAssigned: student.classAssigned
+            });
     return res.status(201).json({ message: 'Payment recorded', payment });
   } catch (err) {
     console.error('createPayment err:', err);
@@ -147,7 +164,21 @@ exports.updatePayment = async (req, res) => {
         await student.save();
       }
     }
-
+    const student = await Student.findById(updated.studentId);
+        const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `Payment updated: ${updated._id}`,
+              targetModel: 'Student',
+              targetId: student._id,
+              targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              targetEmail: student.studentEmail,
+              registrationNumber: student.registration_number,
+              classAssigned: student.classAssigned
+            });
     return res.json({ message: 'Payment updated', payment: updated });
   } catch (err) {
     console.error('updatePayment err:', err);
@@ -177,7 +208,21 @@ exports.deletePayment = async (req, res) => {
       student.feesDue = (student.feesDue || 0) + payment.amountPaid;
       await student.save();
     }
-
+    // const student = await Student.findById(studentId);
+        const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `Payment deleted: ${paymentId}`,
+              targetModel: 'Student',
+              targetId: student._id,
+              targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              targetEmail: student.studentEmail,
+              registrationNumber: student.registration_number,
+              classAssigned: student.classAssigned
+            });
     return res.json({ message: 'Payment deleted' });
   } catch (err) {
     console.error('deletePayment err:', err);
@@ -214,7 +259,21 @@ exports.updateFeesDue = async (req, res) => {
 
     student.feesDue = Number(feesDue);
     await student.save();
-
+    // const student = await Student.findById(studentId);
+        const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `Set Fees Due: ${feesDue}`,
+              targetModel: 'Student',
+              targetId: student._id,
+              targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              targetEmail: student.studentEmail,
+              registrationNumber: student.registration_number,
+              classAssigned: student.classAssigned
+            });
     return res.json({ message: 'Fees Due updated successfully' });
   } catch (err) {
     console.error('updateFeesDue error:', err);

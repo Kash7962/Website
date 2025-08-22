@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Approve Leaves</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    #flashMessageContainer {
+      margin-bottom: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    table th, table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #e1e1e1;
+    }
+
+    table th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+
+    table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    table tr:hover {
+      background: #f2f9ff;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+      color: #fff;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .approve-btn {
+      background: #2ecc71;
+    }
+
+    .deny-btn {
+      background: #e74c3c;
+    }
+
+    /* Status Badges */
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #fff;
+      display: inline-block;
+    }
+
+    .status.Pending {
+      background: #f39c12;
+    }
+    .status.Approved {
+      background: #27ae60;
+    }
+    .status.Denied {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h2>Leave Approval</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Staff</th>
+        <th>Reason</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Total</th>
+        <th>Paid</th>
+        <th>Unpaid</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% leaves.forEach(l => { %>
+        <tr>
+          <td><%= l.name %></td>
+          <td><%= l.reason %></td>
+          <td><%= l.fromDate.toDateString() %></td>
+          <td><%= l.toDate.toDateString() %></td>
+          <td><%= l.totalDays %></td>
+          <td><%= l.paidLeaves %></td>
+          <td><%= l.unpaidLeaves %></td>
+          <td><span class="status <%= l.status %>"><%= l.status %></span></td>
+          <td>
+            <button class="approve-btn" data-id="<%= l._id %>" data-status="Approved">Approve</button>
+            <button class="deny-btn" data-id="<%= l._id %>" data-status="Denied">Deny</button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".approve-btn, .deny-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          const status = btn.getAttribute("data-status");
+
+          const res = await fetch(`/Leaves/${id}/status`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status })
+          });
+
+          if (res.ok) {
+            // showFlashMessage("success", `Leave ${status}`);
+            setTimeout(() => window.location.reload(), 1000);
+          } else {
+            // await handleServerError(res);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

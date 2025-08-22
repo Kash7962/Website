@@ -590,8 +590,10 @@
                 <a href="/Admin/get" id="restrictButton" class="admin-button hidden">👤 Admins</a>
                 <a href="/Admin/staff/get">👨‍💼 Staff</a>
                 <a href="/Admin/Sessions_Admins/get" id="restrictBtn" class="hidden">📋 Admin Sessions</a>
-                <a href="/Admin/Sessions_Staffs/get">📋 Staff Sessions</a>
-                <a href="/Admin/Sessions_Students/get">📋 Student Sessions</a>
+                <a href="/Admin/Sessions_Staffs/get" id="restrictBtn2" class="hidden">📋 Staff Sessions</a>
+                <a href="/Admin/Sessions_Students/get" id="restrictBtn3" class="hidden">📋 Student Sessions</a>
+                <a href="/Admin/activity-logs/get" id="restrictBtn4" class="hidden">📊 Activity Logs</a>
+                <a href="/Admin/attendance/get-all" id="restrictBtn5" class="hidden">📊 Staff Attendance</a>
 
                 <!-- <a href="/Staff/Management/students/get">👥 Students</a>
                 <a href="/Staff/Management/notices">📢 Notices</a>
@@ -872,11 +874,28 @@
                 if (role === 'Super Admin') {
                 const restrictBtn = document.getElementById('restrictButton');
                 const restrictBtn2 = document.getElementById('restrictBtn'); 
+                const restrictBtn3 = document.getElementById('restrictBtn2'); 
+                const restrictBtn4 = document.getElementById('restrictBtn3'); 
+                const restrictBtn5 = document.getElementById('restrictBtn4'); 
+                const restrictBtn6 = document.getElementById('restrictBtn5'); 
+                // console.log(restrictBtn4);
                 if (restrictBtn) {
                     restrictBtn.classList.remove('hidden');
                     }
                 if (restrictBtn2) {
                     restrictBtn2.classList.remove('hidden');
+                    }
+                if (restrictBtn3) {
+                    restrictBtn3.classList.remove('hidden');
+                    }
+                if (restrictBtn4) {
+                    restrictBtn4.classList.remove('hidden');
+                    }
+                if (restrictBtn5) {
+                    restrictBtn5.classList.remove('hidden');
+                    }
+                if (restrictBtn6) {
+                    restrictBtn6.classList.remove('hidden');
                     }
                 }
 

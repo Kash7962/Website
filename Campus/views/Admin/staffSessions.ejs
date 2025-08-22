@@ -6,30 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Staff Sessions</title>
   <% const nonceAttr = (typeof cspNonce !== 'undefined' && cspNonce) ? `nonce="${cspNonce}"` : ''; %>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style nonce="<%= nonceAttr %>">
+    /* --- THEME & GLOBAL STYLES (from All Admins example) --- */
     :root {
-      --bg: #0b1020;
-      --card: #111833;
-      --muted: #94a3b8;
-      --text: #e2e8f0;
-      --accent: #4f46e5;
-      --accent-2: #22c55e;
-      --danger: #ef4444;
-      --border: #1f2a44;
-      --shadow: 0 6px 20px rgba(0,0,0,0.25);
-      --radius: 14px;
+      --primary-color: #1e40af;
+      --primary-dark: #1c3d90;
+      --secondary-color: #f8fafc; /* Using a slightly cooler off-white for body */
+      --text-dark: #1e293b;
+      --text-light: #475569;
+      --border-color: #e2e8f0;
+      --card-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      --danger-color: #dc2626;
+      --danger-light: #fee2e2;
+      --danger-dark: #b91c1c;
+      --success-color: #16a34a;
+      --success-light: #dcfce7;
     }
+
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-      background: radial-gradient(1200px 600px at 15% 0%, rgba(79,70,229,0.15), transparent 60%),
-                  radial-gradient(1200px 600px at 85% 0%, rgba(34,197,94,0.15), transparent 60%),
-                  var(--bg);
-      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-dark);
     }
 
+    /* --- LAYOUT & HEADER --- */
     .container {
       max-width: 1200px;
       margin: 32px auto;
@@ -41,39 +45,62 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
     }
 
     .title {
       margin: 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 2rem;
       font-weight: 700;
-      letter-spacing: 0.2px;
-      font-size: clamp(20px, 3vw, 28px);
+      color: var(--text-dark);
     }
 
     .btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
+    /* --- BUTTONS --- */
     .btn {
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, #1a2347, #131a36);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: transform .12s ease, filter .12s ease, background .2s ease, border-color .2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
       user-select: none;
     }
-    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-    .btn:active { transform: translateY(0); filter: brightness(0.98); }
-    .btn--danger { background: linear-gradient(180deg, #2a0f12, #200b0d); border-color: #3a1013; }
-    .btn--primary { background: linear-gradient(180deg, #222b6b, #1a2053); border-color: #2f3aa0; }
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .btn--primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .btn--primary:hover {
+      background-color: var(--primary-dark);
+    }
+    .btn--danger {
+      background-color: var(--danger-light);
+      color: var(--danger-color);
+      border-color: #fecaca;
+    }
+    .btn--danger:hover {
+      background-color: #fecaca;
+      color: var(--danger-dark);
+    }
 
+    /* --- CARD & TABLE --- */
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)), var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
       overflow: hidden;
     }
 
@@ -82,9 +109,10 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-light);
       font-size: 14px;
+      background-color: #f8fafc;
     }
 
     .table-wrap {
@@ -101,20 +129,27 @@
     thead th {
       position: sticky;
       top: 0;
-      background: #101635;
-      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
       text-align: left;
       padding: 12px 10px;
       white-space: nowrap;
       z-index: 1;
+      color: var(--text-light);
+      font-weight: 600;
     }
     tbody td {
-      border-bottom: 1px solid var(--border);
-      padding: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 10px;
       vertical-align: top;
+      color: var(--text-light);
     }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+    tbody tr:hover { background: #f8fafc; }
 
+    /* --- UTILITY & COMPONENTS --- */
     .ua {
       max-width: 320px;
       overflow: hidden;
@@ -128,63 +163,203 @@
       font-size: 12px;
       padding: 3px 8px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #0d1330;
+      font-weight: 600;
     }
-    .badge--active { color: var(--accent-2); border-color: rgba(34,197,94,0.45); }
-    .badge--inactive { color: var(--muted); }
+    .badge--active {
+        color: var(--success-color);
+        background-color: var(--success-light);
+    }
+    .badge--inactive {
+        color: var(--text-light);
+        background-color: #f1f5f9;
+    }
 
     .empty {
       padding: 32px;
       text-align: center;
-      color: var(--muted);
+      color: var(--text-light);
     }
 
-    /* Flash messages */
-    #flashMessageContainer {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: min(92vw, 560px);
-      pointer-events: none;
-    }
-    .flash {
-      pointer-events: auto;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: #0d1330;
-      color: var(--text);
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity .2s ease, transform .2s ease;
-      word-break: break-word;
-    }
-    .flash.show { opacity: 1; transform: translateY(0); }
-    .flash.success { border-color: rgba(34,197,94,0.35); }
-    .flash.error { border-color: rgba(239,68,68,0.35); }
     .count {
       font-weight: 600;
-      color: #cbd5e1;
+      color: var(--text-dark);
     }
+
+    /* --- Flash messages (styled like example) --- */
+     #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #flashMessageContainer {
+            position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%); z-index: 1001; display: flex;
+            flex-direction: column; align-items: center; width: 100%;
+            max-width: 420px; padding: 0 1rem; pointer-events: none;
+        }
+        .flash-message {
+            padding: 1rem 1.25rem; margin-bottom: 0.75rem; border-radius: 8px;
+            font-weight: 600; width: 100%; text-align: center; pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+        .flash-success { background-color: #d1fae5; color: #065f46; border: 1px solid #10b981; }
+        .flash-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+            .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-backdrop.active {
+          display: flex;
+        }
+
+        .modal-content {
+          background: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          max-width: 400px;
+          text-align: center;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        .modal-actions {
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          margin-top: 20px;
+        }
+
+        .btn-secondary {
+          background: #e5e7eb;
+          color: #374151;
+          padding: 8px 14px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+          background: #d1d5db;
+        }
+
+        .btn-danger-solid {
+          background: #ef4444;
+          color: white;
+          padding: 8px 14px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background 0.2s ease;
+        }
+
+        .btn-danger-solid:hover {
+          background: #dc2626;
+        }
+
   </style>
 </head>
 <body>
-  <!-- required container -->
-  <div id="flashMessageContainer" aria-live="polite"></div>
+  <div id="flashMessageContainer"></div>
 
   <div class="container">
     <div class="toolbar">
       <h1 class="title">Staff Sessions</h1>
       <div class="btns">
         <button id="refreshBtn" class="btn btn--primary" type="button">Refresh</button>
-        <button id="deleteAllBtn" class="btn btn--danger" type="button" title="Delete ALL staff sessions">Delete All Sessions</button>
+        <button id="deleteAllBtn" class="btn btn--danger" type="button" title="Delete ALL staff sessions">Delete All</button>
+         <div id="deleteAllModal" class="modal-backdrop">
+        <div class="modal-content">
+          <h3>Are you sure?</h3>
+          <p>This will delete <strong>ALL staff sessions</strong>. This action cannot be undone.</p>
+          <div class="modal-actions">
+            <button id="cancelDeleteAllBtn" class="btn-secondary">Cancel</button>
+            <button id="confirmDeleteAllBtn" class="btn-danger-solid">Delete All</button>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
 
@@ -219,12 +394,12 @@
                   <td><%= s.name %></td>
                   <td><%= s.email %></td>
                   <td><%= s.department %></td>
-                  <td><span class="badge"><%= s.method %></span></td>
+                  <td><span class="badge badge--inactive"><%= s.method %></span></td>
                   <td>
                     <% if (s.isActive) { %>
-                      <span class="badge badge--active">active</span>
+                      <span class="badge badge--active">Active</span>
                     <% } else { %>
-                      <span class="badge badge--inactive">inactive</span>
+                      <span class="badge badge--inactive">Inactive</span>
                     <% } %>
                   </td>
                   <td><%= s.ipAddress || '-' %></td>
@@ -244,33 +419,137 @@
   </div>
 
 <script nonce="<%= nonceAttr %>">
+   window.onload = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch('/Auth/verify-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!res.ok) {
+                    const contentType = res.headers.get('Content-Type') || '';
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+                        if (popup) {
+                            document.body.prepend(popup);
+                            scripts.forEach((script) => {
+                                const newScript = document.createElement('script');
+                                if (script.src) newScript.src = script.src;
+                                else newScript.textContent = script.textContent;
+                                document.body.appendChild(newScript);
+                            });
+                        } else {
+                            showFlashMessage('error', 'An unknown error occurred.');
+                        }
+                        setTimeout(() => {
+                            window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+                        setTimeout(() => {
+                            window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                }
+            } catch (err) {
+                showFlashMessage('error', 'An unknown error occurred.');
+            }
+             try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const role = payload.role;
+                if (role !== 'Super Admin') {
+                    showFlashMessage('error', 'Unauthorized access.');
+                    setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                }
+            } catch (err) {
+                console.error('Failed to decode JWT:', err);
+                showFlashMessage('error', 'Invalid token.');
+            }
+        }
+       async function handleServerError(res) {
+            const contentType = res.headers.get('Content-Type') || '';
+            if (contentType.includes('text/html')) {
+                const html = await res.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                const popup = tempDiv.querySelector('#errorPopupContainer');
+                if (popup) {
+                    document.body.prepend(popup);
+                    const scripts = tempDiv.querySelectorAll('script');
+                    scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        if (script.src) newScript.src = script.src;
+                        else newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    });
+                } else {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                }
+            } else {
+                showFlashMessage('error', 'Server error: unexpected content type.');
+            }
+        }
+
+        function showFlashMessage(type, message, duration = 4000) {
+            const container = document.getElementById('flashMessageContainer');
+            const msg = document.createElement('div');
+            msg.classList.add('flash-message');
+            msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+            msg.textContent = message;
+            container.appendChild(msg);
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, duration);
+        }
   const tbody = document.getElementById('sessionTbody');
   const countEl = document.getElementById('sessionCount');
   const deleteAllBtn = document.getElementById('deleteAllBtn');
   const refreshBtn = document.getElementById('refreshBtn');
 
-  deleteAllBtn.addEventListener('click', async () => {
-    if (!confirm('Delete ALL staff sessions? This cannot be undone.')) return;
-    try {
-      const res = await fetch('/Admin/Sessions_Staffs/delete-all', { method: 'DELETE' });
-      if (res.ok) {
-        alert('All sessions deleted');
-        tbody.innerHTML = '';
-        countEl.textContent = '0';
-      } else {
-        alert('Error deleting sessions');
+   const deleteAllModal = document.getElementById('deleteAllModal');
+    const cancelDeleteAllBtn = document.getElementById('cancelDeleteAllBtn');
+    const confirmDeleteAllBtn = document.getElementById('confirmDeleteAllBtn');
+
+    deleteAllBtn.addEventListener('click', () => {
+      deleteAllModal.classList.add('active'); // show modal
+    });
+
+    // Cancel button
+    cancelDeleteAllBtn.addEventListener('click', () => {
+      deleteAllModal.classList.remove('active');
+    });
+
+    // Confirm delete all
+    confirmDeleteAllBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/Admin/Sessions_Staffs/delete-all', { method: 'DELETE' });
+        if (res.ok) {
+          showFlashMessage('success', 'All sessions deleted successfully!');
+          tbody.innerHTML = '';
+          countEl.textContent = '0';
+        } else {
+          const msg = await res.text();
+          showFlashMessage('error', msg || 'Error deleting sessions');
+        }
+      } catch (err) {
+        showFlashMessage('error', 'Network error while deleting sessions');
+      } finally {
+        deleteAllModal.classList.remove('active');
       }
-    } catch (err) {
-      alert('Network error while deleting sessions');
-    }
-  });
+    });
 
   refreshBtn.addEventListener('click', () => {
     location.reload();
   });
 </script>
-
-
 
 </body>
 </html>

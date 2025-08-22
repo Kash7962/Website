@@ -1,85 +1,163 @@
 const LeaveRequest = require('../models/leave');
-
-// Submit leave
-const createLeave = async (req, res) => {
-
-  const { reason, fromDate, toDate } = req.body;
-  const { username, email, phone } = req.user;
-
+const { Staff } = require('../models/staff');
+// const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
+// Apply for leave
+// Apply Leave (No deduction here)
+exports.applyLeave = async (req, res) => {
   try {
-    const leave = new LeaveRequest({ username, email, phone, reason, fromDate, toDate });
-    await leave.save();
-    res.status(201).json({ message: 'Leave request submitted' });
+    const { reason, fromDate, toDate } = req.body;
+    const staffId = req.user._id; // From auth middleware/session
+
+    const staff = await Staff.findById(staffId);
+    if (!staff) return res.status(404).render('error/error', { message: 'Staff not found' });
+
+    // Validate dates
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    if (from > to) return res.status(400).render('error/error', { message: 'From date cannot be after To date' });
+
+    // Calculate leave days
+    const totalDays = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) + 1;
+
+    // Decide how many could be paid/unpaid (but don't deduct yet!)
+    let paidLeaves = Math.min(totalDays, staff.numberOfLeaves);
+    let unpaidLeaves = totalDays - paidLeaves;
+
+    const leaveRequest = new LeaveRequest({
+      staffId: staff._id,
+      name: staff.name,
+      email: staff.email,
+      phone: staff.phone,
+      reason,
+      fromDate,
+      toDate,
+      totalDays,
+      paidLeaves,
+      unpaidLeaves,
+      status: 'Pending' // default
+    });
+
+    await leaveRequest.save();
+    res.status(200).json({ message: 'Leave request submitted successfully', leaveRequest });
+
+  } catch (err) {
+    console.error('Error in applyLeave:', err);
+    res.status(500).render('error/error',{ message: 'Server error' });
+  }
+};
+
+// Approve or Deny leave (deduction/refund happens here)
+exports.updateLeaveStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const leaveRequest = await LeaveRequest.findById(id).populate('staffId');
+    if (!leaveRequest) return res.status(404).render('error/error',{ message: 'Leave request not found' });
+
+    const staff = await Staff.findById(leaveRequest.staffId);
+    if (!staff) return res.status(404).render('error/error', { message: 'Staff not found' });
+
+    // ✅ Check previous status
+    const previousStatus = leaveRequest.status;
+
+    if (status === 'Approved') {
+      // Only deduct if it was not already approved before
+      if (previousStatus !== 'Approved') {
+        staff.numberOfLeaves = Math.max(0, staff.numberOfLeaves - leaveRequest.paidLeaves);
+        await staff.save();
+      }
+    } else if (status === 'Denied') {
+      // If it was previously approved and now denied → return leaves back
+      if (previousStatus === 'Approved') {
+        staff.numberOfLeaves += leaveRequest.paidLeaves;
+        await staff.save();
+      }
+    } 
+    // If Pending → no change needed
+
+    leaveRequest.status = status;
+    await leaveRequest.save();
+        const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `Leave status updated from ${previousStatus} → ${status}`,
+              targetModel: 'Staff',
+              targetId: staff._id,
+              targetname: staff.name,
+              targetEmail: staff.email,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
+    res.status(200).json({
+      message: `Leave status updated from ${previousStatus} → ${status}`,
+      leaveRequest
+    });
+
+  } catch (err) {
+    console.error('Error updating leave:', err);
+    res.status(500).render('error/error', { message: 'Server error' });
+  }
+};
+
+
+// Get all leave requests
+exports.getAllLeaves = async (req, res) => {
+  try {
+    const leaves = await LeaveRequest.find()
+      .populate('staffId')
+      .sort({ createdAt: -1 });
+
+    res.render('Staff/manageLeave', { leaves });
   } catch (err) {
     console.error(err);
-    return res.status(500).render('error/error', {message: 'Server error'});
+    res.status(500).render('error/error', { message: 'Unable to fetch leaves' });
   }
 };
 
-// View all leave requests
-const getAllLeaves = async (req, res) => {
+// Render apply leave page
+exports.getApplyPage = async (req, res) => {
   try {
-    const leaves = await LeaveRequest.find().sort({ createdAt: -1 });
-    res.json(leaves);
+    const staffId = req.user._id; // from token/session
+    const staff = await Staff.findById(staffId);
+    const staffLeaves = await LeaveRequest.find({ staffId }).sort({ createdAt: -1 });
+
+    res.render('Staff/applyLeave', { staff, staffLeaves });
   } catch (err) {
-    return res.status(500).render('error/error', {message: 'Server error'});
+    console.error(err);
+    res.status(500).render('error/error', { message: 'Unable to load leave form' });
   }
 };
 
-// Approve or deny leave
-const updateLeaveStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  if (!['Approved', 'Denied'].includes(status)) {
-    return res.status(400).render('error/error', {message: 'Invalid status'});
-  }
-
+// Delete leave request
+exports.deleteLeave = async (req, res) => {
   try {
-    const leave = await LeaveRequest.findByIdAndUpdate(id, { status }, { new: true });
-    res.json(leave);
-  } catch (err) {
-    return res.status(404).render('error/error', {message: 'Server error'});
-  }
-};
+    const { id } = req.params;
+    const leaveRequest = await LeaveRequest.findById(id);
+    if (!leaveRequest) return res.status(404).render('error/error',{ message: 'Leave request not found' });
 
-// Delete by user
-const deleteLeaveByUser = async (req, res) => {
-  const { id } = req.params;
-  const userEmail = req.user.email;
+    if (leaveRequest.status !== 'Pending') {
+      return res.status(400).render('error/error',{ message: 'Only pending leave requests can be deleted' });
+    }
 
-  try {
-    const leave = await LeaveRequest.findById(id);
-    if (!leave) return res.status(404).render('error/error', {message: 'Leave not found.'});
-
-    if (leave.email !== userEmail) {
-      return res.status(403).render('error/error', {
-      message: 'You are not authorized to delete this leave.'});
+    // Return deducted paid leaves
+    if (leaveRequest.paidLeaves > 0) {
+      const staff = await Staff.findById(leaveRequest.staffId);
+      if (staff) {
+        staff.numberOfLeaves += leaveRequest.paidLeaves;
+        await staff.save();
+      }
     }
 
     await LeaveRequest.findByIdAndDelete(id);
-    res.status(200).json({ message: 'Leave deleted' });
-  } catch (err) {
-    return res.status(500).render('error/error', {
-      message: 'Server error' });;
-  }
-};
+    res.status(200).json({ message: 'Leave request deleted successfully' });
 
-// Auto delete expired leaves (CRON-based or scheduled call)
-const deleteExpiredLeaves = async () => {
-  const today = new Date();
-  try {
-    await LeaveRequest.deleteMany({ toDate: { $lt: today } });
   } catch (err) {
-    console.error('Error deleting expired leaves:', err.message);
-    
+    console.error(err);
+    res.status(500).render('error/error', { message: 'Server error' });
   }
-};
-
-module.exports = {
-  createLeave,
-  updateLeaveStatus,
-  deleteLeaveByUser,
-  deleteExpiredLeaves,
-  getAllLeaves
 };

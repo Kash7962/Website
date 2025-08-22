@@ -567,6 +567,10 @@
                 <a href="/Manage/payment" data-permission="students_payment" id="sdBtn">💰 Manage Payments</a>
                 <a href="/Manage/documents" data-permission="document_students" id="sdBtn">📂 Manage Documents</a>
                 <a href="/Manage/results" data-permission="result_students" id="sdBtn">📊 Manage Results</a>
+                <a href="/Leaves/all" data-permission="manage_leaves" id="sdBtn">🛌 Manage Leaves</a>
+                <a href="/Manage/staffList" data-permission="manage_staff_attendance" id="sdBtn">🕒 Staff Attendance</a>
+                <a href="/Leaves/apply"  id="normalLeaveBtn">🌴 Apply Leave</a>
+                <a href="/Manage/attendance/get"  id="normalAttendanceBtn">📅 My attendance</a>
                 <!-- <a href="/Manage/join" data-permission="direct_join_students">➕🎓 Direct Join Students</a> -->
             </nav>
         </div>
@@ -902,7 +906,30 @@
        
 
             }
-         
+            //     document.addEventListener("DOMContentLoaded", () => {
+            //     const applyBtn = document.getElementById("normalLeaveBtn");
+            //     if (applyBtn) {
+            //     applyBtn.addEventListener("click", async (e) => {
+            //         e.preventDefault();
+
+            //         try {
+            //         const token = localStorage.getItem('token');
+            //         const payload = JSON.parse(atob(token.split('.')[1]));
+            //         const staffId = payload._id;
+            //         if (!staffId) {
+            //             console.error("No staff ID found in token");
+            //             showFlashMessage("error", "Unable to fetch staff ID from token");
+            //             return;
+            //         }
+            //         // redirect with staffId as query
+            //         window.location.href = `/Leaves/apply/${staffId}`;
+            //         } catch (err) {
+            //         console.error("Error fetching token:", err);
+            //         showFlashMessage("error", "Error verifying token");
+            //         }
+            //     });
+            //     }
+            // });
                 document.getElementById('changePasswordBtn').addEventListener('click', () => {
                     window.location.href = '/Staff/change-password';
                 });
@@ -924,7 +951,7 @@
             }
 
             document.getElementById('profile').addEventListener('click', () => {
-                    window.location.href = '/Admin/profile';
+                    window.location.href = '/Staff/profile';
                 });
 
             async function handleServerError(res) {

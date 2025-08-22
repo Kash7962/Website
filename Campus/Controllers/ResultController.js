@@ -2,6 +2,8 @@
 const mongoose = require('mongoose');
 const Result = require('../models/result');
 const { Student } = require('../models/student');
+const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
 
 const EXAM_TYPES = [
   'Monthly Achievement Test (MAT)',
@@ -168,7 +170,21 @@ exports.addResult = async (req, res) => {
       sgpa: sgpa ? Number(sgpa) : undefined,
       cgpa: cgpa ? Number(cgpa) : undefined
     });
-
+    const student = await Student.findById(studentId);
+    const user = await Staff.findById(req.user._id);
+        await ActivityLog.create({
+          userId : user._id,
+          userModel: 'Staff',
+          name: user.name,
+          email: user.email,
+          action: `Result added ${examType} - ${year} ${month}`,
+          targetModel: 'Student',
+          targetId: student._id,
+          targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+          targetEmail: student.studentEmail,
+          registrationNumber: student.registration_number,
+          classAssigned: student.classAssigned
+        });
     res.json({ type: 'success', message: 'Result added', resultId: newResult._id });
   } catch (err) {
     console.error('Error adding result:', err);
@@ -205,7 +221,21 @@ exports.editResult = async (req, res) => {
       },
       { new: true }
     );
-
+    const student = await Student.findById(studentId);
+    const user = await Staff.findById(req.user._id);
+        await ActivityLog.create({
+          userId : user._id,
+          userModel: 'Staff',
+          name: user.name,
+          email: user.email,
+          action: `Result edited ${examType} - ${year} ${month}`,
+          targetModel: 'Student',
+          targetId: student._id,
+          targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+          targetEmail: student.studentEmail,
+          registrationNumber: student.registration_number,
+          classAssigned: student.classAssigned
+        });
     res.json({ type: 'success', message: 'Result updated' });
   } catch (err) {
     console.error('Error editing result:', err);
@@ -219,8 +249,23 @@ exports.deleteResult = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(resultId)) {
       return res.status(400).render('error/error', { message: 'Invalid student ID or result ID' });
     }
-
+    const result = await Result.findById(resultId);
     await Result.findOneAndDelete({ _id: resultId, student: studentId });
+    const student = await Student.findById(studentId);
+    const user = await Staff.findById(req.user._id);
+        await ActivityLog.create({
+          userId : user._id,
+          userModel: 'Staff',
+          name: user.name,
+          email: user.email,
+          action: `Result deleted: ${result.examType} - ${result.year} ${result.month}`,
+          targetModel: 'Student',
+          targetId: student._id,
+          targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+          targetEmail: student.studentEmail,
+          registrationNumber: student.registration_number,
+          classAssigned: student.classAssigned
+        });
     res.json({ type: 'success', message: 'Result deleted' });
   } catch (err) {
     console.error('Error deleting result:', err);

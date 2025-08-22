@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { getAllLeaves, createLeave, deleteLeaveByUser, updateLeaveStatus } = require('../Controllers/LeaveController');
-const { leaveValidator } = require('../validators/schema');
-const { verifyToken } = require('../middlewares/middleware');
+const leaveController = require('../Controllers/LeaveController');
+const  {leaveValidator}  = require('../validators/schema');
+const { verifyCookieToken } = require('../middlewares/middleware');
 
 // Staff routes
-router.post('/request', verifyToken, leaveValidator, createLeave);
-router.delete('/:id', verifyToken, deleteLeaveByUser);
+router.get('/apply', verifyCookieToken, leaveController.getApplyPage);
 
-// Management routes
-router.get('/', verifyToken, getAllLeaves);
-router.patch('/status/:id', verifyToken, updateLeaveStatus);
-router.get('/dashboard', verifyToken, (req, res) => {
-  res.render('Leave/staffLeave', { title: 'Staff Leave Dashboard' });
-});
-router.get('/manage', verifyToken, (req, res) => {
-  res.render('Leave/manageLeaves', { title: 'Manage Leave' });
-});
+// Apply for leave
+router.post('/apply', verifyCookieToken, leaveValidator, leaveController.applyLeave);
+
+// Get all leave requests
+router.get('/all', verifyCookieToken, leaveController.getAllLeaves);
+
+// Update leave status
+router.post('/:id/status', verifyCookieToken, leaveController.updateLeaveStatus);
+
+router.delete('/:id/delete', leaveController.deleteLeave);
+
 module.exports = router;

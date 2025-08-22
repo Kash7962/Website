@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      padding: 20px;
+    }
+    .profile-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .section {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 15px;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #374151;
+    }
+    .detail {
+      margin: 4px 0;
+      padding-left: 10px;
+    }
+    .detail strong {
+      display: inline-block;
+      width: 200px;
+      color: #111827;
+    }
+    ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h1>Staff Profile</h1>
+
+    <!-- Core Info -->
+    <div class="section">
+      <h2>Basic Information</h2>
+      <p class="detail"><strong>Name:</strong> <%= staff.name %></p>
+      <p class="detail"><strong>Email:</strong> <%= staff.email %></p>
+      <p class="detail"><strong>Phone:</strong> <%= staff.phone %></p>
+      <p class="detail"><strong>Department:</strong> <%= staff.department %></p>
+      <p class="detail"><strong>Designation:</strong> <%= staff.designation || '-' %></p>
+      <p class="detail"><strong>Authorized:</strong> <%= staff.isAuthorized ? 'Yes' : 'No' %></p>
+      <p class="detail"><strong>Salary:</strong> <%= staff.salary || '-' %></p>
+      <p class="detail"><strong>Leaves Available:</strong> <%= staff.numberOfLeaves %></p>
+      <p class="detail"><strong>Employment Type:</strong> <%= staff.employmentType %></p>
+      <p class="detail"><strong>Joining Date:</strong> <%= staff.joiningDate ? staff.joiningDate.toDateString() : '-' %></p>
+    </div>
+
+    <!-- IDs -->
+    <div class="section">
+      <h2>Identification</h2>
+      <p class="detail"><strong>Aadhar Number:</strong> <%= staff.aadharNumber || '-' %></p>
+      <p class="detail"><strong>PAN Number:</strong> <%= staff.panNumber || '-' %></p>
+    </div>
+
+    <!-- Academics -->
+    <div class="section">
+      <h2>Academic Information</h2>
+      <p class="detail"><strong>Qualifications:</strong> <%= staff.qualifications && staff.qualifications.length ? staff.qualifications.join(', ') : '-' %></p>
+      <p class="detail"><strong>Subjects:</strong> <%= staff.subjects && staff.subjects.length ? staff.subjects.join(', ') : '-' %></p>
+      <p class="detail"><strong>Classes Assigned:</strong> <%= staff.classAssigned && staff.classAssigned.length ? staff.classAssigned.join(', ') : '-' %></p>
+      <p class="detail"><strong>Years of Experience:</strong> <%= staff.yearsOfExperience || 0 %></p>
+    </div>
+
+    <!-- Academic Details Table -->
+    <div class="section">
+      <h2>Academic Details</h2>
+      <% if (staff.academicDetails && staff.academicDetails.length) { %>
+        <ul>
+          <% staff.academicDetails.forEach(detail => { %>
+            <li>
+              <strong><%= detail.examination %></strong> - 
+              <%= detail.boardOrUniversity %>, 
+              Year: <%= detail.yearOfPassing %>, 
+              Grade: <%= detail.divisionOrGrade %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="detail">No academic details.</p>
+      <% } %>
+    </div>
+
+    <!-- Research -->
+    <div class="section">
+      <h2>Research & Projects</h2>
+      <p class="detail"><strong>Completed Projects:</strong> <%= staff.researchProjectsCompleted && staff.researchProjectsCompleted.length ? staff.researchProjectsCompleted.join(', ') : '-' %></p>
+      <p class="detail"><strong>Ongoing Projects:</strong> <%= staff.ongoingProjects && staff.ongoingProjects.length ? staff.ongoingProjects.join(', ') : '-' %></p>
+      <p class="detail"><strong>Research Scholars:</strong></p>
+      <ul>
+        <li>Completed PhD: <%= staff.researchScholars.completedPhD %></li>
+        <li>Continuing PhD: <%= staff.researchScholars.continuingPhD %></li>
+        <li>Completed MPhil: <%= staff.researchScholars.completedMPhil %></li>
+        <li>Continuing MPhil: <%= staff.researchScholars.continuingMPhil %></li>
+      </ul>
+      <p class="detail"><strong>Awards:</strong> <%= staff.awardsReceived && staff.awardsReceived.length ? staff.awardsReceived.join(', ') : '-' %></p>
+      <p class="detail"><strong>Books Published:</strong> <%= staff.booksPublished %></p>
+      <p class="detail"><strong>Research Papers Published:</strong> <%= staff.researchPapers.published %></p>
+      <p class="detail"><strong>Research Papers Communicated:</strong> <%= staff.researchPapers.communicated %></p>
+    </div>
+
+    <!-- Other Details -->
+    <div class="section">
+      <h2>Other Details</h2>
+      <p class="detail"><strong>Present Address:</strong> <%= staff.presentAddress || '-' %></p>
+      <p class="detail"><strong>Alt Phone:</strong> <%= staff.contactInfo?.altPhone || '-' %></p>
+      <p class="detail"><strong>Alt Email:</strong> <%= staff.contactInfo?.emailAlt || '-' %></p>
+      <p class="detail"><strong>Skills:</strong> <%= staff.skills && staff.skills.length ? staff.skills.join(', ') : '-' %></p>
+      <p class="detail"><strong>Certifications:</strong> <%= staff.certifications && staff.certifications.length ? staff.certifications.join(', ') : '-' %></p>
+      <p class="detail"><strong>Achievements:</strong> <%= staff.achievements && staff.achievements.length ? staff.achievements.join(', ') : '-' %></p>
+    </div>
+
+    <div class="section">
+      <p class="detail"><strong>Profile Created:</strong> <%= staff.createdAt.toDateString() %></p>
+      <p class="detail"><strong>Last Updated:</strong> <%= staff.updatedAt.toDateString() %></p>
+    </div>
+  </div>
+</body>
+</html>

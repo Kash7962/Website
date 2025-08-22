@@ -7,6 +7,8 @@ const dotenv = require('dotenv');
 const nodemailer = require('nodemailer');
 const { Admin } = require('../models/admin')
 const Session_Admin = require('../models/session_admin')
+// const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
 dotenv.config();
 
 // const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -50,7 +52,20 @@ const registerUser = async (req, res) => {
     });
 
     await newUser.save();
-
+    // const user = await Staff.findById(req.user._id);
+        await ActivityLog.create({
+          // userId : newUser._id,
+          userModel: 'Staff',
+          name: newUser.name,
+          email: newUser.email,
+          action: `Registered new user: ${newUser.name}`,
+          // targetModel: 'Student',
+          // targetId: student._id,
+          // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+          // targetEmail: student.studentEmail,
+          // registrationNumber: student.registration_number,
+          // classAssigned: student.classAssigned
+        });
     res.status(201).json({
       message: 'User registered successfully.',
       user: {
@@ -513,11 +528,13 @@ const changePassword = async (req, res) => {
 
   try {
     let Model;
-
+    let userModelName;
     if (role === 'Admin' || role === 'Super Admin') {
       Model = Admin;
+      userModelName = 'Admin';
     } else if (role === 'Staff' || department) {
       Model = Staff;
+      userModelName = 'Staff';
     } else {
       return res.status(400).render('error/error', {
         message: 'Invalid role or department. Please try again.'
@@ -541,7 +558,20 @@ const changePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
-
+    // const user = await Staff.findById(req.user._id);
+        await ActivityLog.create({
+          userId : user._id,
+          userModel: userModelName,
+          name: user.name,
+          email: user.email,
+          action: `Password changed`,
+          // targetModel: 'Student',
+          // targetId: student._id,
+          // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+          // targetEmail: student.studentEmail,
+          // registrationNumber: student.registration_number,
+          // classAssigned: student.classAssigned
+        });
     return res.status(200).json({ message: 'Password changed successfully.' });
 
   } catch (err) {
@@ -552,6 +582,20 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getStaffProfile = async (req, res) => {
+  try {
+    const staffId = req.user._id; // comes from verifyToken middleware
+    const staff = await Staff.findById(staffId);
 
+    if (!staff) {
+      return res.status(404).render('error/error', { message: 'Staff not found' });
+    }
 
-module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword };
+    res.render('Staff/profile', { staff });
+  } catch (err) {
+    console.error('Error fetching staff profile:', err);
+    res.status(500).render('error/error', { message: 'Unable to load profile' });
+  }
+};
+
+module.exports = { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword, getStaffProfile };

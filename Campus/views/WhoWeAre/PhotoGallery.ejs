@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Campus Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f8f8;
+        }
+
+        header {
+            background: #004080;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        /* General gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Staff Section */
+        .staff-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .staff-gallery img {
+            width: 500px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        /* -------------------
+           RESPONSIVE DESIGN
+        ------------------- */
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .staff-gallery img {
+                width: 400px;
+                height: 250px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .staff-gallery {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .staff-gallery img {
+                width: 90%;
+                height: auto; /* keeps aspect ratio */
+                max-height: 250px;
+            }
+
+            .gallery img {
+                height: 180px;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.3rem;
+            }
+
+            .staff-gallery img {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .gallery img {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>College Campus Gallery</h1>
+</header>
+
+<!-- Staff Section -->
+<h2>Staff</h2>
+<section class="staff-gallery">
+    <img src="/images/KASH_COLLEGE_PICS/PXL_20250711_120953824.RAW-01.COVER.jpg" alt="Staff Group Photo">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5959.JPG" alt="Principal">
+</section>
+
+<!-- Kitchen Section -->
+<h2>Canteen / Kitchen</h2>
+<section class="gallery">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5868.JPG" alt="Kitchen">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5878.JPG" alt="Kitchen">
+</section>
+
+<!-- Sports Section -->
+<h2>Sports</h2>
+<section class="gallery">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5772.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5775.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5776.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5777.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5778.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5779.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5782.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5783.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5784.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5786.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5787.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5788.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5790.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5791.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5792.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5793.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5794.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5795.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5796.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5797.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5798.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5800.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5801.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5802.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5803.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5804.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5805.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5807.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5808.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5809.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5810.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5812.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5813.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5814.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5815.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5816.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5817.JPG" alt="Sports">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5818.JPG" alt="Sports">
+</section>
+
+<!-- Workshop Section -->
+<h2>Workshop</h2>
+<section class="gallery">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5890.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5891.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5892.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5895.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5896.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5898.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5900.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5903.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5906.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5917.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5918.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5921.JPG" alt="Workshop">
+    <img src="/images/KASH_COLLEGE_PICS/IMG_5925.JPG" alt="Workshop">
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+    <img src="" alt="Enlarged view">
+</div>
+
+<script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = lightbox.querySelector("img");
+
+    document.querySelectorAll(".gallery img, .staff-gallery img").forEach(img => {
+        img.addEventListener("click", () => {
+            lightbox.style.display = "flex";
+            lightboxImg.src = img.src;
+        });
+    });
+
+    lightbox.addEventListener("click", (e) => {
+        if (e.target !== lightboxImg) {
+            lightbox.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>

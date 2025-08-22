@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Face Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --text: #111827;
+      --muted: #6b7280;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .camera-container {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+      text-align: center;
+    }
+
+    video {
+      width: 400px;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 2px solid var(--primary);
+    }
+
+    #statusMessage {
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--muted);
+    }
+
+    .success {
+      color: var(--success);
+    }
+
+    .error {
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+  <h1>Staff Face Attendance</h1>
+
+  <div class="camera-container">
+    <video id="camera" autoplay playsinline></video>
+    <p id="statusMessage">Loading models...</p>
+  </div>
+
+  <!-- Face API -->
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script>
+    const video = document.getElementById('camera');
+    const statusMessage = document.getElementById('statusMessage');
+
+    // Start camera
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        statusMessage.textContent = "Camera is active. Detecting face...";
+      } catch (error) {
+        statusMessage.textContent = "Unable to access camera.";
+        statusMessage.classList.add("error");
+      }
+    }
+
+    // Load face-api.js models
+    async function loadModels() {
+      const MODEL_URL = '/models'; // 👉 ensure models are served from /public/models
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+      ]);
+      statusMessage.textContent = "✅ Models loaded. Initializing camera...";
+    }
+
+    // Face recognition & attendance marking
+    let recognitionInterval = null; // store interval ID
+
+    // Face recognition & attendance marking
+    async function recognizeFace() {
+    try {
+        const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+        if (!detection) {
+        statusMessage.textContent = "⚠️ No face detected";
+        return;
+        }
+
+        const encoding = Array.from(detection.descriptor);
+
+        // Step 1: Match with backend
+        const faceRes = await fetch("/Face/match-face", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ encoding }),
+        });
+
+        if (!faceRes.ok) throw new Error("Face not recognized");
+
+        const staffData = await faceRes.json();
+
+        // Step 2: Mark attendance
+        const attendanceRes = await fetch("/Manage/attendance/mark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ staff: staffData._id }),
+        });
+
+        if (!attendanceRes.ok) {
+            const errData = await attendanceRes.json().catch(() => ({}));
+            const errorMsg = errData.error || "Attendance marking failed";
+            throw new Error(errorMsg); // this will go to your catch block
+            };
+
+        const result = await attendanceRes.json();
+        statusMessage.textContent = `✅ Attendance marked for ${staffData.name} (${staffData.email})`;
+        statusMessage.classList.remove("error");
+        statusMessage.classList.add("success");
+
+        // 👉 Stop recognition loop once attendance is marked
+        if (recognitionInterval) {
+        clearInterval(recognitionInterval);
+        recognitionInterval = null;
+        }
+
+    } catch (err) {
+        statusMessage.textContent = `❌ ${err.message}`;
+        statusMessage.classList.remove("success");
+        statusMessage.classList.add("error");
+    }
+    }
+
+    // Initialize
+    window.addEventListener("DOMContentLoaded", async () => {
+    await loadModels();
+    await startCamera();
+
+    // 👉 store interval ID
+    recognitionInterval = setInterval(recognizeFace, 7000);
+    });
+
+  </script>
+</body>
+</html>

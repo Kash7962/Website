@@ -9,12 +9,15 @@ const mongoose = require('mongoose')
 const bcryptjs = require('bcryptjs');
 // const { body, validationResult } = require('express-validator');
 const Document = require('../models/documents')
+const {Staff} = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
+const StaffAttendance = require('../models/staffAttendance');
 // const jwt = require('jsonwebtoken');
 
 
 const uploadCourse = async (req, res) => {
   try {
-    const { courseName, userId, username, email } = req.body;
+    const { courseName, userId, name, email } = req.body;
 
     if (!req.file) return res.status(400).render('error/error', {message: 'File not found'});
 
@@ -23,12 +26,21 @@ const uploadCourse = async (req, res) => {
       filename: req.file.filename,
       uploadedBy: {
         id: userId,
-        name: username,
+        name: name,
         email
       }
     });
 
     await newMaterial.save();
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Uploaded course material: ${courseName}`
+    });
+
     res.status(200).send("File uploaded successfully");
   } catch (err) {
     console.error(err);
@@ -64,6 +76,20 @@ const deleteCourse = async (req, res) => {
     });
 
     await CourseMaterial.findByIdAndDelete(id);
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Course material deleted : ${file.courseName}`,
+      // targetModel: 'Student',
+      // targetId: student._id,
+      // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      // targetEmail: student.studentEmail,
+      // registrationNumber: student.registration_number,
+      // classAssigned: student.classAssigned
+    });
     res.status(200).send("Deleted successfully");
   } catch (err) {
     console.error(err);
@@ -80,7 +106,7 @@ const uploadAssignment = async (req, res) => {
   }
 
   try {
-    const user = req.user; // Assumed to be added via auth middleware
+    const user = await Staff.findById(req.user._id);; // Assumed to be added via auth middleware
     const assignment = new Assignment({
       title,
       classAssigned,
@@ -94,6 +120,20 @@ const uploadAssignment = async (req, res) => {
     });
 
     await assignment.save();
+    // const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Assignment uploaded: ${title}`,
+      // targetModel: 'Student',
+      // targetId: student._id,
+      // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      // targetEmail: student.studentEmail,
+      // registrationNumber: student.registration_number,
+      // classAssigned: student.classAssigned
+    });
     res.redirect('/Staff/Teaching/assignments');
   } catch (err) {
     return res.status(500).render('error/error', {message: 'Server error'});
@@ -133,7 +173,22 @@ const deleteAssignment = async (req, res) => {
     fs.unlinkSync(filePath);
 
     await Assignment.findByIdAndDelete(req.params.id);
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Assignment deleted : ${assignment.title}`,
+      // targetModel: 'Student',
+      // targetId: student._id,
+      // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      // targetEmail: student.studentEmail,
+      // registrationNumber: student.registration_number,
+      // classAssigned: student.classAssigned
+    });
     res.redirect('/Staff/Teaching/assignments');
+    
   } catch (err) {
     return res.status(500).render('error/error', {message: 'Server error'});
   }
@@ -197,7 +252,20 @@ const deleteEnrollment = async (req, res) => {
 
     // --- Delete student from DB ---
     await Student.findByIdAndDelete(id);
-
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Enrollment deleted`,
+      targetModel: 'Student',
+      targetId: student._id,
+      targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      targetEmail: student.studentEmail,
+      // registrationNumber: student.registration_number,
+      // classAssigned: student.classAssigned
+    });
     return res.status(200).json({ message: 'Deleted successfully' });
 
   } catch (err) {
@@ -438,6 +506,22 @@ const postFinalizeForm = [
       } catch (docErr) {
         console.error('Document save error (student enrolled):', docErr);
       }
+     
+    await doc.save();
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Enrolled/Edited student`,
+      targetModel: 'Student',
+      targetId: student._id,
+      targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      targetEmail: student.studentEmail,
+      registrationNumber: student.registration_number,
+      classAssigned: student.classAssigned
+    });
 
       return res.status(200).json({ success: true, message: 'Student enrolled successfully', student: updatedStudent });
     } catch (err) {
@@ -526,7 +610,22 @@ const uploadDocument = async (req, res) => {
       type,
       url: `/uploads/students/${studentId}/${req.file.filename}`,
     });
+    const student = await Student.findById(studentId);
     await doc.save();
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Uploaded document: ${doc.name}`,
+      targetModel: 'Student',
+      targetId: studentId,
+      targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      targetEmail: student.studentEmail,
+      registrationNumber: student.registration_number,
+      classAssigned: student.classAssigned
+    });
     res.status(200).json({ message: 'Document uploaded successfully'});
     // res.redirect(`/Manage/documents/${studentId}`);
   } catch (err) {
@@ -539,7 +638,7 @@ const uploadDocument = async (req, res) => {
 const deleteDocument = async (req, res) => {
   try {
     const { studentId, docId } = req.params;
-
+    const student = await Student.findById(studentId);
     const doc = await Document.findById(docId);
     if (!doc) {
       return res.status(404).render('error/error', { message: 'Document not found' });
@@ -567,6 +666,20 @@ const deleteDocument = async (req, res) => {
 
     // Remove DB record
     await Document.deleteOne({ _id: docId });
+    const user = await Staff.findById(req.user._id);
+    await ActivityLog.create({
+      userId : user._id,
+      userModel: 'Staff',
+      name: user.name,
+      email: user.email,
+      action: `Deleted document: ${doc.name}`,
+      targetModel: 'Student',
+      targetId: studentId,
+      targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+      targetEmail: student.studentEmail,
+      registrationNumber: student.registration_number,
+      classAssigned: student.classAssigned
+    });
     res.status(200).json({ message: 'Document deleted successfully' });
     // res.redirect(`/Manage/documents/${studentId}`);
   } catch (err) {
@@ -585,9 +698,142 @@ const getResult = async (req, res) => {
   }
 };
 
+const getStaffList = async (req, res) => {
+  try {
+    const staffList = await Staff.find().lean();
+    res.render('Staff/staffList', { staffList });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error/error', { message: 'Failed to load staff list.' });
+  }
+};
+
+const markAttendance = async (req, res) => {
+  try {
+    const { staff } = req.body; 
+    // method = "FaceSystem" or "Manual"
+    if (!staff) {
+      return res.status(400).json({ error: 'Staff ID is required' });
+    }
+
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(today.setHours(23, 59, 59, 999));
+
+    let record = await StaffAttendance.findOne({
+      staff: staff,
+      date: { $gte: todayStart, $lte: todayEnd }
+    });
+
+    if (!record) {
+      // First punch → Check-In
+      record = new StaffAttendance({
+        staff: staff,
+        date: todayStart,
+        checkInTime: new Date(),
+        status: 'Present',
+        markedBy: 'FaceSystem'
+      });
+      await record.save();
+      return res.status(201).json({ message: 'Check-in recorded', record });
+    } else if (!record.checkOutTime) {
+      // Second punch → Check-Out
+      record.checkOutTime = new Date();
+      await record.save();
+      return res.status(200).json({ message: 'Check-out recorded', record });
+    } else {
+      return res.status(400).json({ error: 'Attendance already completed for today' });
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+// ===============================
+// Mark manual attendance (bypass system)
+// ===============================
+const manualAttendance = async (req, res) => {
+  try {
+    const { staffId, date, status, checkInTime } = req.body;
+
+    if (!staffId || !date) {
+      return res.status(400).json({ error: 'Staff ID and Date are required' });
+    }
+
+    const dayStart = new Date(new Date(date).setHours(0, 0, 0, 0));
+    const dayEnd = new Date(new Date(date).setHours(23, 59, 59, 999));
+
+    let record = await StaffAttendance.findOne({
+      staff: staffId,
+      date: { $gte: dayStart, $lte: dayEnd }
+    });
+
+    if (!record) {
+      record = new StaffAttendance({
+        staff: staffId,
+        date: dayStart,
+        status: status || 'Present',
+        checkInTime: checkInTime ? new Date(checkInTime) : null,
+        checkOutTime: checkOutTime ? new Date(checkOutTime) : null,
+        markedBy: 'Manual'
+      });
+    } else {
+      // Update existing record manually
+      record.status = status || record.status;
+      record.checkInTime = checkInTime ? new Date(checkInTime) : record.checkInTime;
+      record.checkOutTime = checkOutTime ? new Date(checkOutTime) : record.checkOutTime;
+      record.markedBy = 'Manual';
+    }
+
+    await record.save();
+    res.status(200).json({ message: 'Manual attendance recorded/updated', record });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+// ===============================
+// Get attendance by staff
+// ===============================
+const getAttendanceByStaff = async (req, res) => {
+  try {
+    const { staffId } = req.params;
+
+    if (!staffId || !mongoose.Types.ObjectId.isValid(staffId)) {
+      return res.status(400).json({ error: 'Invalid staff ID' });
+    }
+    // console.log(staffId)
+    // Match all records regardless of time
+    const records = await StaffAttendance.find({ staff: staffId }).sort({ date: -1 });
+
+    // console.log('Attendance records:', records);
+
+    res.status(200).json(records);
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+
+const renderStaffAttendancePage = (req, res) => {
+  try {
+    // ✅ No need to pass staffId from backend
+    res.render('Staff/attendanceRecords');
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('error/error', { message: 'Failed to load attendance page' });
+  }
+};
+
 module.exports = {
   uploadCourse, getAllCourses, deleteCourse, getStaffPermissions, getFinalizeForm,
   uploadAssignment, viewAssignments, deleteAssignment, getPendingEnrollment, deleteEnrollment,
    postFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, 
-   uploadDocument, deleteDocument, getResult,
+   uploadDocument, deleteDocument, getResult, getStaffList, markAttendance, manualAttendance,
+   getAttendanceByStaff, renderStaffAttendancePage,
 }; 

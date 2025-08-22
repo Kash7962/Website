@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Activity Logs</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #111833;
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --accent: #4f46e5;
+      --danger: #ef4444;
+      --border: #1f2a44;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+    }
+
+    .container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: var(--border);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.2s ease-in-out;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    #flashMessageContainer {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+
+    .flash-success {
+      background: #22c55e;
+      color: white;
+    }
+
+    .flash-error {
+      background: var(--danger);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <div class="container">
+    <h1>📜 Activity Logs</h1>
+    <button id="deleteAllBtn" class="btn btn-danger" type="button">Delete All Logs</button>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Class</th>
+            <th>Registration</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (logs.length === 0) { %>
+            <tr><td colspan="7" style="text-align:center;">No activity logs available</td></tr>
+          <% } else { %>
+            <% logs.forEach(log => { %>
+              <tr>
+                <td><%= log.name %> (<%= log.userModel %>)</td>
+                <td><%= log.email %></td>
+                <td><%= log.action %></td>
+                <td>
+                  <% if (log.targetname) { %>
+                    <%= log.targetname %> (<%= log.targetModel || '' %>)
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+                <td><%= log.classAssigned || '-' %></td>
+                <td><%= log.registrationNumber || '-' %></td>
+                <td><%= new Date(log.timestamp).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script >
+    // Flash message utility
+    function showFlashMessage(type, message) {
+      const container = document.getElementById('flashMessageContainer');
+      const div = document.createElement('div');
+      div.className = `flash-message flash-${type}`;
+      div.textContent = message;
+      container.appendChild(div);
+      setTimeout(() => div.remove(), 3000);
+    }
+
+    // Delete all logs
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+    deleteAllBtn.addEventListener('click', async () => {
+      if (!confirm('Delete ALL activity logs? This cannot be undone.')) return;
+      try {
+        const res = await fetch('/Admin/activity-logs/delete-all', { method: 'DELETE' });
+        if (res.ok) {
+          showFlashMessage('success', 'All logs deleted successfully');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          const data = await res.json();
+          showFlashMessage('error', data.message || 'Failed to delete logs');
+        }
+      } catch (err) {
+        console.error(err);
+        showFlashMessage('error', 'Something went wrong');
+      }
+    });
+  </script>
+</body>
+</html>

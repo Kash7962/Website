@@ -246,6 +246,18 @@
                             Manage Students Results
                         </label>
                     </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="manage_leaves" <%= permissions.includes('manage_leaves') ? 'checked' : '' %> />
+                            Manage Leaves
+                        </label>
+                    </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="manage_staff_attendance" <%= permissions.includes('manage_staff_attendance') ? 'checked' : '' %> />
+                            Manage Staff Attendance
+                        </label>
+                    </div>
                     
                     </div>
             </div>

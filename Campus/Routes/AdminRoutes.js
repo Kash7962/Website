@@ -40,7 +40,12 @@ const {
     deleteStudentSessions,
     getAdminSessions,
     deleteAdminSessions,
+    getActivityLogs,
+    deleteAllActivityLogs,
+    renderAdminAttendancePage,
+    deleteAttendance
 } = require('../Controllers/AdminController');
+
 
 
 
@@ -129,5 +134,17 @@ router.delete('/Sessions_Students/delete-all', verifyCookieToken, deleteStudentS
 
 router.get('/Sessions_Admins/get', verifyCookieToken, getAdminSessions);
 router.delete('/Sessions_Admins/delete-all', verifyCookieToken, deleteAdminSessions);
+
+// View logs
+router.get('/activity-logs/get', verifyCookieToken, getActivityLogs);
+
+// Delete all logs
+router.delete('/activity-logs/delete-all', verifyCookieToken, deleteAllActivityLogs);
+
+// Fetch all attendance
+router.get('/attendance/get-all', verifyCookieToken, renderAdminAttendancePage);
+
+// Delete attendance record
+router.delete('/attendance/delete/:id', verifyCookieToken, deleteAttendance);
 
 module.exports = router;

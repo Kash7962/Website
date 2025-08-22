@@ -422,7 +422,16 @@ const staffValidator = [
     .trim()
     .escape()
     .isString(),
-
+  body('aadharNumber')
+    .optional()
+    .trim()
+    .escape()
+    .isLength({ min: 12, max: 12 }),
+  body('panNumber')
+    .optional()
+    .trim()
+    .escape()
+    .isLength({ min: 10, max: 10 }),
   body('designation')
     .optional()
     .trim()
@@ -695,4 +704,67 @@ const validateClassSchedule = [
   // You can optionally validate file uploads by multer separately
 ];
 
-module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule };
+
+const staffFaceValidator = [
+  body('name')
+    .trim().escape()
+    .notEmpty().withMessage('Name is required')
+    .isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
+
+  body('email')
+    .trim().normalizeEmail({
+      gmail_remove_subaddress: false, // keep subaddressing for Gmail
+      gmail_remove_dots: false, // keep dots in Gmail addresses
+    })
+    .isEmail().withMessage('Please provide a valid email'),
+
+  body('encoding')
+    .custom((value) => {
+      if (!Array.isArray(value)) {
+        throw new Error('Encoding must be an array');
+      }
+      if (value.length !== 128) {
+        throw new Error('Encoding must be exactly 128 numbers');
+      }
+      if (!value.every(n => typeof n === 'number')) {
+        throw new Error('Encoding must contain only numbers');
+      }
+      return true;
+    })
+];
+
+const staffAttendanceValidator = [
+  body('staff')
+    .notEmpty().withMessage('Staff ID is required')
+    .custom((value) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage('Invalid Staff ID'),
+
+  body('date')
+    .notEmpty().withMessage('Date is required')
+    .isISO8601().withMessage('Date must be in a valid ISO8601 format (YYYY-MM-DD)')
+    .toDate(),
+
+  body('status')
+    .optional()
+    .isIn(['Present', 'Absent', 'Late', 'Half-Day'])
+    .withMessage('Invalid status'),
+
+  body('checkInTime')
+    .optional()
+    .isISO8601().withMessage('Check-in time must be a valid date-time')
+    .toDate(),
+
+  body('checkOutTime')
+    .optional()
+    .isISO8601().withMessage('Check-out time must be a valid date-time')
+    .toDate(),
+
+  body('markedBy')
+    .optional()
+    .isIn(['FaceSystem', 'Manual'])
+    .withMessage('markedBy must be FaceSystem or Manual')
+    .default('Manual') // For manual attendance override
+];
+
+
+module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, };
