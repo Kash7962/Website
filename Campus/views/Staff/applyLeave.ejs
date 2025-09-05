@@ -1,224 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Apply Leave</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    }
-    h2 {
-      margin-bottom: 20px;
-      color: #1f2937;
-    }
-    form {
-      margin-bottom: 25px;
-    }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #d1d5db;
-      font-size: 14px;
-    }
-    button {
-      background: #2563eb;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #1e40af;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    table th, table td {
-      padding: 10px;
-      border: 1px solid #e5e7eb;
-      text-align: center;
-    }
-    .delete-btn {
-      background: #dc2626;
-    }
-    .delete-btn:hover {
-      background: #991b1b;
-    }
-    #flashMessageContainer {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-    }
-    .flash {
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 6px;
-      font-weight: bold;
-      text-align: center;
-      color: #fff;
-      animation: fadeInOut 4s forwards;
-    }
-    .flash.success { background: #16a34a; }
-    .flash.error { background: #dc2626; }
+    <meta charset="UTF-8">
+    <title>Apply Leave</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --primary-blue-dark: #1e3a8a;
+            --danger-red: #dc2626;
+            --danger-red-dark: #b91c1c;
+            --text-dark: #1e293b;
+            --text-light: #475569;
+            --border-color: #e2e8f0;
+            --background-light: #f8fafc;
+            --background-white: #ffffff;
+        }
 
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(-20px); }
-      10% { opacity: 1; transform: translateY(0); }
-      90% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-20px); }
-    }
-  </style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--background-light);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            background: var(--background-white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            font-size: 2rem; /* Increased font size for main heading */
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-top: 40px;
+            margin-bottom: 24px;
+        }
+        
+        form {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        input, textarea {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .leave-info {
+            background-color: #f0f4f8;
+            border: 1px solid #d9e2ec;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .leave-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+            width: auto;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--background-white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-blue-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            color: var(--background-white);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-red-dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: var(--background-white);
+        }
+
+        table th, table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table th {
+            background: var(--background-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            font-size: 0.75rem;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+         #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+            #flashMessageContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .flash-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        }
+        .modal-backdrop.hidden {
+        display: none;
+        }
+        .modal-content {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 12px;
+        width: 350px;
+        max-width: 90%;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        animation: fadeIn 0.2s ease-in-out;
+        }
+        .modal-content h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        }
+        .modal-content p {
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        color: #444;
+        }
+        .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        }
+        .btn {
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        border: none;
+        }
+        .btn-secondary {
+        background: #e5e7eb;
+        }
+        .btn-danger {
+        background: #dc2626;
+        color: white;
+        }
+        .btn-danger:hover {
+        background: #b91c1c;
+        }
+        @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
-  <div id="flashMessageContainer"></div>
+    <div id="flashMessageContainer"></div>
 
-  <div class="container">
     <h2>Apply for Leave</h2>
 
-   <form id="leaveForm">
-  <input type="hidden" name="staffId" value="<%= staff._id %>">
+    <div class="container">
+        <form id="leaveForm">
+            <input type="hidden" name="staffId" value="<%= staff._id %>">
 
-  <div class="leave-info">
-    <p><strong>Available Leaves:</strong> <%= staff.numberOfLeaves %></p>
-  </div>
+            <div class="leave-info">
+                <p><strong>Available Leaves:</strong> <%= staff.numberOfLeaves %></p>
+            </div>
 
-  <label>Reason</label>
-  <textarea name="reason" required></textarea>
+            <div class="form-group">
+                <label for="reason">Reason</label>
+                <textarea id="reason" name="reason" rows="4" required></textarea>
+            </div>
 
-  <label>From Date</label>
-  <input type="date" name="fromDate" required>
+            <div class="form-group">
+                <label for="fromDate">From Date</label>
+                <input type="date" id="fromDate" name="fromDate" required>
+            </div>
 
-  <label>To Date</label>
-  <input type="date" name="toDate" required>
+            <div class="form-group">
+                <label for="toDate">To Date</label>
+                <input type="date" id="toDate" name="toDate" required>
+            </div>
 
-  <button type="submit">Apply Leave</button>
-</form>
+            <button class="btn btn-primary" type="submit">Apply Leave</button>
+        </form>
 
-    <h3>My Leave Requests</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Reason</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Total Days</th>
-          <th>Paid</th>
-          <th>Unpaid</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (staffLeaves.length === 0) { %>
-          <tr><td colspan="8">No leave requests yet.</td></tr>
-        <% } else { %>
-          <% staffLeaves.forEach(leave => { %>
-            <tr>
-              <td><%= leave.reason %></td>
-              <td><%= leave.fromDate.toDateString() %></td>
-              <td><%= leave.toDate.toDateString() %></td>
-              <td><%= leave.totalDays %></td>
-              <td><%= leave.paidLeaves %></td>
-              <td><%= leave.unpaidLeaves %></td>
-              <td><%= leave.status %></td>
-              <td>
-                <% if (leave.status === 'Pending') { %>
-                  <button class="delete-btn" data-id="<%= leave._id %>">Delete</button>
+        <h3>My Leave Requests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Reason</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Total Days</th>
+                    <th>Paid</th>
+                    <th>Unpaid</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (staffLeaves.length === 0) { %>
+                    <tr><td colspan="8">No leave requests yet.</td></tr>
                 <% } else { %>
-                  -
+                    <% staffLeaves.forEach(leave => { %>
+                        <tr>
+                            <td><%= leave.reason %></td>
+                            <td><%= leave.fromDate.toDateString() %></td>
+                            <td><%= leave.toDate.toDateString() %></td>
+                            <td><%= leave.totalDays %></td>
+                            <td><%= leave.paidLeaves %></td>
+                            <td><%= leave.unpaidLeaves %></td>
+                            <td><%= leave.status %></td>
+                            <td>
+                                <% if (leave.status === 'Pending') { %>
+                                    <button class="btn btn-danger delete-leave-btn" data-id="<%= leave._id %>">Delete</button>
+                                    <!-- <div id="deleteLeaveModal" class="modal-backdrop hidden">
+                                    <div class="modal-content">
+                                        <h3>Confirm Delete</h3>
+                                        <p>Are you sure you want to delete this <strong>leave request</strong>? This action cannot be undone.</p>
+                                        <div class="modal-actions">
+                                        <button id="cancelLeaveDelete" class="btn btn-secondary">Cancel</button>
+                                        <button id="confirmLeaveDelete" class="btn btn-danger">Delete</button>
+                                        </div>
+                                    </div>
+                                    </div> -->
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
                 <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } %>
-      </tbody>
-    </table>
-  </div>
+            </tbody>
+        </table>
+    </div>
+    <div id="deleteLeaveModal" class="modal-backdrop hidden">
+    <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete this <strong>leave request</strong>? This action cannot be undone.</p>
+        <div class="modal-actions">
+        <button id="cancelLeaveDelete" class="btn btn-secondary">Cancel</button>
+        <button id="confirmLeaveDelete" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+    </div>
+    <script>
+        window.onload = async function() {
+            const token = localStorage.getItem('token');
+            try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
 
-  <script>
-    async function handleServerError(res) {
-      const text = await res.text();
-      document.body.innerHTML = text;
-    }
+                        const contentType = res.headers.get('Content-Type') || '';
 
-    function showFlashMessage(type, message) {
-      const container = document.getElementById("flashMessageContainer");
-      const div = document.createElement("div");
-      div.className = `flash ${type}`;
-      div.innerText = message;
-      container.appendChild(div);
-      setTimeout(() => div.remove(), 4000);
-    }
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
 
-    // Verify JWT token on load
-    // window.onload = async () => {
-    //   try {
-    //     const res = await fetch('/Auth/verify-token');
-    //     if (!res.ok) {
-    //       window.location.href = '/login';
-    //     }
-    //   } catch {
-    //     window.location.href = '/login';
-    //   }
-    // };
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
 
-    // Handle form submit
-    document.getElementById("leaveForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
 
-      try {
-        const res = await fetch('/Leaves/apply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                }
+        document.getElementById("leaveForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch('/Leaves/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) return handleServerError(res);
+
+                const result = await res.json();
+                showFlashMessage('success', result.message);
+                setTimeout(() => location.reload(), 1200);
+            } catch {
+                showFlashMessage('error', 'Failed to apply leave');
+            }
         });
-        if (!res.ok) return handleServerError(res);
 
-        const result = await res.json();
-        showFlashMessage('success', result.message);
-        setTimeout(() => location.reload(), 1200);
-      } catch {
-        showFlashMessage('error', 'Failed to apply leave');
-      }
-    });
+       document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("deleteLeaveModal");
+            const cancelBtn = document.getElementById("cancelLeaveDelete");
+            const confirmBtn = document.getElementById("confirmLeaveDelete");
+            let currentId = null;
 
-    // Handle delete leave
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        if (!confirm("Delete this leave request?")) return;
-        const id = btn.dataset.id;
-        try {
-          const res = await fetch(`/Leaves/${id}/delete`, { method: 'DELETE' });
-          if (!res.ok) return handleServerError(res);
+            // Open modal when delete button clicked
+            document.querySelectorAll(".delete-leave-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                currentId = btn.dataset.id;
+                modal.classList.remove("hidden");
+                });
+            });
 
-          const result = await res.json();
-          showFlashMessage('success', result.message);
-          setTimeout(() => location.reload(), 1000);
-        } catch {
-          showFlashMessage('error', 'Failed to delete leave');
+            // Cancel modal
+            cancelBtn.addEventListener("click", () => {
+                modal.classList.add("hidden");
+                currentId = null;
+            });
+
+            // Confirm delete
+            confirmBtn.addEventListener("click", async () => {
+                if (!currentId) return;
+
+                try {
+                const res = await fetch(`/Leaves/${currentId}/delete`, { method: 'DELETE' });
+                if (!res.ok) return handleServerError(res);
+
+                const result = await res.json();
+                showFlashMessage('success', result.message);
+                modal.classList.add("hidden");
+                setTimeout(() => location.reload(), 1000);
+                } catch {
+                showFlashMessage('error', 'Failed to delete leave');
+                }
+            });
+            });
+
+        async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+        if (contentType.includes('text/html')) {
+        const html = await res.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        const popup = tempDiv.querySelector('#errorPopupContainer');
+        const scripts = tempDiv.querySelectorAll('script');
+
+        if (popup) {
+            document.body.prepend(popup);
+            scripts.forEach((script) => {
+            const newScript = document.createElement('script');
+            if (script.src) newScript.src = script.src;
+            else newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+            });
+        } else {
+            showFlashMessage('error', 'An unknown error occurred.');
         }
-      });
-    });
-  </script>
+        } else {
+        showFlashMessage('error', 'Server error: unexpected content type.');
+        }
+    } 
+
+    function showFlashMessage(type, message, duration = 4000) {
+        const container = document.getElementById('flashMessageContainer');
+        const msg = document.createElement('div');
+        msg.classList.add('flash-message');
+        msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+        msg.textContent = message;
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 500);
+        }, duration);
+    } 
+    </script>
 </body>
 </html>

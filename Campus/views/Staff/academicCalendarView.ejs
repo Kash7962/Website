@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>📅 Academic Calendar — View</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
+  <style>
+    :root{ --bg:#fafafa; --card:#fff; --muted:#666; --accent:#2b6cb0; }
+    body{font-family:Inter, system-ui, Arial, sans-serif; margin:0; background:var(--bg); color:#222;}
+    .container{max-width:1200px;margin:18px auto;padding:16px;}
+    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .card{background:var(--card);border-radius:8px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    #calendar { max-width:100%; margin: 0 auto; }
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:12px;font-size:12px;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h2>📅 Academic Calendar — View</h2>
+      <div class="card form-row">
+        <label for="batchSelect">Batch:</label>
+        <select id="batchSelect">
+          <% if (batches && batches.length) { %>
+            <% batches.forEach(function(b){ %>
+              <option value="<%= b %>"><%= b %></option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="calendar"></div>
+    </div>
+
+    <div class="card">
+      <h3>Events list (<span id="eventsForBatch"></span>)</h3>
+      <div>Working days: <strong id="workingDays">—</strong></div>
+      <table id="eventsTable">
+        <thead><tr><th>Date</th><th>Title</th><th>Type</th><th>Batch</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+  (function(){
+    const batchSelect=document.getElementById('batchSelect');
+    const calendar=new FullCalendar.Calendar(document.getElementById('calendar'),{
+      initialView:'dayGridMonth',
+      headerToolbar:{ left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek,listWeek'},
+      selectable:false, editable:false, dayMaxEvents:true,
+      events:async(fetchInfo,success,failure)=>{
+        try{
+          const batch=batchSelect.value;
+          const url=`/Calendar/view-events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
+          const res=await fetch(url);
+          if(!res.ok) return failure('Load failed');
+          const json=await res.json();
+          const arr = Array.isArray(json) ? json : (json.events||[]);
+          document.getElementById('workingDays').textContent=json.workingDays ?? '—';
+          renderEventsList(arr, batch);
+          success(arr);
+        }catch(e){failure(e);}
+      }
+    });
+
+    function renderEventsList(arr, batch){
+      document.getElementById('eventsForBatch').textContent=batch;
+      const body=document.querySelector('#eventsTable tbody'); body.innerHTML='';
+      arr.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(ev=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${new Date(ev.start).toLocaleDateString()}</td>
+          <td><span class="badge" style="background:${ev.color}">${ev.title}</span></td>
+          <td>${ev.extendedProps?.type||''}</td>
+          <td>${(ev.extendedProps?.batches||[]).join(', ')}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    batchSelect.addEventListener('change',()=>{calendar.refetchEvents();});
+    window.onload=()=>{calendar.render();};
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!-- views/Staff/principal_curriculum.ejs -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Principal — Create / Review Curriculum</title>
+
+  <!-- Embedded stylesheet (no inline styles) -->
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#fff; --muted:#6b7280; --accent:#2563eb; --danger:#ef4444;
+      --success:#16a34a; --glass: rgba(255,255,255,0.7);
+    }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{background:var(--bg); color:#111; padding:24px;}
+    .container{max-width:1200px;margin:0 auto;}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+    h1{font-size:1.25rem;margin:0}
+    form.card, .card{background:var(--card); border-radius:10px; padding:16px; box-shadow:0 1px 4px rgba(16,24,40,0.06); margin-bottom:16px;}
+    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+    label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"], input[type="number"], select, textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #e6e9ef;font-size:0.95rem;}
+    textarea.review{min-height:50px;resize:vertical}
+    button{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    button.secondary{background:#e6eefc;color:var(--accent)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eef2f7;text-align:left;font-size:0.95rem;vertical-align:top}
+    th{background:#fbfdff;font-weight:600}
+    .small{font-size:0.85rem;color:var(--muted)}
+    .muted{color:var(--muted)}
+    .flash{position:fixed;right:20px;top:20px;z-index:999}
+    .flash-message{padding:10px 14px;border-radius:8px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.1);font-size:0.9rem}
+    .flash-success{background:#dcfce7;color:#166534}
+    .flash-error{background:#fee2e2;color:#991b1b}
+    .flash-info{background:#e0f2fe;color:#075985}
+    .btn-approve{background:var(--success);color:white;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+    .btn-reject{background:var(--danger);color:white;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+    .btn-delete{background:#aaa;color:white;padding:6px 10px;border-radius:6px;border:none;cursor:pointer}
+    .row-actions{display:flex;gap:8px;align-items:center;margin-top:6px}
+    .tiny{font-size:0.8rem}
+    .teacher-progress{font-size:0.8rem;color:var(--muted);margin-top:4px}
+    .teacher-progress div{margin-bottom:2px}
+  </style>
+</head>
+<body>
+  <!-- Flash message container -->
+  <div id="flashMessageContainer"></div>
+
+  <div class="container">
+    <header>
+      <h1>Curriculum — Create & Review</h1>
+      <div class="small muted">Subjects: MIL English, MIL Odiya, Maths, Physics, Chemistry, Botany, Zoology, IT</div>
+    </header>
+
+    <!-- Create form -->
+    <form id="createForm" class="card" autocomplete="off">
+      <div class="grid">
+        <div>
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject" required>
+            <option value="">Select subject</option>
+            <option>MIL English</option>
+            <option>MIL Odiya</option>
+            <option>Maths</option>
+            <option>Physics</option>
+            <option>Chemistry</option>
+            <option>Botany</option>
+            <option>Zoology</option>
+            <option>IT</option>
+          </select>
+        </div>
+        <div>
+          <label for="teacher">Teacher</label>
+          <select id="teacher" name="teacher" required>
+            <option value="">Select teacher</option>
+            <% if (teachers && teachers.length) { %>
+              <% teachers.forEach(t => { %>
+                <option value="<%= t._id %>"><%= t.name %></option>
+              <% }) %>
+            <% } else { %>
+              <option disabled>No teachers found</option>
+            <% } %>
+          </select>
+        </div>
+        <div>
+          <label for="unit">Unit</label>
+          <input id="unit" name="unit" type="text" required />
+        </div>
+        <div>
+          <label for="chapter">Chapter</label>
+          <input id="chapter" name="chapter" type="text" required />
+        </div>
+        <div>
+          <label for="topic">Topic</label>
+          <input id="topic" name="topic" type="text" required />
+        </div>
+        <div>
+          <label for="subtopic">Subtopic</label>
+          <input id="subtopic" name="subtopic" type="text" required />
+        </div>
+        <div>
+          <label for="numberOfDays">Number of days</label>
+          <input id="numberOfDays" name="numberOfDays" type="number" min="0" value="1" required />
+        </div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <button id="createBtn" type="submit">Create row</button>
+        <button id="refreshBtn" type="button" class="secondary">Refresh list</button>
+      </div>
+    </form>
+
+    <!-- Subject + Teacher filter + table -->
+    <div class="card">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <label for="filterSubject" class="tiny muted">Filter by subject:</label>
+        <select id="filterSubject">
+          <option value="">-- select subject --</option>
+          <option>MIL English</option>
+          <option>MIL Odiya</option>
+          <option>Maths</option>
+          <option>Physics</option>
+          <option>Chemistry</option>
+          <option>Botany</option>
+          <option>Zoology</option>
+          <option>IT</option>
+        </select>
+
+        <label for="filterTeacher" class="tiny muted">Teacher:</label>
+        <select id="filterTeacher">
+          <option value="">-- select teacher --</option>
+          <% if (teachers && teachers.length) { %>
+            <% teachers.forEach(t => { %>
+              <option value="<%= t._id %>"><%= t.name %></option>
+            <% }) %>
+          <% } else { %>
+            <option disabled>No teachers found</option>
+          <% } %>
+        </select>
+
+        <div style="margin-left:auto"><button id="loadBtn" type="button">Load</button></div>
+      </div>
+
+      <div style="overflow:auto">
+        <table id="curriculumTable">
+          <thead>
+            <tr>
+              <th>Unit</th>
+              <th>Chapter</th>
+              <th>Topic</th>
+              <th>Subtopic</th>
+              <th>#Days</th>
+              <th>Teacher Progress</th>
+              <th>Principal review</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" class="muted tiny">Select subject + teacher and click Load</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded JS -->
+  <script>
+    /* ---------- Helpers ---------- */
+    function showFlashMessage(type, message) {
+      const container = document.getElementById('flashMessageContainer');
+      const div = document.createElement('div');
+      div.className = 'flash-message flash-' + type;
+      div.textContent = message;
+      container.appendChild(div);
+      setTimeout(() => div.remove(), 3000);
+    }
+
+    async function handleServerError(res) {
+      const text = await res.text();
+      showFlashMessage('error', text || res.statusText);
+    }
+
+    /* ---------- Curriculum logic ---------- */
+    function rowHtml(row) {
+      const progressHtml = row.teacherProgress && row.teacherProgress.length
+        ? row.teacherProgress.map(p => `<div>Completion % : ${p.percentComplete || ''} <br> Teacher's Note : ${p.notes || ''} <br> Completed status : ${p.completed ? '✔' : '✘'}</div>`).join('')
+        : '—';
+        // console.log('Row data:', row);
+      return `
+        <tr data-id="${row._id}">
+          <td>${row.unit || ''}</td>
+          <td>${row.chapter || ''}</td>
+          <td>${row.topic || ''}</td>
+          <td>${row.subtopic || ''}</td>
+          <td>${row.numberOfDays || ''}</td>
+          <td>
+            <div class="teacher-progress">${progressHtml}</div>
+          </td>
+          <td>
+            <textarea class="review" placeholder="Write review...">${row.principalReview?.comment || ''}</textarea>
+            <div class="tiny muted">
+              Status: ${row.principalReview?.approved === true ? '✔ Approved' : row.principalReview?.approved === false ? '✘ Rejected' : '— Pending'}
+            </div>
+          </td>
+          <td class="row-actions">
+            <button class="btn-approve">✓</button>
+            <button class="btn-reject">✗</button>
+            <button class="btn-delete">🗑</button>
+          </td>
+        </tr>`;
+    }
+
+    async function loadBySubject(subject, teacherId) {
+      if (!subject || !teacherId) {
+        document.querySelector('#curriculumTable tbody').innerHTML =
+          '<tr><td colspan="8" class="muted tiny">Select subject + teacher and click Load</td></tr>';
+        return;
+      }
+      try {
+        const res = await fetch(`/Curriculum/subject/${encodeURIComponent(subject)}/teacher/${encodeURIComponent(teacherId)}`, { credentials: 'include' });
+        if (!res.ok) return handleServerError(res);
+        const data = await res.json();
+        // console.log(data)
+        const rows = data.items || [];
+        if (!rows.length) {
+          document.querySelector('#curriculumTable tbody').innerHTML =
+            '<tr><td colspan="8" class="muted tiny">No rows yet — create some.</td></tr>';
+          return;
+        }
+        document.querySelector('#curriculumTable tbody').innerHTML = rows.map(rowHtml).join('');
+      } catch (err) {
+        showFlashMessage('error', err.message || 'Could not load');
+      }
+    }
+
+    async function createRow(ev) {
+      ev.preventDefault();
+      const d = {
+        subject: document.getElementById('subject').value,
+        teacher: document.getElementById('teacher').value,
+        unit: document.getElementById('unit').value,
+        chapter: document.getElementById('chapter').value,
+        topic: document.getElementById('topic').value,
+        subtopic: document.getElementById('subtopic').value,
+        numberOfDays: document.getElementById('numberOfDays').value
+      };
+      try {
+        const res = await fetch('/Curriculum/create', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(d)
+        });
+        if (!res.ok) return handleServerError(res);
+        showFlashMessage('success', 'Created');
+        const fs = document.getElementById('filterSubject').value;
+        const ft = document.getElementById('filterTeacher').value;
+        if (fs === d.subject && ft === d.teacher) loadBySubject(fs, ft);
+      } catch (err) {
+        showFlashMessage('error', err.message || 'Create failed');
+      }
+    }
+
+    async function reviewRow(id, approved, comment) {
+      try {
+        const res = await fetch(`/Curriculum/${id}/review`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approved, comment })
+        });
+        if (!res.ok) return handleServerError(res);
+        showFlashMessage('success', approved ? 'Approved' : 'Rejected');
+        document.getElementById('loadBtn').click();
+      } catch (err) {
+        showFlashMessage('error', err.message || 'Review failed');
+      }
+    }
+
+    async function deleteRow(id) {
+      if (!confirm('Delete this curriculum row?')) return;
+      try {
+        const res = await fetch(`/Curriculum/${id}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        if (!res.ok) return handleServerError(res);
+        showFlashMessage('success', 'Deleted');
+        document.getElementById('loadBtn').click();
+      } catch (err) {
+        showFlashMessage('error', err.message || 'Delete failed');
+      }
+    }
+
+    // Event listeners
+    document.getElementById('createForm').addEventListener('submit', createRow);
+    document.getElementById('loadBtn').addEventListener('click', () => {
+      const subj = document.getElementById('filterSubject').value;
+      const teacherId = document.getElementById('filterTeacher').value;
+      loadBySubject(subj, teacherId);
+    });
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      const subj = document.getElementById('filterSubject').value || document.getElementById('subject').value;
+      const teacherId = document.getElementById('filterTeacher').value || document.getElementById('teacher').value;
+      if (subj && teacherId) loadBySubject(subj, teacherId);
+      else showFlashMessage('info', 'Select subject + teacher to refresh');
+    });
+
+    // Delegate approve/reject/delete actions
+    document.querySelector('#curriculumTable').addEventListener('click', (e) => {
+      const tr = e.target.closest('tr');
+      if (!tr) return;
+      const id = tr.getAttribute('data-id');
+      const comment = tr.querySelector('textarea.review')?.value || '';
+      if (e.target.classList.contains('btn-approve')) reviewRow(id, true, comment);
+      if (e.target.classList.contains('btn-reject')) reviewRow(id, false, comment);
+      if (e.target.classList.contains('btn-delete')) deleteRow(id);
+    });
+  </script>
+</body>
+</html>

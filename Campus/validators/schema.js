@@ -1,4 +1,6 @@
 const { body, validationResult } = require('express-validator');
+const { check } = require('express-validator');
+const { SUBJECTS } = require('../models/lessonPlan');
 
 const matricValidators = [
   body('lastSchoolAttended').optional({ checkFalsy: true }).trim().escape(),
@@ -216,7 +218,6 @@ const documentValidator = [
   body('student')
     .trim()
     .escape()
-    .notEmpty()
     .isMongoId()
     .withMessage('Invalid student ID'),
 
@@ -231,7 +232,6 @@ const documentValidator = [
   body('type')
     .trim()
     .escape()
-    .notEmpty()
     .isIn(['photo', 'pdf'])
     .withMessage('Type must be either photo or pdf'),
 
@@ -239,7 +239,6 @@ const documentValidator = [
   body('url')
     .trim()
     .escape()
-    .notEmpty()
     .isURL()
     .withMessage('URL must be a valid link'),
 
@@ -766,5 +765,151 @@ const staffAttendanceValidator = [
     .default('Manual') // For manual attendance override
 ];
 
+const addEventValidator = [
+  body('title')
+    .trim()
+    .escape()
+    .isLength({ min: 1 })
+    .withMessage('Title required'),
 
-module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, };
+  body('description')
+    .optional()
+    .trim()
+    .escape(),
+
+  body('start')
+    .trim()
+    .isISO8601({ strict: false })
+    .withMessage('Invalid start date'),
+
+  body('end')
+    .optional()
+    .trim()
+    .isISO8601({ strict: false })
+    .withMessage('Invalid end date'),
+
+  body('allDay')
+    .optional()
+    .toBoolean(),
+
+  body('startTime')
+    .optional()
+    .trim()
+    .matches(/^([0-1]\d|2[0-3]):([0-5]\d)$/) // "HH:mm"
+    .withMessage('Invalid start time'),
+
+  body('endTime')
+    .optional()
+    .trim()
+    .matches(/^([0-1]\d|2[0-3]):([0-5]\d)$/)
+    .withMessage('Invalid end time'),
+
+  body('type')
+    .optional()
+    .trim()
+    .escape()
+    .isIn(['holiday','exam','program','meeting','webinar','observance','practical','other'])
+    .withMessage('Invalid event type'),
+
+  body('color')
+    .optional()
+    .trim()
+    .escape()
+    .isString(),
+
+  body('batches')
+    .optional()
+    .isArray()
+    .withMessage('batches must be array'),
+
+  body('batches.*')
+    .optional()
+    .trim()
+    .escape()
+];
+
+/* ---------- Create Curriculum (Principal) ---------- */
+const createCurriculumValidator = [
+  check('subject')
+    .trim()
+    .escape()
+    .isIn(SUBJECTS)
+    .withMessage('Invalid subject'),
+  check('unit')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Unit required'),
+  check('chapter')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Chapter required'),
+  check('topic')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Topic required'),
+  check('subtopic')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Subtopic required'),
+  check('numberOfDays')
+    .optional()
+    .toInt()
+    .isInt({ min: 0 })
+    .withMessage('numberOfDays must be a non-negative integer'),
+  (req, res, next) => {
+    const errs = validationResult(req);
+    if (!errs.isEmpty()) {
+      return res.status(422).json({ errors: errs.array() });
+    }
+    next();
+  }
+];
+
+/* ---------- Teacher Progress Update ---------- */
+const updateTeacherProgressValidator = [
+  check('percentComplete')
+    .optional()
+    .toInt()
+    .isInt({ min: 0, max: 100 })
+    .withMessage('percentComplete must be between 0–100'),
+  check('completed')
+    .optional()
+    .isBoolean()
+    .withMessage('completed must be true/false'),
+  check('notes')
+    .optional()
+    .trim()
+    .escape(),
+  (req, res, next) => {
+    const errs = validationResult(req);
+    if (!errs.isEmpty()) {
+      return res.status(422).json({ errors: errs.array() });
+    }
+    next();
+  }
+];
+
+/* ---------- Principal Review Update ---------- */
+const updatePrincipalReviewValidator = [
+  check('approved')
+    .isBoolean()
+    .withMessage('approved must be true/false'),
+  check('comment')
+    .optional()
+    .trim()
+    .escape(),
+  (req, res, next) => {
+    const errs = validationResult(req);
+    if (!errs.isEmpty()) {
+      return res.status(422).json({ errors: errs.array() });
+    }
+    next();
+  }
+];
+
+
+module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, addEventValidator, createCurriculumValidator, updateTeacherProgressValidator, updatePrincipalReviewValidator, };

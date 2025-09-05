@@ -16,6 +16,8 @@ const Session_Admin = require('../models/session_admin');
 // const {Staff} = require('../models/staff');
 const ActivityLog = require('../models/activityLog');
 const StaffAttendance = require('../models/staffAttendance');
+const StaffFaceData = require('../models/staffFace');
+const staffAttendance = require('../models/staffAttendance');
 // Get all non-enrolled students
 
 const getNotices = async (req, res) => {
@@ -560,9 +562,23 @@ const deleteStaff = async (req, res) => {
     const staffId = req.params.id;
     const staff = await Staff.findById(staffId);
     const deleted = await Staff.findByIdAndDelete(staffId);
+    const accessDeleted = await StaffAccess.deleteOne({ staffId });
+    const attendanceDeleted = await staffAttendance.deleteMany({ staff: staffId });
+    const faceDeleted = await staffFace.deleteOne({ staffId });
+    
+       if (!deleted) {
+      return res.status(404).render("error/error", { message: "Staff deletion failed" });
+    }
 
-    if (!deleted) {
-      return res.status(404).render('error/error', {message: 'Staff not found' });
+    // ⚠️ If other records didn’t exist, that’s fine → just warn
+    if (accessDeleted.deletedCount === 0) {
+      console.warn(`⚠️ No access record found for staffId: ${staffId}`);
+    }
+    if (attendanceDeleted.deletedCount === 0) {
+      console.warn(`⚠️ No attendance records found for staffId: ${staffId}`);
+    }
+    if (faceDeleted.deletedCount === 0) {
+      console.warn(`⚠️ No face data found for staffId: ${staffId}`);
     }
         
         const user = await Admin.findById(req.user._id);
@@ -834,7 +850,7 @@ const deleteAttendance = async (req, res) => {
     res.status(200).json({ message: 'Attendance record deleted' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server Error' });
+    res.status(500).render('error/error', { message: 'Server Error' });
   }
 };
 

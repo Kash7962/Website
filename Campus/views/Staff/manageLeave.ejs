@@ -2,93 +2,250 @@
 <html>
 <head>
   <title>Approve Leaves</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+        --primary-blue: #1e40af;
+        --success-green: #16a34a;
+        --danger-red: #dc2626;
+        --warning-orange: #f59e0b;
+        --text-dark: #1e293b;
+        --text-light: #475569;
+        --border-color: #e2e8f0;
+        --background-light: #f8fafc;
+        --background-white: #ffffff;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--background-light);
       margin: 0;
-      padding: 20px;
-      color: #333;
+      padding: 40px 20px;
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     h2 {
-      margin-bottom: 15px;
-      color: #2c3e50;
-    }
-
-    #flashMessageContainer {
-      margin-bottom: 15px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      text-align: center;
+      margin-bottom: 24px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
-      border-radius: 8px;
+      background: var(--background-white);
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
     }
 
     table th, table td {
-      padding: 10px;
-      text-align: center;
-      border-bottom: 1px solid #e1e1e1;
+      padding: 16px;
+      text-align: left; /* Changed from center for better readability */
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      font-size: 0.875rem;
     }
 
     table th {
-      background: #f0f0f0;
-      font-weight: bold;
+      background: var(--background-light);
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
     }
 
+    /* Remove original alternating row color and use a cleaner hover effect */
     table tr:nth-child(even) {
-      background: #fafafa;
+      background: none;
     }
 
     table tr:hover {
-      background: #f2f9ff;
+      background: #f9fafb;
     }
 
-    button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
+    /* Center specific columns for numbers and actions */
+    table th:nth-child(5), table td:nth-child(5), /* Total */
+    table th:nth-child(6), table td:nth-child(6), /* Paid */
+    table th:nth-child(7), table td:nth-child(7), /* Unpaid */
+    table th:nth-child(8), table td:nth-child(8), /* Status */
+    table th:last-child, table td:last-child {    /* Action */
+        text-align: center;
+    }
+
+    /* Button styles */
+    .approve-btn, .deny-btn {
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s;
-      color: #fff;
+      font-weight: 600;
+      transition: all 0.2s ease-in-out;
+      color: var(--background-white);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
+    
     .approve-btn {
-      background: #2ecc71;
+      background: var(--success-green);
+    }
+    .deny-btn {
+      background: var(--danger-red);
     }
 
-    .deny-btn {
-      background: #e74c3c;
+    .approve-btn:hover, .deny-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     /* Status Badges */
     .status {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.85em;
-      font-weight: bold;
-      color: #fff;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--background-white);
       display: inline-block;
+      text-transform: capitalize;
     }
 
     .status.Pending {
-      background: #f39c12;
+      background: var(--warning-orange);
     }
     .status.Approved {
-      background: #27ae60;
+      background: var(--success-green);
     }
     .status.Denied {
-      background: #c0392b;
+      background: var(--danger-red);
     }
+
+    /* Flash Message styles (added for consistency) */
+     #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+            #flashMessageContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .flash-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
   </style>
 </head>
 <body>
@@ -121,8 +278,12 @@
           <td><%= l.unpaidLeaves %></td>
           <td><span class="status <%= l.status %>"><%= l.status %></span></td>
           <td>
-            <button class="approve-btn" data-id="<%= l._id %>" data-status="Approved">Approve</button>
-            <button class="deny-btn" data-id="<%= l._id %>" data-status="Denied">Deny</button>
+            <% if (l.status === 'Pending') { %>
+              <button class="approve-btn" data-id="<%= l._id %>" data-status="Approved">Approve</button>
+              <button class="deny-btn" data-id="<%= l._id %>" data-status="Denied">Deny</button>
+            <% } else { %>
+              -
+            <% } %>
           </td>
         </tr>
       <% }) %>
@@ -130,6 +291,95 @@
   </table>
 
   <script>
+    window.onload = async function() {
+            const token = localStorage.getItem('token');
+            try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                        try {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                        console.error('No token found');
+                        return;
+                        }
+                        // console.log('Token:', token);
+                        // Decode JWT to get staffId
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const staffId = payload._id;
+                        
+                        const res = await fetch('/Manage/get-permissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ staffId })
+                        });
+
+                        if (!res.ok) {
+                        handleServerError(res);
+                        return;
+                        }
+
+                        const data = await res.json();
+                        const permissions = data.permissions || [];
+                        // console.log('Permissions:', permissions);
+                        // Hide all menu items not in permissions
+                        
+                        if (!permissions.includes('manage_leaves')) {
+                            showFlashMessage('error', 'You do not have permission to access this page.');
+                            setTimeout(() => {
+                                window.location.href = '/Staff/dashboard';
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Error fetching permissions:', err);
+                    }
+                }
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".approve-btn, .deny-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -141,7 +391,10 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status })
           });
-
+          if (!res.ok) {
+            handleServerError(res);
+          return;
+        }
           if (res.ok) {
             // showFlashMessage("success", `Leave ${status}`);
             setTimeout(() => window.location.reload(), 1000);
@@ -151,6 +404,48 @@
         });
       });
     });
+    async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+        if (contentType.includes('text/html')) {
+        const html = await res.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        const popup = tempDiv.querySelector('#errorPopupContainer');
+        const scripts = tempDiv.querySelectorAll('script');
+
+        if (popup) {
+            document.body.prepend(popup);
+            scripts.forEach((script) => {
+            const newScript = document.createElement('script');
+            if (script.src) newScript.src = script.src;
+            else newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+            });
+        } else {
+            showFlashMessage('error', 'An unknown error occurred.');
+        }
+        } else {
+        showFlashMessage('error', 'Server error: unexpected content type.');
+        }
+    } 
+
+    function showFlashMessage(type, message, duration = 4000) {
+        const container = document.getElementById('flashMessageContainer');
+        const msg = document.createElement('div');
+        msg.classList.add('flash-message');
+        msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+        msg.textContent = message;
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 500);
+        }, duration);
+    } 
   </script>
 </body>
 </html>

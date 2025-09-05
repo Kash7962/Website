@@ -1,141 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Profile</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
-      padding: 20px;
-    }
-    .profile-container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .section {
-      margin-bottom: 25px;
-      border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 15px;
-    }
-    .section:last-child {
-      border-bottom: none;
-    }
-    .section h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #374151;
-    }
-    .detail {
-      margin: 4px 0;
-      padding-left: 10px;
-    }
-    .detail strong {
-      display: inline-block;
-      width: 200px;
-      color: #111827;
-    }
-    ul {
-      margin: 5px 0;
-      padding-left: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --text-dark: #111827;
+            --text-regular: #374151;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --background-light: #f9fafb;
+            --background-white: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--background-light);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-regular);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--background-white);
+            border-radius: 16px;
+            box-shadow: 0 6px 20px var(--card-shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 28px 32px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .section:hover {
+            background: #f4f6f8;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--primary-blue);
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .detail-item {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 18px;
+            font-size: 0.9rem;
+            align-items: center;
+            padding: 4px 0;
+            transition: transform 0.2s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateX(2px);
+        }
+
+        .detail-item .label {
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .detail-item .value {
+            font-weight: 500;
+            color: var(--text-regular);
+        }
+
+        ul {
+            margin: 12px 0 0 0;
+            padding-left: 24px;
+            list-style-type: disc;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-regular);
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        li strong {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .detail-item {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .detail-item .label {
+                font-size: 0.85rem;
+            }
+            .section {
+                padding: 20px;
+            }
+        }
+      #errorPopupContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #errorPopupContainer * {
+            box-sizing: border-box;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+        }
+
+        #errorPopupBox {
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #errorPopupBox h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #errorPopupBox h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #errorMessage {
+            font-size: 1rem;
+            color: #666;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        #closeErrorPopup {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 24px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        #closeErrorPopup:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+            #flashMessageContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            pointer-events: all;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flash-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .flash-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+    </style>
 </head>
 <body>
-  <div class="profile-container">
+    <div id="flashMessageContainer"></div>
     <h1>Staff Profile</h1>
 
-    <!-- Core Info -->
-    <div class="section">
-      <h2>Basic Information</h2>
-      <p class="detail"><strong>Name:</strong> <%= staff.name %></p>
-      <p class="detail"><strong>Email:</strong> <%= staff.email %></p>
-      <p class="detail"><strong>Phone:</strong> <%= staff.phone %></p>
-      <p class="detail"><strong>Department:</strong> <%= staff.department %></p>
-      <p class="detail"><strong>Designation:</strong> <%= staff.designation || '-' %></p>
-      <p class="detail"><strong>Authorized:</strong> <%= staff.isAuthorized ? 'Yes' : 'No' %></p>
-      <p class="detail"><strong>Salary:</strong> <%= staff.salary || '-' %></p>
-      <p class="detail"><strong>Leaves Available:</strong> <%= staff.numberOfLeaves %></p>
-      <p class="detail"><strong>Employment Type:</strong> <%= staff.employmentType %></p>
-      <p class="detail"><strong>Joining Date:</strong> <%= staff.joiningDate ? staff.joiningDate.toDateString() : '-' %></p>
-    </div>
+    <div class="profile-container">
+        <div class="section">
+            <h2>Basic Information</h2>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Name:</span> <span class="value"><%= staff.name %></span></div>
+                <div class="detail-item"><span class="label">Email:</span> <span class="value"><%= staff.email %></span></div>
+                <div class="detail-item"><span class="label">Phone:</span> <span class="value"><%= staff.phone %></span></div>
+                <div class="detail-item"><span class="label">Department:</span> <span class="value"><%= staff.department %></span></div>
+                <div class="detail-item"><span class="label">Designation:</span> <span class="value"><%= staff.designation || '-' %></span></div>
+                <div class="detail-item"><span class="label">Authorized:</span> <span class="value"><%= staff.isAuthorized ? 'Yes' : 'No' %></span></div>
+                <div class="detail-item"><span class="label">Salary:</span> <span class="value"><%= staff.salary || '-' %></span></div>
+                <div class="detail-item"><span class="label">Leaves Available:</span> <span class="value"><%= staff.numberOfLeaves %></span></div>
+                <div class="detail-item"><span class="label">Employment Type:</span> <span class="value"><%= staff.employmentType %></span></div>
+                <div class="detail-item"><span class="label">Joining Date:</span> <span class="value"><%= staff.joiningDate ? staff.joiningDate.toDateString() : '-' %></span></div>
+            </div>
+        </div>
 
-    <!-- IDs -->
-    <div class="section">
-      <h2>Identification</h2>
-      <p class="detail"><strong>Aadhar Number:</strong> <%= staff.aadharNumber || '-' %></p>
-      <p class="detail"><strong>PAN Number:</strong> <%= staff.panNumber || '-' %></p>
-    </div>
+        <div class="section">
+            <h2>Identification</h2>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Aadhar Number:</span> <span class="value"><%= staff.aadharNumber || '-' %></span></div>
+                <div class="detail-item"><span class="label">PAN Number:</span> <span class="value"><%= staff.panNumber || '-' %></span></div>
+            </div>
+        </div>
 
-    <!-- Academics -->
-    <div class="section">
-      <h2>Academic Information</h2>
-      <p class="detail"><strong>Qualifications:</strong> <%= staff.qualifications && staff.qualifications.length ? staff.qualifications.join(', ') : '-' %></p>
-      <p class="detail"><strong>Subjects:</strong> <%= staff.subjects && staff.subjects.length ? staff.subjects.join(', ') : '-' %></p>
-      <p class="detail"><strong>Classes Assigned:</strong> <%= staff.classAssigned && staff.classAssigned.length ? staff.classAssigned.join(', ') : '-' %></p>
-      <p class="detail"><strong>Years of Experience:</strong> <%= staff.yearsOfExperience || 0 %></p>
-    </div>
+        <div class="section">
+            <h2>Academic Information</h2>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Qualifications:</span> <span class="value"><%= staff.qualifications && staff.qualifications.length ? staff.qualifications.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Subjects:</span> <span class="value"><%= staff.subjects && staff.subjects.length ? staff.subjects.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Classes Assigned:</span> <span class="value"><%= staff.classAssigned && staff.classAssigned.length ? staff.classAssigned.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Years of Experience:</span> <span class="value"><%= staff.yearsOfExperience || 0 %></span></div>
+            </div>
+        </div>
 
-    <!-- Academic Details Table -->
-    <div class="section">
-      <h2>Academic Details</h2>
-      <% if (staff.academicDetails && staff.academicDetails.length) { %>
-        <ul>
-          <% staff.academicDetails.forEach(detail => { %>
-            <li>
-              <strong><%= detail.examination %></strong> - 
-              <%= detail.boardOrUniversity %>, 
-              Year: <%= detail.yearOfPassing %>, 
-              Grade: <%= detail.divisionOrGrade %>
-            </li>
-          <% }) %>
-        </ul>
-      <% } else { %>
-        <p class="detail">No academic details.</p>
-      <% } %>
-    </div>
+        <div class="section">
+            <h2>Academic Details</h2>
+            <% if (staff.academicDetails && staff.academicDetails.length) { %>
+                <ul>
+                    <% staff.academicDetails.forEach(detail => { %>
+                        <li>
+                            <strong><%= detail.examination %></strong> - 
+                            <%= detail.boardOrUniversity %>, 
+                            Year: <%= detail.yearOfPassing %>, 
+                            Grade: <%= detail.divisionOrGrade %>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No academic details provided.</p>
+            <% } %>
+        </div>
 
-    <!-- Research -->
-    <div class="section">
-      <h2>Research & Projects</h2>
-      <p class="detail"><strong>Completed Projects:</strong> <%= staff.researchProjectsCompleted && staff.researchProjectsCompleted.length ? staff.researchProjectsCompleted.join(', ') : '-' %></p>
-      <p class="detail"><strong>Ongoing Projects:</strong> <%= staff.ongoingProjects && staff.ongoingProjects.length ? staff.ongoingProjects.join(', ') : '-' %></p>
-      <p class="detail"><strong>Research Scholars:</strong></p>
-      <ul>
-        <li>Completed PhD: <%= staff.researchScholars.completedPhD %></li>
-        <li>Continuing PhD: <%= staff.researchScholars.continuingPhD %></li>
-        <li>Completed MPhil: <%= staff.researchScholars.completedMPhil %></li>
-        <li>Continuing MPhil: <%= staff.researchScholars.continuingMPhil %></li>
-      </ul>
-      <p class="detail"><strong>Awards:</strong> <%= staff.awardsReceived && staff.awardsReceived.length ? staff.awardsReceived.join(', ') : '-' %></p>
-      <p class="detail"><strong>Books Published:</strong> <%= staff.booksPublished %></p>
-      <p class="detail"><strong>Research Papers Published:</strong> <%= staff.researchPapers.published %></p>
-      <p class="detail"><strong>Research Papers Communicated:</strong> <%= staff.researchPapers.communicated %></p>
-    </div>
+        <div class="section">
+            <h2>Research & Projects</h2>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Completed Projects:</span> <span class="value"><%= staff.researchProjectsCompleted && staff.researchProjectsCompleted.length ? staff.researchProjectsCompleted.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Ongoing Projects:</span> <span class="value"><%= staff.ongoingProjects && staff.ongoingProjects.length ? staff.ongoingProjects.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Awards:</span> <span class="value"><%= staff.awardsReceived && staff.awardsReceived.length ? staff.awardsReceived.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Books Published:</span> <span class="value"><%= staff.booksPublished %></span></div>
+                <div class="detail-item"><span class="label">Research Papers Published:</span> <span class="value"><%= staff.researchPapers.published %></span></div>
+                <div class="detail-item"><span class="label">Research Papers Communicated:</span> <span class="value"><%= staff.researchPapers.communicated %></span></div>
+            </div>
+            <br>
+            <strong>Research Scholars:</strong>
+            <ul>
+                <li>Completed PhD: <%= staff.researchScholars.completedPhD %></li>
+                <li>Continuing PhD: <%= staff.researchScholars.continuingPhD %></li>
+                <li>Completed MPhil: <%= staff.researchScholars.completedMPhil %></li>
+                <li>Continuing MPhil: <%= staff.researchScholars.continuingMPhil %></li>
+            </ul>
+        </div>
 
-    <!-- Other Details -->
-    <div class="section">
-      <h2>Other Details</h2>
-      <p class="detail"><strong>Present Address:</strong> <%= staff.presentAddress || '-' %></p>
-      <p class="detail"><strong>Alt Phone:</strong> <%= staff.contactInfo?.altPhone || '-' %></p>
-      <p class="detail"><strong>Alt Email:</strong> <%= staff.contactInfo?.emailAlt || '-' %></p>
-      <p class="detail"><strong>Skills:</strong> <%= staff.skills && staff.skills.length ? staff.skills.join(', ') : '-' %></p>
-      <p class="detail"><strong>Certifications:</strong> <%= staff.certifications && staff.certifications.length ? staff.certifications.join(', ') : '-' %></p>
-      <p class="detail"><strong>Achievements:</strong> <%= staff.achievements && staff.achievements.length ? staff.achievements.join(', ') : '-' %></p>
+        <div class="section">
+            <h2>Other Details</h2>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Present Address:</span> <span class="value"><%= staff.presentAddress || '-' %></span></div>
+                <div class="detail-item"><span class="label">Alt Phone:</span> <span class="value"><%= staff.contactInfo?.altPhone || '-' %></span></div>
+                <div class="detail-item"><span class="label">Alt Email:</span> <span class="value"><%= staff.contactInfo?.emailAlt && staff.contactInfo?.emailAlt != '@'  || '-' %></span></div>
+                <div class="detail-item"><span class="label">Skills:</span> <span class="value"><%= staff.skills && staff.skills.length ? staff.skills.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Certifications:</span> <span class="value"><%= staff.certifications && staff.certifications.length ? staff.certifications.join(', ') : '-' %></span></div>
+                <div class="detail-item"><span class="label">Achievements:</span> <span class="value"><%= staff.achievements && staff.achievements.length ? staff.achievements.join(', ') : '-' %></span></div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Created At:</span> <span class="value"><%= staff.createdAt ? staff.createdAt.toDateString() : '-' %></span></div>
+                <div class="detail-item"><span class="label">Last Updated:</span> <span class="value"><%= staff.updatedAt ? staff.updatedAt.toDateString() : '-' %></span></div>
+            </div>
+        </div>
     </div>
-
-    <div class="section">
-      <p class="detail"><strong>Profile Created:</strong> <%= staff.createdAt.toDateString() %></p>
-      <p class="detail"><strong>Last Updated:</strong> <%= staff.updatedAt.toDateString() %></p>
-    </div>
-  </div>
 </body>
 </html>

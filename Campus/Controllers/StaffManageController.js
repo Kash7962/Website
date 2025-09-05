@@ -507,7 +507,7 @@ const postFinalizeForm = [
         console.error('Document save error (student enrolled):', docErr);
       }
      
-    await doc.save();
+    // await doc.save();
     const user = await Staff.findById(req.user._id);
     await ActivityLog.create({
       userId : user._id,
@@ -713,7 +713,7 @@ const markAttendance = async (req, res) => {
     const { staff } = req.body; 
     // method = "FaceSystem" or "Manual"
     if (!staff) {
-      return res.status(400).json({ error: 'Staff ID is required' });
+      return res.status(400).render('error/error' ,{ message: 'Staff ID is required' });
     }
 
     const today = new Date();
@@ -742,12 +742,12 @@ const markAttendance = async (req, res) => {
       await record.save();
       return res.status(200).json({ message: 'Check-out recorded', record });
     } else {
-      return res.status(400).json({ error: 'Attendance already completed for today' });
+      return res.status(400).render('error/error', { message: 'Attendance already completed for today' });
     }
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server Error' });
+    res.status(500).render('error/error', { message: 'Server Error' });
   }
 };
 
@@ -804,7 +804,7 @@ const getAttendanceByStaff = async (req, res) => {
     const { staffId } = req.params;
 
     if (!staffId || !mongoose.Types.ObjectId.isValid(staffId)) {
-      return res.status(400).json({ error: 'Invalid staff ID' });
+      return res.status(400).render('error/error', { message: 'Invalid staff ID' });
     }
     // console.log(staffId)
     // Match all records regardless of time
@@ -815,7 +815,7 @@ const getAttendanceByStaff = async (req, res) => {
     res.status(200).json(records);
   } catch (error) {
     console.error('Error fetching attendance:', error);
-    res.status(500).json({ error: 'Server Error' });
+    res.status(500).render('error/error', { message: 'Server Error' });
   }
 };
 

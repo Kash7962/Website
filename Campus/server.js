@@ -21,7 +21,9 @@ const cron = require('node-cron');
 const NoticeRoutes = require('./Routes/NoticeRoutes.js');
 const PaymentRoutes = require('./Routes/PaymentRoutes.js');
 const ResultRoutes = require('./Routes/ResultRoutes.js');
-const FaceRoutes = require('./Routes/FaceRoutes.js')
+const FaceRoutes = require('./Routes/FaceRoutes.js');
+const calendarRoutes = require('./Routes/CalendarRoutes.js');
+const LessonPlanRoutes = require('./Routes/LessonPlanRoutes.js');
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
 const db = mongoose.connection;
@@ -62,6 +64,7 @@ app.use(
 
       fontSrc: [
         "'self'",
+         "data:",
         "https://fonts.gstatic.com",
         "https://cdnjs.cloudflare.com",
         "https://fonts.googleapis.com"
@@ -141,6 +144,8 @@ app.use('/Notices', NoticeRoutes);
 app.use('/Payment', PaymentRoutes);
 app.use('/Result', ResultRoutes);
 app.use('/Face', FaceRoutes);
+app.use('/Calendar', calendarRoutes);
+app.use('/Curriculum', LessonPlanRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

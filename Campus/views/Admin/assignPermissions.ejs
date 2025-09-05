@@ -258,6 +258,18 @@
                             Manage Staff Attendance
                         </label>
                     </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="manage_calendar" <%= permissions.includes('manage_calendar') ? 'checked' : '' %> />
+                            Manage Calendar
+                        </label>
+                    </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="manage_curriculum" <%= permissions.includes('manage_curriculum') ? 'checked' : '' %> />
+                            Manage Curriculum
+                        </label>
+                    </div>
                     
                     </div>
             </div>

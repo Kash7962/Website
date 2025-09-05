@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Academic Calendar — Create / Manage</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
+  <style>
+    :root{ --bg:#fafafa; --card:#fff; --muted:#666; --accent:#2b6cb0; }
+    body{font-family:Inter, system-ui, Arial, sans-serif; margin:0; background:var(--bg); color:#222;}
+    .container{max-width:1200px;margin:18px auto;padding:16px;}
+    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .card{background:var(--card);border-radius:8px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    #calendar { max-width:100%; margin: 0 auto; }
+    .form-row{display:flex;gap:8px;align-items:center}
+    select,input,textarea{padding:8px;border-radius:6px;border:1px solid #ddd;background:#fff}
+    button.btn{padding:8px 12px;border-radius:6px;border:0;cursor:pointer}
+    button.btn--primary{background:var(--accent);color:#fff}
+    button.btn--danger{background:#e74c3c;color:#fff}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:12px;font-size:12px;color:#fff}
+    #color { width: 40px; height: 25px; border: none; border-radius: 4px; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h2>📅 Academic Calendar — Create / Manage</h2>
+      <div class="card form-row">
+        <label for="batchSelect">Batch:</label>
+        <select id="batchSelect">
+          <% if (batches && batches.length) { %>
+            <% batches.forEach(function(b){ %>
+              <option value="<%= b %>"><%= b %></option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="calendar"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3>Add Event</h3>
+      <form id="eventForm" autocomplete="off">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <label>Title</label><br>
+            <input id="title" type="text" required />
+          </div>
+
+          <div>
+            <label>Type</label><br>
+            <select id="type">
+              <option value="holiday">Holiday</option>
+              <option value="exam">Exam</option>
+              <option value="program">Program</option>
+              <option value="meeting">Meeting</option>
+              <option value="webinar">Webinar</option>
+              <option value="observance">Observance</option>
+              <option value="practical">Practical</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Color</label><br>
+            <button id="color" type="button" disabled></button>
+          </div>
+
+          <div>
+            <label>Start Date</label><br>
+            <input id="start" type="date" required />
+          </div>
+
+          <div>
+            <label>End Date</label><br>
+            <input id="end" type="date" />
+          </div>
+
+          <div>
+            <label>All day?</label><br>
+            <select id="allDay">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          <div id="timeFields" style="display:none">
+            <label>Time (start - end)</label><br>
+            <input id="startTime" type="time"> —
+            <input id="endTime" type="time">
+          </div>
+        </div>
+
+        <div style="margin-top:8px">
+          <label>Description</label><br>
+          <textarea id="description" rows="2" style="width:100%"></textarea>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="btn btn--primary" type="submit">Add event</button>
+          <button class="btn btn--danger" type="button" id="clearBtn">Clear</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card events-list">
+      <h3>Events list (<span id="eventsForBatch"></span>)</h3>
+      <div>Working days: <strong id="workingDays">—</strong></div>
+      <table id="eventsTable">
+        <thead><tr><th>Date</th><th>Title</th><th>Type</th><th>Batch</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+  (function(){
+    const typeColor = {
+      holiday:'#e74c3c',exam:'#e67e22',program:'#3498db',meeting:'#2ecc71',
+      webinar:'#9b59b6',observance:'#f1c40f',practical:'#16a085',other:'#7f8c8d'
+    };
+    const batchSelect=document.getElementById('batchSelect');
+    const typeEl=document.getElementById('type'), colorEl=document.getElementById('color');
+    const allDayEl=document.getElementById('allDay'), timeFields=document.getElementById('timeFields');
+
+    function setColorFromType() {
+      const c = typeColor[typeEl.value] || '';
+      colorEl.style.backgroundColor = c;
+    }
+    typeEl.addEventListener('change', setColorFromType);
+    setColorFromType();
+
+    allDayEl.addEventListener('change',()=>{ 
+      timeFields.style.display=(allDayEl.value==='false')?'block':'none'; 
+    });
+
+    const calendar=new FullCalendar.Calendar(document.getElementById('calendar'),{
+      initialView:'dayGridMonth',
+      headerToolbar:{ left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek,listWeek'},
+      selectable:true, editable:true, dayMaxEvents:true,
+      events:async(fetchInfo,success,failure)=>{
+        try{
+          const batch=batchSelect.value;
+          const url=`/Calendar/events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
+          const res=await fetch(url);
+          if(!res.ok) return failure('Load failed');
+          const json=await res.json();
+          const arr = Array.isArray(json) ? json : (json.events||[]);
+          document.getElementById('workingDays').textContent=json.workingDays ?? '—';
+          renderEventsList(arr, batch);
+          success(arr);
+        }catch(e){failure(e);}
+      }
+    });
+
+    function renderEventsList(arr, batch){
+      document.getElementById('eventsForBatch').textContent=batch;
+      const body=document.querySelector('#eventsTable tbody'); body.innerHTML='';
+      arr.sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(ev=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${new Date(ev.start).toLocaleDateString()}</td>
+          <td><span class="badge" style="background:${ev.color}">${ev.title}</span></td>
+          <td>${ev.extendedProps?.type||''}</td>
+          <td>${(ev.extendedProps?.batches||[]).join(', ')}</td>
+          <td><button class="btn btn--danger btn-delete" data-id="${ev.id}">Delete</button></td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    document.addEventListener('click', async e => {
+      if (e.target.classList.contains('btn-delete')) {
+        const id = e.target.dataset.id;
+        if (!confirm('Delete this event?')) return;
+        try {
+          const res = await fetch(`/Calendar/delete/${id}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error('Delete failed');
+          calendar.refetchEvents();
+        } catch (err) {
+          console.error('Delete error:', err);
+          alert('Could not delete event.');
+        }
+      }
+    });
+
+    document.getElementById('eventForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const payload={
+        title:document.getElementById('title').value.trim(),
+        description:document.getElementById('description').value.trim(),
+        start:document.getElementById('start').value,
+        end:document.getElementById('end').value||undefined,
+        allDay:allDayEl.value==='true',
+        startTime:(allDayEl.value==='false')?document.getElementById('startTime').value:undefined,
+        endTime:(allDayEl.value==='false')?document.getElementById('endTime').value:undefined,
+        type:typeEl.value,color:colorEl.style.backgroundColor,batches:[batchSelect.value]
+      };
+      const res=await fetch('/Calendar/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(res.ok){ 
+        await res.json(); 
+        calendar.refetchEvents(); 
+        e.target.reset(); 
+        setColorFromType(); 
+        timeFields.style.display='none'; 
+      }
+    });
+
+    batchSelect.addEventListener('change',()=>{calendar.refetchEvents();});
+    window.onload=()=>{calendar.render();};
+  })();
+  </script>
+</body>
+</html>

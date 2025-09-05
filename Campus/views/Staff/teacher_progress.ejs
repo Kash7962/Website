@@ -1,0 +1,170 @@
+<!-- views/Staff/teacher_progress.ejs -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Teacher — Update Progress</title>
+  <style>
+    :root{--bg:#fafafa;--card:#fff;--muted:#6b7280;--accent:#0ea5e9}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:20px;background:var(--bg)}
+    .container{max-width:1100px;margin:0 auto}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.05);margin-bottom:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #eef2f7;text-align:left}
+    th{background:#f8fbff}
+    input[type="number"]{width:70px;padding:6px;border-radius:6px;border:1px solid #e8eef6}
+    textarea{min-height:40px;border-radius:6px;border:1px solid #e8eef6;padding:8px}
+    button{background:var(--accent);color:white;padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+    .muted{color:var(--muted);font-size:0.9rem}
+    .flash{position:fixed;right:20px;top:20px;z-index:999}
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Teacher — Update Progress</h2>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <label class="muted">Select subject:</label>
+        <select id="filterSubject">
+          <option value="">-- select subject --</option>
+          <% [
+            'MIL English','MIL Odiya','Maths','Physics',
+            'Chemistry','Botany','Zoology','IT'
+          ].forEach(s => { %>
+            <option value="<%= s %>" <%= subject===s ? "selected" : "" %>><%= s %></option>
+          <% }) %>
+        </select>
+        <button id="loadBtn">Load</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <table id="progressTable">
+        <thead>
+          <tr>
+            <th>Unit</th><th>Chapter</th><th>Topic</th><th>Subtopic</th>
+            <th>#Days</th><th>Your progress (%)</th><th>Completed?</th><th>Notes</th><th>Save</th><th>Principal approval</th><th>Principal Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (items && items.length) { %>
+            <% items.forEach(item => { %>
+              <tr data-id="<%= item._id %>">
+                <td><%= item.unit %></td>
+                <td><%= item.chapter %></td>
+                <td><%= item.topic %></td>
+                <td><%= item.subtopic %></td>
+                <td><%= item.numberOfDays %></td>
+                <td><input type="number" min="0" max="100"
+                      value="<%= item.teacherProgress?.percentComplete || 0 %>" data-percent /></td>
+                <td><input type="checkbox" data-completed
+                      <%= item.teacherProgress?.completed ? "checked" : "" %> /></td>
+                <td><textarea data-notes><%= item.teacherProgress?.notes || "" %></textarea></td>
+                <td><button data-action="save">Save</button></td>
+                <td><%= item.principalReview.approved ? "Approved" : "Pending" %></td>
+                <td><%= item.principalReview.comment ? item.principalReview.comment : "" %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="9" class="muted">Select a subject and click Load</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const teacherId = "<%= teacherId %>"; // injected from controller
+
+    function handleServerError(res){
+      return res.text().then(text=>{
+        const ct=res.headers.get('content-type')||'';
+        if(ct.includes('text/html')){
+          const m=text.match(/<title>([^<]+)<\/title>/i);
+          throw new Error(m?m[1]:'Server error');
+        }
+        try{return JSON.parse(text);}catch(e){throw new Error('Unexpected response');}
+      });
+    }
+
+    function showFlashMessage(type,message,t=4000){
+      const c=document.getElementById('flashMessageContainer');
+      const el=document.createElement('div');
+      el.className='flash';
+      el.style.padding='10px 12px';
+      el.style.borderRadius='8px';
+      el.style.background= type==='success' ? 'rgba(16,185,129,0.08)' : 'rgba(59,130,246,0.08)';
+      el.textContent=message;
+      c.appendChild(el);
+      setTimeout(()=>el.remove(),t);
+    }
+
+    function escapeHtml(s=''){
+      return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    function rowHtml(item){
+      const tProgress=item.teacherProgress?.percentComplete ?? 0;
+      const tNotes=item.teacherProgress?.notes ?? '';
+      const completed=item.teacherProgress?.completed?'checked':'';
+      return `
+        <tr data-id="${item._id}">
+          <td>${escapeHtml(item.unit)}</td>
+          <td>${escapeHtml(item.chapter)}</td>
+          <td>${escapeHtml(item.topic)}</td>
+          <td>${escapeHtml(item.subtopic)}</td>
+          <td>${item.numberOfDays}</td>
+          <td><input type="number" min="0" max="100" value="${tProgress}" data-percent /></td>
+          <td><input type="checkbox" data-completed ${completed} /></td>
+          <td><textarea data-notes>${escapeHtml(tNotes)}</textarea></td>
+          <td><button data-action="save">Save</button></td>
+        </tr>`;
+    }
+
+    async function loadBySubject(subject){
+      if(!subject){
+        document.querySelector('#progressTable tbody').innerHTML='<tr><td colspan="9" class="muted">Select a subject</td></tr>';
+        return;
+      }
+      try{
+        const res=await fetch(`/Curriculum/subject/${encodeURIComponent(subject)}/teacher/${encodeURIComponent(teacherId)}`,{credentials:'include'});
+        if(!res.ok) return handleServerError(res);
+        const json=await res.json();
+        const items=json.items||[];
+        if(!items.length){
+          document.querySelector('#progressTable tbody').innerHTML='<tr><td colspan="9" class="muted">No curriculum rows yet</td></tr>';
+          return;
+        }
+        document.querySelector('#progressTable tbody').innerHTML=items.map(rowHtml).join('');
+      }catch(err){showFlashMessage('error',err.message||'Could not load');}
+    }
+
+    document.getElementById('loadBtn').addEventListener('click',()=>{
+      const subj=document.getElementById('filterSubject').value;
+      loadBySubject(subj);
+    });
+
+    document.addEventListener('click',async e=>{
+      const btn=e.target.closest('button[data-action="save"]');
+      if(!btn)return;
+      const tr=btn.closest('tr');
+      const id=tr.dataset.id;
+      const percent=tr.querySelector('[data-percent]').value;
+      const completed=tr.querySelector('[data-completed]').checked;
+      const notes=tr.querySelector('[data-notes]').value;
+      try{
+        const res=await fetch(`/Curriculum/${id}/progress`,{
+          method:'PUT',credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({percentComplete:Number(percent),completed,notes})
+        });
+        if(!res.ok)return handleServerError(res);
+        await res.json();
+        showFlashMessage('success','Progress saved');
+      }catch(err){showFlashMessage('error',err.message||'Save failed');}
+    });
+  </script>
+</body>
+</html>

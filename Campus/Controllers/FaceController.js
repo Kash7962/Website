@@ -14,15 +14,15 @@ const saveFace = async (req, res) => {
       encoding.length !== 128 ||
       !encoding.every(n => typeof n === "number")
     ) {
-      return res.status(400).json({ success: false, error: "Invalid face encoding format" });
+      return res.status(400).render('error/error', { success: false, message: "Invalid face encoding format" });
     }
 
     // Check if a record with the same name & email already exists
     const existingFace = await StaffFace.findOne({ name, email, staffId });
     if (existingFace) {
-      return res.status(400).json({
+      return res.status(400).render('error/error',{
         success: false,
-        error: `Face data already exists for this staff (name and email)`,
+        message: `Face data already exists for this staff (name and email)`,
       });
     }
 
@@ -31,7 +31,7 @@ const saveFace = async (req, res) => {
     return res.json({ success: true, message: "Face data saved successfully" });
   } catch (err) {
     console.error("Error saving face:", err);
-    return res.status(500).json({ success: false, error: "Server error" });
+    return res.status(500).render('error/error', { success: false, message: "Server error" });
   }
 };
 
@@ -41,7 +41,7 @@ const matchFace = async (req, res) => {
     const { encoding } = req.body;
 
     if (!Array.isArray(encoding) || encoding.length !== 128) {
-      return res.status(400).json({ matched: false, error: "Invalid encoding" });
+      return res.status(400).render('error/error', { matched: false, message: "Invalid encoding" });
     }
 
     const allStaff = await StaffFace.find();
@@ -74,7 +74,7 @@ const matchFace = async (req, res) => {
     }
   } catch (err) {
     console.error("Error matching face:", err);
-    return res.status(500).json({ matched: false, error: "Server error" });
+    return res.status(500).render('error/error', { matched: false, message: "Server error" });
   }
 };
 

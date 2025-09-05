@@ -4,38 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Campus Gallery</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Droid+Serif:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
             margin: 0;
             padding: 0;
             background: #f8f8f8;
+            color: #333;
         }
 
         header {
-            background: #004080;
+            background:  #1e40af; /* Rich blue */;
             color: white;
             text-align: center;
-            padding: 20px;
+            padding: 25px;
+            font-family: 'Droid Serif', serif;
         }
 
         header h1 {
             margin: 0;
-            font-size: 2rem;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
         }
 
         h2 {
             text-align: center;
-            margin-top: 30px;
-            color: #333;
-            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            color: #1e40af;
+            font-family: 'Droid Serif', serif;
+            font-size: 1.7rem;
         }
 
         /* General gallery */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            gap: 18px;
             padding: 20px;
         }
 
@@ -43,8 +52,8 @@
             width: 100%;
             height: 220px;
             object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
             transition: transform 0.3s ease;
             cursor: pointer;
         }
@@ -57,17 +66,25 @@
         .staff-gallery {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 25px;
             padding: 20px;
             flex-wrap: wrap;
         }
 
-        .staff-gallery img {
+        .staff-gallery img:first-child {
+            width: 90%;
+            max-width: 1000px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .staff-gallery img:last-child {
             width: 500px;
-            height: 300px;
+            height: 320px;
             object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
         }
 
         /* Lightbox */
@@ -85,23 +102,18 @@
         }
 
         .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 10px;
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 12px;
             box-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
 
-        /* -------------------
-           RESPONSIVE DESIGN
-        ------------------- */
-
         /* Tablet */
         @media (max-width: 1024px) {
-            header h1 {
-                font-size: 1.8rem;
+            .staff-gallery img:first-child {
+                width: 95%;
             }
-
-            .staff-gallery img {
+            .staff-gallery img:last-child {
                 width: 400px;
                 height: 250px;
             }
@@ -110,24 +122,24 @@
         /* Mobile */
         @media (max-width: 768px) {
             header h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
-
             h2 {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
             }
-
             .staff-gallery {
                 flex-direction: column;
                 align-items: center;
             }
-
-            .staff-gallery img {
+            .staff-gallery img:first-child {
+                width: 100%;
+                height: auto;
+            }
+            .staff-gallery img:last-child {
                 width: 90%;
-                height: auto; /* keeps aspect ratio */
+                height: auto;
                 max-height: 250px;
             }
-
             .gallery img {
                 height: 180px;
             }
@@ -136,14 +148,8 @@
         /* Small Mobile */
         @media (max-width: 480px) {
             header h1 {
-                font-size: 1.3rem;
+                font-size: 1.5rem;
             }
-
-            .staff-gallery img {
-                width: 100%;
-                max-height: 200px;
-            }
-
             .gallery img {
                 height: 150px;
             }
@@ -175,23 +181,23 @@
 <section class="gallery">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5772.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5775.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5776.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5777.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5776.JPG" alt="Sports"> -->
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5777.JPG" alt="Sports"> -->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5778.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5779.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5779.JPG" alt="Sports"> -->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5782.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5783.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5784.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5784.JPG" alt="Sports"> -->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5786.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5787.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5788.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5790.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5791.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5792.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5793.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5794.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5795.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5796.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5793.JPG" alt="Sports">-->
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5794.JPG" alt="Sports">-->
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5795.JPG" alt="Sports">-->
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5796.JPG" alt="Sports">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5797.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5798.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5800.JPG" alt="Sports">
@@ -199,17 +205,17 @@
     <img src="/images/KASH_COLLEGE_PICS/IMG_5802.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5803.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5804.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5805.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5805.JPG" alt="Sports">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5807.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5808.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5808.JPG" alt="Sports">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5809.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5810.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5812.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5812.JPG" alt="Sports">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5813.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5814.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5815.JPG" alt="Sports">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5816.JPG" alt="Sports">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5817.JPG" alt="Sports">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5817.JPG" alt="Sports">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5818.JPG" alt="Sports">
 </section>
 
@@ -218,15 +224,15 @@
 <section class="gallery">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5890.JPG" alt="Workshop">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5891.JPG" alt="Workshop">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5892.JPG" alt="Workshop">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5892.JPG" alt="Workshop">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5895.JPG" alt="Workshop">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5896.JPG" alt="Workshop">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5896.JPG" alt="Workshop">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5898.JPG" alt="Workshop">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5900.JPG" alt="Workshop">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5900.JPG" alt="Workshop">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5903.JPG" alt="Workshop">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5906.JPG" alt="Workshop">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5906.JPG" alt="Workshop">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5917.JPG" alt="Workshop">
-    <img src="/images/KASH_COLLEGE_PICS/IMG_5918.JPG" alt="Workshop">
+    <!--<img src="/images/KASH_COLLEGE_PICS/IMG_5918.JPG" alt="Workshop">-->
     <img src="/images/KASH_COLLEGE_PICS/IMG_5921.JPG" alt="Workshop">
     <img src="/images/KASH_COLLEGE_PICS/IMG_5925.JPG" alt="Workshop">
 </section>

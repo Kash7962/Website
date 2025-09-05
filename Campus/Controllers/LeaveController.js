@@ -145,13 +145,13 @@ exports.deleteLeave = async (req, res) => {
     }
 
     // Return deducted paid leaves
-    if (leaveRequest.paidLeaves > 0) {
-      const staff = await Staff.findById(leaveRequest.staffId);
-      if (staff) {
-        staff.numberOfLeaves += leaveRequest.paidLeaves;
-        await staff.save();
-      }
-    }
+    // if (leaveRequest.paidLeaves > 0) {
+    //   const staff = await Staff.findById(leaveRequest.staffId);
+    //   if (staff) {
+    //     staff.numberOfLeaves += leaveRequest.paidLeaves;
+    //     await staff.save();
+    //   }
+    // }
 
     await LeaveRequest.findByIdAndDelete(id);
     res.status(200).json({ message: 'Leave request deleted successfully' });
