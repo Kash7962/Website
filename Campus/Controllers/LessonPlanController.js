@@ -1,7 +1,7 @@
 // Controllers/LessonPlanController.js
 const { CurriculumItem } = require('../models/lessonPlan');
 const {Staff} = require('../models/staff'); // Teachers live here
-
+const ActivityLog = require('../models/activityLog');
 /* =====================================================
    Create Curriculum Item
    ===================================================== */
@@ -29,11 +29,25 @@ async function createCurriculumItem(req, res) {
 
     const doc = new CurriculumItem(payload);
     await doc.save();
-
+    const teacher = await Staff.findById(teacherId);
+    const user = await Staff.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Staff',
+                  name: user.name,
+                  email: user.email,
+                  action: `Created new curriculum item — Subject: ${doc.subject}, Unit: ${doc.unit}, Chapter: ${doc.chapter}, Topic: ${doc.topic}, Subtopic: ${doc.subtopic}, Number of Days: ${doc.numberOfDays}, Assigned Teacher: ${teacher?.name || 'N/A'}`,
+                  // targetModel: 'Student',
+                  // targetId: student._id,
+                  // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+                  // targetEmail: student.studentEmail,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     return res.status(201).json({ success: true, item: doc });
   } catch (err) {
     console.error('createCurriculumItem:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
 
@@ -50,11 +64,10 @@ async function getCurriculumBySubjectAndTeacher(req, res) {
     })
       .populate('teacherProgress.teacher', 'name')
       .lean();
-
     return res.json({ success: true, items });
   } catch (err) {
     console.error('getCurriculumBySubjectAndTeacher:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
 
@@ -82,13 +95,27 @@ async function updateTeacherProgress(req, res) {
     );
 
     if (!item) {
-      return res.status(404).json({ error: 'Item not found or teacher not assigned' });
+      return res.status(404).render('error/error', { message: 'Item not found or teacher not assigned' });
     }
+     const user = await Staff.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Staff',
+                  name: user.name,
+                  email: user.email,
+                  action: `Teacher updated progress — Subject: ${item.subject}, Unit: ${item.unit}, Chapter: ${item.chapter}, Topic: ${item.topic}, Subtopic: ${item.subtopic}, Progress: ${percentComplete}%, Completed: ${completed ? 'Yes' : 'No'}, Notes: "${notes?.trim() || 'No notes'}"`
 
+                  // targetModel: 'Student',
+                  // targetId: student._id,
+                  // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+                  // targetEmail: student.studentEmail,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     return res.json({ success: true, item });
   } catch (err) {
     console.error('updateTeacherProgress:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
 
@@ -114,13 +141,26 @@ async function updatePrincipalReview(req, res) {
     );
 
     if (!item) {
-      return res.status(404).json({ error: 'Item not found' });
+      return res.status(404).render('error/error',{ message: 'Item not found' });
     }
-
+     const user = await Staff.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Staff',
+                  name: user.name,
+                  email: user.email,
+                  action: `Principal ${approved ? 'approved' : 'rejected'} curriculum item — Subject: ${item.subject}, Unit: ${item.unit}, Chapter: ${item.chapter}, Topic: ${item.topic}, Subtopic: ${item.subtopic}, Comment: "${comment?.trim() || 'No comment'}"`
+                  // targetModel: 'Student',
+                  // targetId: student._id,
+                  // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+                  // targetEmail: student.studentEmail,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     return res.json({ success: true, item });
   } catch (err) {
     console.error('updatePrincipalReview:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
 
@@ -130,16 +170,30 @@ async function updatePrincipalReview(req, res) {
 async function deleteCurriculumItem(req, res) {
   try {
     const { id } = req.params;
+    const item = await CurriculumItem.findById(id)
     const deleted = await CurriculumItem.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({ error: 'Item not found' });
+      return res.status(404).render('error/error', { message: 'Item not found' });
     }
-
+     const user = await Staff.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Staff',
+                  name: user.name,
+                  email: user.email,
+                  action: `Curriculum item deleted with subject - ${item.subject}, unit - ${item.unit}, chapter - ${item.chapter}, topic - ${item.topic}, subtopic - ${item.subtopic}`,
+                  // targetModel: 'Student',
+                  // targetId: student._id,
+                  // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+                  // targetEmail: student.studentEmail,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     return res.json({ success: true });
   } catch (err) {
     console.error('deleteCurriculumItem:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
 

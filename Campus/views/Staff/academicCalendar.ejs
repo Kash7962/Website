@@ -5,24 +5,446 @@
   <title>Academic Calendar — Create / Manage</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
   <style>
-    :root{ --bg:#fafafa; --card:#fff; --muted:#666; --accent:#2b6cb0; }
-    body{font-family:Inter, system-ui, Arial, sans-serif; margin:0; background:var(--bg); color:#222;}
-    .container{max-width:1200px;margin:18px auto;padding:16px;}
-    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
-    .card{background:var(--card);border-radius:8px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
-    #calendar { max-width:100%; margin: 0 auto; }
-    .form-row{display:flex;gap:8px;align-items:center}
-    select,input,textarea{padding:8px;border-radius:6px;border:1px solid #ddd;background:#fff}
-    button.btn{padding:8px 12px;border-radius:6px;border:0;cursor:pointer}
-    button.btn--primary{background:var(--accent);color:#fff}
-    button.btn--danger{background:#e74c3c;color:#fff}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
-    .badge{display:inline-block;padding:4px 8px;border-radius:12px;font-size:12px;color:#fff}
-    #color { width: 40px; height: 25px; border: none; border-radius: 4px; pointer-events: none; }
+    :root {
+      /* User-provided color */
+      --primary-blue: #1e40af;
+      
+      /* Derived colors */
+      --primary-blue-dark: #1e3a8a;
+      --primary-blue-light: #dbeafe;
+      
+      /* Danger colors */
+      --danger-red: #dc2626;
+      --danger-red-dark: #b91c1c;
+
+      /* Neutral palette */
+      --bg: #f3f4f6; /* Lighter grey background */
+      --card: #ffffff;
+      --border: #d1d5db; /* A slightly darker border */
+      --text-primary: #111827; /* Near black for headings */
+      --text-secondary: #374151; /* Dark grey for body text */
+      --text-muted: #6b7280; /* Lighter grey for labels */
+      
+      /* Shadow */
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    /* Base styles */
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-secondary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+      #errorPopupContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #errorPopupContainer * {
+      box-sizing: border-box;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #closeErrorPopup:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+      #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Delete Confirmation Modal */
+    #deleteModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none; /* hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    #deleteModal .modal-box {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.25s ease;
+    }
+
+    #deleteModal h2 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    #deleteModal p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    #deleteModal .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    #deleteModal button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #deleteModal .confirm-btn {
+      background: var(--danger-red);
+      color: white;
+    }
+    #deleteModal .confirm-btn:hover {
+      background: var(--danger-red-dark);
+    }
+    #deleteModal .cancel-btn {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+    #deleteModal .cancel-btn:hover {
+      background: #cbd5e1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 24px auto; /* Increased margin */
+      padding: 16px;
+    }
+
+    /* Top bar styling */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .topbar h2 {
+      color: var(--text-primary);
+      margin: 0;
+      font-size: 1.75rem; /* Larger title */
+    }
+    .topbar .card {
+      padding: 8px 12px; /* Smaller padding for this specific card */
+      margin: 0;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--card);
+      border-radius: 12px; /* Larger radius */
+      padding: 24px; /* More padding */
+      box-shadow: var(--shadow-md);
+      border: 1px solid #e5e7eb;
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+    }
+
+    /* Form elements */
+    .form-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    label {
+      display: inline-block;
+      margin-bottom: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    select, input[type="text"], input[type="date"], input[type="time"], textarea {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      width: 100%;
+      box-sizing: border-box; /* Important for width:100% */
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px var(--primary-blue-light);
+    }
+    textarea {
+      resize: vertical;
+    }
+    #color {
+      width: 48px;
+      height: 42px; /* Match input height */
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      pointer-events: none;
+      transition: border-color 0.2s ease;
+    }
+
+    /* Button styling */
+    button.btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    button.btn:active {
+      transform: scale(0.98);
+    }
+    button.btn--primary {
+      background: var(--primary-blue);
+      color: #fff;
+    }
+    button.btn--primary:hover {
+      background: var(--primary-blue-dark);
+    }
+    button.btn--danger {
+      background: var(--danger-red);
+      color: #fff;
+    }
+    button.btn--danger:hover {
+      background: var(--danger-red-dark);
+    }
+    #clearBtn { /* Specific style for clear button */
+      background: #e5e7eb;
+      color: var(--text-secondary);
+    }
+    #clearBtn:hover {
+      background: #d1d5db;
+    }
+
+    /* Table styling */
+    .events-list div:first-of-type {
+      margin-bottom: 16px; /* Space between "Working days" and table */
+      color: var(--text-secondary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 16px; /* More padding */
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 0.875rem;
+      vertical-align: middle;
+    }
+    th {
+      font-weight: 600;
+      color: var(--text-muted);
+      background-color: #f9fafb; /* Light header background */
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+    }
+    tbody tr:hover {
+      background-color: #f9fafb;
+    }
+
+    /* Badge styling */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px; /* Pill shape */
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    /* FullCalendar Customizations */
+    #calendar {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .fc .fc-button-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+    }
+    .fc .fc-button-primary:hover, .fc .fc-button-primary:active {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+    }
+    .fc .fc-toolbar-title {
+      color: var(--text-primary);
+      font-size: 1.5em;
+    }
+    .fc-theme-standard .fc-list-day-cushion { /* For list view */
+      background-color: #f9fafb;
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border: 1px solid #e5e7eb;
+    }
+    
+    /* === NEW STYLES START HERE === */
+    /* Custom styling for the calendar's view-switcher buttons (month/week/list) */
+    .fc .fc-header-toolbar .fc-button-group {
+      border-radius: 8px; /* Match other elements' border radius */
+    }
+
+    .fc .fc-header-toolbar .fc-button-group .fc-button {
+      margin: 0;
+      /* Inactive state is blue, matching the default button style */
+      background-color: var(--primary-blue); 
+      border-color: var(--primary-blue);
+      text-transform: capitalize;
+    }
+
+    /* The active button is dark grey/black */
+    .fc .fc-header-toolbar .fc-button-group .fc-button.fc-button-active {
+      background-color: var(--text-primary);
+      border-color: var(--text-primary);
+      color: #fff;
+      box-shadow: none;
+    }
+    
+    /* Hover state for the active button */
+    .fc .fc-header-toolbar .fc-button-group .fc-button.fc-button-active:hover {
+      background-color: #000;
+      border-color: #000;
+    }
+    
+    /* Hover state for inactive buttons */
+    .fc .fc-header-toolbar .fc-button-group .fc-button:not(.fc-button-active):hover {
+        background-color: var(--primary-blue-dark);
+        border-color: var(--primary-blue-dark);
+        box-shadow: none;
+    }
+
+    .fc .fc-button:focus {
+        box-shadow: none; /* Remove default focus ring for a cleaner look */
+    }
+    /* === NEW STYLES END HERE === */
+
   </style>
 </head>
 <body>
+  <div id="flashMessageContainer"></div>
   <div class="container">
     <div class="topbar">
       <h2>📅 Academic Calendar — Create / Manage</h2>
@@ -42,7 +464,7 @@
       <div id="calendar"></div>
     </div>
 
-    <div class="card" style="margin-top:12px">
+    <div class="card" style="margin-top:24px">
       <h3>Add Event</h3>
       <form id="eventForm" autocomplete="off">
         <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -88,34 +510,49 @@
             </select>
           </div>
 
-          <div id="timeFields" style="display:none">
+          <div id="timeFields" style="display:none; flex:1; min-width:220px">
             <label>Time (start - end)</label><br>
-            <input id="startTime" type="time"> —
-            <input id="endTime" type="time">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input id="startTime" type="time" style="flex:1;"> —
+              <input id="endTime" type="time" style="flex:1;">
+            </div>
           </div>
         </div>
 
-        <div style="margin-top:8px">
+        <div style="margin-top:12px">
           <label>Description</label><br>
           <textarea id="description" rows="2" style="width:100%"></textarea>
         </div>
 
-        <div style="margin-top:8px;display:flex;gap:8px">
+        <div style="margin-top:16px;display:flex;gap:8px">
           <button class="btn btn--primary" type="submit">Add event</button>
-          <button class="btn btn--danger" type="button" id="clearBtn">Clear</button>
+          <button class="btn" type="button" id="clearBtn">Clear</button>
         </div>
       </form>
     </div>
 
-    <div class="card events-list">
+    <div class="card events-list" style="margin-top:24px">
       <h3>Events list (<span id="eventsForBatch"></span>)</h3>
       <div>Working days: <strong id="workingDays">—</strong></div>
-      <table id="eventsTable">
-        <thead><tr><th>Date</th><th>Title</th><th>Type</th><th>Batch</th><th>Action</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <div style="overflow-x:auto;">
+        <table id="eventsTable">
+          <thead><tr><th>Date</th><th>Title</th><th>Type</th><th>Batch</th><th>Action</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
+  <!-- Delete Confirmation Modal -->
+<div id="deleteModal">
+  <div class="modal-box">
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+    <div class="actions">
+      <button class="cancel-btn" type="button">Cancel</button>
+      <button class="confirm-btn" type="button">Delete</button>
+    </div>
+  </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
@@ -148,12 +585,13 @@
           const batch=batchSelect.value;
           const url=`/Calendar/events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
           const res=await fetch(url);
-          if(!res.ok) return failure('Load failed');
+          if (!res.ok) return handleServerError(res);
           const json=await res.json();
           const arr = Array.isArray(json) ? json : (json.events||[]);
           document.getElementById('workingDays').textContent=json.workingDays ?? '—';
           renderEventsList(arr, batch);
           success(arr);
+          // showFlashMessage('success', 'Events loaded successfully.');
         }catch(e){failure(e);}
       }
     });
@@ -172,20 +610,41 @@
       });
     }
 
-    document.addEventListener('click', async e => {
-      if (e.target.classList.contains('btn-delete')) {
-        const id = e.target.dataset.id;
-        if (!confirm('Delete this event?')) return;
+
+      let deleteId = null;
+
+      // Open modal on delete button click
+      document.addEventListener('click', e => {
+        if (e.target.classList.contains('btn-delete')) {
+          deleteId = e.target.dataset.id;
+          document.getElementById('deleteModal').style.display = 'flex';
+        }
+      });
+
+      function closeDeleteModal() {
+        deleteId = null;
+        document.getElementById('deleteModal').style.display = 'none';
+      }
+
+      async function confirmDelete() {
+        if (!deleteId) return;
         try {
-          const res = await fetch(`/Calendar/delete/${id}`, { method: 'DELETE' });
-          if (!res.ok) throw new Error('Delete failed');
+          const res = await fetch(`/Calendar/delete/${deleteId}`, { method: 'DELETE' });
+          if (!res.ok) return handleServerError(res);
           calendar.refetchEvents();
+          showFlashMessage('success', 'Event deleted.');
         } catch (err) {
           console.error('Delete error:', err);
-          alert('Could not delete event.');
+          showFlashMessage('error', 'Could not delete event.');
+        } finally {
+          closeDeleteModal();
         }
       }
-    });
+
+      // Hook up modal buttons (attach only once)
+      document.querySelector('#deleteModal .cancel-btn').addEventListener('click', closeDeleteModal);
+      document.querySelector('#deleteModal .confirm-btn').addEventListener('click', confirmDelete);
+
 
     document.getElementById('eventForm').addEventListener('submit',async e=>{
       e.preventDefault();
@@ -200,17 +659,121 @@
         type:typeEl.value,color:colorEl.style.backgroundColor,batches:[batchSelect.value]
       };
       const res=await fetch('/Calendar/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if (!res.ok) return handleServerError(res);
       if(res.ok){ 
         await res.json(); 
         calendar.refetchEvents(); 
         e.target.reset(); 
         setColorFromType(); 
         timeFields.style.display='none'; 
+        showFlashMessage('success', 'Event added successfully.');
+      }else{
+        showFlashMessage('error', 'Failed to add event. Please try again.');
       }
     });
 
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        document.getElementById('eventForm').reset();
+        setColorFromType();
+        timeFields.style.display = 'none';
+    });
+
     batchSelect.addEventListener('change',()=>{calendar.refetchEvents();});
-    window.onload=()=>{calendar.render();};
+      async function handleServerError(res) {
+      const contentType = res.headers.get('Content-Type') || '';
+
+      if (contentType.includes('text/html')) {
+        const html = await res.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        const popup = tempDiv.querySelector('#errorPopupContainer');
+        const scripts = tempDiv.querySelectorAll('script');
+
+        if (popup) {
+          document.body.prepend(popup);
+          scripts.forEach((script) => {
+            const newScript = document.createElement('script');
+            if (script.src) newScript.src = script.src;
+            else newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+          });
+        } else {
+          showFlashMessage('error', 'An unknown error occurred.');
+        }
+      } else {
+        showFlashMessage('error', 'Server error: unexpected content type.');
+      }
+    } 
+
+  function showFlashMessage(type, message, duration = 4000) {
+      const container = document.getElementById('flashMessageContainer');
+      const msg = document.createElement('div');
+      msg.classList.add('flash-message');
+      msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+      msg.textContent = message;
+
+      container.appendChild(msg);
+
+      setTimeout(() => {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 500);
+      }, duration);
+    } 
+    window.onload= async ()=>{
+      const token = localStorage.getItem('token');
+        try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+        calendar.render();
+      
+    };
   })();
   </script>
 </body>

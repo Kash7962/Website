@@ -5,21 +5,336 @@
   <title>📅 Academic Calendar — View</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
   <style>
-    :root{ --bg:#fafafa; --card:#fff; --muted:#666; --accent:#2b6cb0; }
-    body{font-family:Inter, system-ui, Arial, sans-serif; margin:0; background:var(--bg); color:#222;}
-    .container{max-width:1200px;margin:18px auto;padding:16px;}
-    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
-    .card{background:var(--card);border-radius:8px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
-    #calendar { max-width:100%; margin: 0 auto; }
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
-    .badge{display:inline-block;padding:4px 8px;border-radius:12px;font-size:12px;color:#fff}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --primary-blue: #1e40af;
+      --primary-blue-dark: #1e3a8a;
+      --primary-blue-light: #dbeafe;
+      
+      --danger-red: #dc2626;
+      --danger-red-dark: #b91c1c;
+
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --border: #e5e7eb; 
+      
+      --text-primary: #111827;
+      --text-secondary: #374151;
+      --text-muted: #6b7280;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+    }
+
+    /* Base styles */
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      background-color: var(--bg);
+      /* Subtle background pattern for texture */
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d1d5db' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      color: var(--text-secondary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+      #errorPopupContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.4);
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      #errorPopupContainer * {
+        box-sizing: border-box;
+        font-family: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      #errorPopupBox {
+        max-width: 400px;
+        width: 90%;
+        padding: 30px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      #errorPopupBox h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #e74c3c;
+      }
+
+      #errorPopupBox h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin: 10px 0;
+      }
+
+      #errorMessage {
+        font-size: 1rem;
+        color: #666;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #e74c3c;
+        text-align: left;
+        word-wrap: break-word;
+      }
+
+      #closeErrorPopup {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 24px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      #closeErrorPopup:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+
+        #flashMessageContainer {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9998;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 420px;
+        padding: 0 1rem;
+        pointer-events: none;
+      }
+
+      .flash-message {
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+        pointer-events: all;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        animation: fadeIn 0.4s ease;
+      }
+
+      .flash-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border: 1px solid #10b981;
+      }
+
+      .flash-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #ef4444;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 16px;
+    }
+
+    /* Top bar styling */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    /* MODIFIED: Styling for H2 container */
+    .topbar h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary-blue);
+    }
+    /* NEW: Apply gradient only to the text inside the span */
+    .topbar h2 .title-text {
+      background: linear-gradient(45deg, var(--primary-blue-dark), var(--primary-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .topbar .card {
+      padding: 8px 12px;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      margin-top: 24px;
+    }
+     .card:first-child {
+        margin-top: 0;
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    /* Form elements inside cards */
+    .form-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+     select {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-secondary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+     select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px var(--primary-blue-light);
+      background-color: #fff;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.875rem;
+      vertical-align: middle;
+    }
+    th {
+      font-weight: 600;
+      color: var(--text-muted);
+      background-color: #f9fafb;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.75rem;
+    }
+    tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* Badge styling */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    /* FullCalendar Customizations */
+    #calendar {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .fc .fc-button-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+    }
+    .fc .fc-button-primary:hover, .fc .fc-button-primary:active {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+    }
+    .fc .fc-toolbar-title {
+      color: var(--text-primary);
+      font-size: 1.5em;
+    }
+    .fc-theme-standard .fc-list-day-cushion {
+      background-color: #f9fafb;
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border: 1px solid var(--border);
+    }
+    .fc .fc-daygrid-day.fc-day-today {
+        background: var(--primary-blue-light);
+    }
+
+    /* Custom styling for the calendar's view-switcher buttons */
+    .fc .fc-header-toolbar .fc-button-group {
+      border-radius: 8px;
+    }
+    .fc .fc-header-toolbar .fc-button-group .fc-button {
+      margin: 0;
+      background-color: var(--primary-blue); 
+      border-color: var(--primary-blue);
+      text-transform: capitalize;
+    }
+    .fc .fc-header-toolbar .fc-button-group .fc-button.fc-button-active {
+      background-color: var(--text-primary);
+      border-color: var(--text-primary);
+      color: #fff;
+      box-shadow: none;
+    }
+    .fc .fc-header-toolbar .fc-button-group .fc-button.fc-button-active:hover {
+      background-color: #000;
+      border-color: #000;
+    }
+    .fc .fc-header-toolbar .fc-button-group .fc-button:not(.fc-button-active):hover {
+        background-color: var(--primary-blue-dark);
+        border-color: var(--primary-blue-dark);
+        box-shadow: none;
+    }
+    .fc .fc-button:focus {
+        box-shadow: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
-      <h2>📅 Academic Calendar — View</h2>
+      <h2>&#x1F4C5; <span class="title-text">Academic Calendar — View</span></h2>
       <div class="card form-row">
         <label for="batchSelect">Batch:</label>
         <select id="batchSelect">
@@ -59,7 +374,7 @@
           const batch=batchSelect.value;
           const url=`/Calendar/view-events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
           const res=await fetch(url);
-          if(!res.ok) return failure('Load failed');
+          if(!res.ok) return handleServerError(res);
           const json=await res.json();
           const arr = Array.isArray(json) ? json : (json.events||[]);
           document.getElementById('workingDays').textContent=json.workingDays ?? '—';
@@ -81,9 +396,100 @@
         body.appendChild(tr);
       });
     }
+    async function handleServerError(res) {
+    const contentType = res.headers.get('Content-Type') || '';
 
+    if (contentType.includes('text/html')) {
+      const html = await res.text();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+
+      const popup = tempDiv.querySelector('#errorPopupContainer');
+      const scripts = tempDiv.querySelectorAll('script');
+
+      if (popup) {
+        document.body.prepend(popup);
+        scripts.forEach((script) => {
+          const newScript = document.createElement('script');
+          if (script.src) newScript.src = script.src;
+          else newScript.textContent = script.textContent;
+          document.body.appendChild(newScript);
+        });
+      } else {
+        showFlashMessage('error', 'An unknown error occurred.');
+      }
+    } else {
+      showFlashMessage('error', 'Server error: unexpected content type.');
+    }
+  } 
+
+function showFlashMessage(type, message, duration = 4000) {
+    const container = document.getElementById('flashMessageContainer');
+    const msg = document.createElement('div');
+    msg.classList.add('flash-message');
+    msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+    msg.textContent = message;
+
+    container.appendChild(msg);
+
+    setTimeout(() => {
+      msg.style.opacity = '0';
+      msg.style.transform = 'translateY(-10px)';
+      setTimeout(() => msg.remove(), 500);
+    }, duration);
+  } 
     batchSelect.addEventListener('change',()=>{calendar.refetchEvents();});
-    window.onload=()=>{calendar.render();};
+    window.onload= async ()=>{
+      const token = localStorage.getItem('token');
+        try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+      calendar.render();};
   })();
   </script>
 </body>

@@ -2,7 +2,8 @@
 const CalendarEvent = require('../models/calendarEvents');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
-
+const { Staff } = require('../models/staff');
+const ActivityLog = require('../models/activityLog');
 /* ---------- Helpers ---------- */
 function parseDateSafe(v) {
   if (!v && v !== 0) return null;
@@ -159,6 +160,20 @@ const apiAddEvent = async (req, res) => {
     });
 
     await ev.save();
+     const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `${ev.title} event created `,
+              // targetModel: 'Student',
+              // targetId: student._id,
+              // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              // targetEmail: student.studentEmail,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     return res.status(201).json({ id: ev._id });
   } catch (err) {
     console.error('apiAddEvent err:', err.stack || err);
@@ -207,7 +222,22 @@ const apiDeleteEvent = async (req, res) => {
   try {
     const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).render('error/error',{ message: 'Invalid id' });
+    const event = await CalendarEvent.findById(id);
     await CalendarEvent.findByIdAndDelete(id);
+    const user = await Staff.findById(req.user._id);
+            await ActivityLog.create({
+              userId : user._id,
+              userModel: 'Staff',
+              name: user.name,
+              email: user.email,
+              action: `${event.title} event deleted `,
+              // targetModel: 'Student',
+              // targetId: student._id,
+              // targetname: `${student.firstName} ${student.middleName} ${student.lastName}`,
+              // targetEmail: student.studentEmail,
+              // registrationNumber: student.registration_number,
+              // classAssigned: student.classAssigned
+            });
     return res.json({ ok: true });
   } catch (err) {
     console.error('apiDeleteEvent err:', err.stack || err);
