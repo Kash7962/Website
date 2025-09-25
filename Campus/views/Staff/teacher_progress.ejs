@@ -6,273 +6,345 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-      --text-primary: #1e293b;
-      --text-secondary: #475569;
-      --muted: #64748b;
-      /* MODIFIED: Changed accent color to primary blue */
-      --accent: #1e40af;
-      --accent-dark: #1e3a8a;
-      --success: #10b981;
-      --error: #ef4444;
-    }
+   :root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --muted: #64748b;
+  /* MODIFIED: Changed accent color to primary blue */
+  --accent: #1e40af;
+  --accent-dark: #1e3a8a;
+  --success: #10b981;
+  --error: #ef4444;
+}
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      margin: 0;
-      background: var(--bg);
-      color: var(--text-secondary);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    .container {
-      max-width: 1200px;
-      margin: 24px auto;
-      padding: 0 16px;
-    }
+.container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
 
-    .card {
-      background: var(--card);
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-    }
+.card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
 
-    /* MODIFIED: Added highlight style to the H2 heading */
-    h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      background: linear-gradient(45deg, var(--accent-dark), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      color: transparent;
-    }
+/* MODIFIED: Added highlight style to the H2 heading */
+h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, var(--accent-dark), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    
-    th, td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      vertical-align: middle;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
 
-    th {
-      background: #fcfdfe;
-      color: var(--muted);
-      font-weight: 600;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+th, td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+  word-wrap: break-word;  /* allow wrapping */
+  white-space: normal;    /* prevent overflow */
+}
 
-    tbody tr:nth-child(even) {
-        background-color: #fcfdfe;
-    }
+th {
+  background: #fcfdfe;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
-    tbody tr:hover {
-        background-color: #f7fbff;
-    }
+tbody tr:nth-child(even) {
+  background-color: #fcfdfe;
+}
 
-    input[type="number"],
-    textarea,
-    select {
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      background-color: #f9fafb;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-secondary);
-    }
+tbody tr:hover {
+  background-color: #f7fbff;
+}
 
-    input[type="number"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
-      background-color: #fff;
-    }
+input[type="number"],
+textarea,
+select {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  background-color: #f9fafb;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-secondary);
+}
 
-    input[type="number"] {
-      width: 80px;
-    }
-    
-    input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        accent-color: var(--accent);
-    }
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+  background-color: #fff;
+}
 
-    /* Make Notes column wider */
-    #progressTable th:nth-child(8),
-    #progressTable td:nth-child(8) {
-      width: 25%;   /* allocate more horizontal space */
-    }
+/* make textareas bigger */
+textarea {
+  min-height: 100px; /* adjust this value as you like */
+  resize: vertical;  /* user can drag to make it taller */
+}
 
-    /* Make textarea comfortably visible */
-    #progressTable td:nth-child(8) textarea {
-      min-height: 60px;
-      width: 100%;
-    }
+/* Notes column textarea */
+textarea[data-notes] {
+  width: 100%;            /* fill the cell width */
+  min-height: 80px;       /* taller by default */
+  resize: vertical;       /* allow teacher to resize vertically */
+  box-sizing: border-box; /* prevent overflow outside the cell */
+  line-height: 1.4;
+  font-size: 14px;
+}
 
-    button {
-      background: var(--accent);
-      color: white;
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-    
-    button:hover {
-        background: var(--accent-dark);
-    }
+input[type="number"] {
+  width: 80px;
+}
 
-    button:active {
-        transform: scale(0.98);
-    }
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
 
-    .muted {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+/* Make Notes column wider */
+#progressTable th:nth-child(8),
+#progressTable td:nth-child(8) {
+  width: 25%;   /* allocate more horizontal space */
+}
 
-    #errorPopupContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      background: rgba(0, 0, 0, 0.4);
-      font-family: 'Montserrat', sans-serif;
-    }
+/* Make textarea comfortably visible */
+#progressTable td:nth-child(8) textarea {
+  min-height: 60px;
+  width: 100%;
+}
 
-    #errorPopupContainer * {
-      box-sizing: border-box;
-      font-family: inherit;
-      margin: 0;
-      padding: 0;
-    }
+button {
+  background: var(--accent);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
 
-    #errorPopupBox {
-      max-width: 400px;
-      width: 90%;
-      padding: 30px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
+button:hover {
+  background: var(--accent-dark);
+}
 
-    #errorPopupBox h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #e74c3c;
-    }
+button:active {
+  transform: scale(0.98);
+}
 
-    #errorPopupBox h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #333;
-      margin: 10px 0;
-    }
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
 
-    #errorMessage {
-      font-size: 1rem;
-      color: #666;
-      background-color: #ffffff;
-      padding: 15px;
-      border-radius: 5px;
-      margin: 20px 0;
-      border-left: 4px solid #e74c3c;
-      text-align: left;
-      word-wrap: break-word;
-    }
+#errorPopupContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.4);
+  font-family: 'Montserrat', sans-serif;
+}
 
-    #closeErrorPopup {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 24px;
-      background-color: #3498db;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      cursor: pointer;
-    }
+#errorPopupContainer * {
+  box-sizing: border-box;
+  font-family: inherit;
+  margin: 0;
+  padding: 0;
+}
 
-    #closeErrorPopup:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
-    }
+#errorPopupBox {
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
-      #flashMessageContainer {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9998;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 420px;
-      padding: 0 1rem;
-      pointer-events: none;
-    }
+#errorPopupBox h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #e74c3c;
+}
 
-    .flash-message {
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-      border-radius: 8px;
-      font-weight: 600;
-      width: 100%;
-      text-align: center;
-      pointer-events: all;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      animation: fadeIn 0.4s ease;
-    }
+#errorPopupBox h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 10px 0;
+}
 
-    .flash-success {
-      background-color: #d1fae5;
-      color: #065f46;
-      border: 1px solid #10b981;
-    }
+#errorMessage {
+  font-size: 1rem;
+  color: #666;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 20px 0;
+  border-left: 4px solid #e74c3c;
+  text-align: left;
+  word-wrap: break-word;
+}
 
-    .flash-error {
-      background-color: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #ef4444;
-    }
+#closeErrorPopup {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 24px;
+  background-color: #3498db;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+#closeErrorPopup:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+#flashMessageContainer {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+
+.flash-message {
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+  pointer-events: all;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease;
+}
+
+.flash-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.flash-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Prevent table from squeezing */
+#progressTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Column widths (adjust per actual table headings) */
+#progressTable th:nth-child(1), 
+#progressTable td:nth-child(1) { width:80px; }   /* Unit */
+#progressTable th:nth-child(2), 
+#progressTable td:nth-child(2) { width:120px; }  /* Chapter */
+#progressTable th:nth-child(3), 
+#progressTable td:nth-child(3) { width:140px; }  /* Topic */
+#progressTable th:nth-child(4), 
+#progressTable td:nth-child(4) { width:140px; }  /* Subtopic */
+#progressTable th:nth-child(5), 
+#progressTable td:nth-child(5) { width:70px; text-align:center; }  /* #Days */
+#progressTable th:nth-child(6), 
+#progressTable td:nth-child(6) { width:120px; text-align:center; } /* Progress */
+#progressTable th:nth-child(7), 
+#progressTable td:nth-child(7) { width:100px; text-align:center; } /* Completed */
+#progressTable th:nth-child(8), 
+#progressTable td:nth-child(8) { width:200px; } /* Notes */
+#progressTable th:nth-child(9), 
+#progressTable td:nth-child(9) { width:80px; text-align:center; }  /* Save */
+#progressTable th:nth-child(10), 
+#progressTable td:nth-child(10) { width:140px; } /* Approval */
+#progressTable th:nth-child(11), 
+#progressTable td:nth-child(11) { width:180px; } /* Comment */
+
+/* ✅ Inputs inside table */
+#progressTable input[type="number"] {
+  width:70px;
+  padding:4px;
+  text-align:center;
+}
+
+#progressTable input[type="checkbox"] {
+  transform:scale(1.2);
+}
+
+#progressTable textarea {
+  width:100%;
+  min-height:50px;
+  resize:vertical;
+}
+
+#progressTable button {
+  padding:6px 12px;
+  font-size:13px;
+}
+
+
   </style>
 </head>
 <body>
@@ -314,12 +386,29 @@
                   <td><%= item.topic %></td>
                   <td><%= item.subtopic %></td>
                   <td><%= item.numberOfDays %></td>
-                  <td><input type="number" min="0" max="100"
-                          value="<%= item.teacherProgress?.percentComplete || 0 %>" data-percent /></td>
-                  <td><input type="checkbox" data-completed
-                          <%= item.teacherProgress?.completed ? "checked" : "" %> /></td>
-                  <td><textarea data-notes><%= item.teacherProgress?.notes || "" %></textarea></td>
-                  <td><button data-action="save">Save</button></td>
+                  <!-- <td><%= item.teacherProgress.notes %></td> -->
+                  
+                  <td>
+                    <input type="number" min="0" max="100"
+                      value="<%= item.teacherProgressForThisTeacher.percentComplete || 0 %>"
+                      data-percent />
+                  </td>
+
+                  <td>
+                    <input type="checkbox" data-completed
+                      <%= item.teacherProgressForThisTeacher.completed ? "checked" : "" %> />
+                  </td>
+
+                  <td>
+                    <textarea data-notes><%- item.teacherProgressForThisTeacher.notes || "" %></textarea>
+                  </td>
+
+                  <td>
+                    <button data-action="save">Save</button>
+                  </td>
+
+
+
                   <td><%= item.principalReview.approved ? "Approved" : "Pending" %></td>
                   <td><%= item.principalReview.comment ? item.principalReview.comment : "" %></td>
                 </tr>

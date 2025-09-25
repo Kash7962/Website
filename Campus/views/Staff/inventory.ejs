@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Inventory</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root { --bg:#f8fafc; --card:#fff; --muted:#64748b }
+    body { font-family:system-ui,Arial,sans-serif; background:var(--bg); color:#0f172a; padding:20px }
+    .card { background:var(--card); padding:14px; border-radius:10px; box-shadow:0 2px 8px rgba(2,6,23,0.06); margin-bottom:14px }
+    table { width:100%; border-collapse:collapse }
+    th,td { padding:10px; border-bottom:1px solid #eef2f7; text-align:left }
+    input { padding:6px; border-radius:6px; border:1px solid #e6eef6 }
+    button { padding:8px 10px; border-radius:6px; border:0; cursor:pointer }
+    .muted { color:var(--muted); font-size:0.95rem }
+    .rowFlex { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px }
+    .danger { background:#fecaca }
+    .primary { background:#bfdbfe }
+    .smallBtn { padding:4px 6px; font-size:0.85rem; border-radius:4px }
+    .budgetCard { background:#f0f9ff; padding:10px; border-radius:8px; margin-bottom:20px }
+    .budgetCard h3 { margin-top:0; }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h1>Inventory</h1>
+
+  <!-- Budget Display Card -->
+  <div class="card budgetCard">
+    <h3>Kitchen Department Budget</h3>
+    <p><strong>Allocated:</strong> ₹<%= budget.allocatedAmount %></p>
+    <p><strong>Spent:</strong> ₹<%= budget.spentAmount %></p>
+    <p><strong>Remaining:</strong> ₹<%= budget.allocatedAmount - budget.spentAmount %></p>
+  </div>
+
+  <div class="card">
+    <h3>Add Items</h3>
+
+    <% if (procurementForUser) { %>
+      <p class="muted">
+        You can add multiple items from procurement: 
+        <strong><%= procurementForUser.originalName %></strong>. 
+        Once you add items from this procurement you'll be prevented from adding more until another procurement is accepted.
+      </p>
+
+      <form id="addForm">
+        <input type="hidden" name="procurementId" id="procurementId" value="<%= procurementForUser._id %>" />
+
+        <div id="itemRows">
+          <div class="rowFlex itemRow">
+            <input class="itemName" placeholder="Item name" />
+            <input class="quantity" type="number" min="0" placeholder="Quantity" />
+            <input class="unit" placeholder="Measurement Unit" />
+            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" />
+            <button type="button" class="removeRow danger smallBtn">X</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <button type="button" id="addRowBtn" class="primary">+ Add another item</button>
+        </div>
+        <div style="margin-top:10px">
+          <button id="submitItemsBtn" type="button">Submit all items</button>
+        </div>
+      </form>
+    <% } else { %>
+      <p class="muted">No pending procurement for you. You cannot add inventory items until a procurement is accepted.</p>
+    <% } %>
+  </div>
+
+  <h2>Current Inventory</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Price per unit</th>
+          <th>Last updated by</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (items && items.length) { %>
+          <% items.forEach(function(it){ %>
+            <tr>
+              <td><%= it.itemName %></td>
+              <td><%= it.quantity %></td>
+              <td><%= it.unit %></td>
+              <td>₹<%= it.pricePerUnit %></td>
+              <td><%= it.lastUpdatedBy %></td>
+              <td>
+                <input type="number" min="0" placeholder="Qty to consume" class="consumeQty" data-id="<%= it._id %>" style="width:70px"/>
+                <button data-id="<%= it._id %>" class="consumeBtn smallBtn">Use Items</button>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr><td colspan="5" class="muted">No items in inventory</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      function showFlash(type, msg) {
+        const container = document.getElementById('flashMessageContainer');
+        const el = document.createElement('div');
+        el.textContent = msg;
+        el.style.padding = '8px 12px';
+        el.style.marginTop = '6px';
+        el.style.borderRadius = '6px';
+        el.style.boxShadow = '0 1px 3px rgba(2,6,23,0.06)';
+        el.style.background = type === 'err' ? '#fecaca' : '#bbf7d0';
+        container.appendChild(el);
+        setTimeout(()=> el.remove(), 3500);
+      }
+
+      const itemRows = document.getElementById('itemRows');
+      const addRowBtn = document.getElementById('addRowBtn');
+      if (addRowBtn && itemRows) {
+        addRowBtn.addEventListener('click', () => {
+          const div = document.createElement('div');
+          div.className = 'rowFlex itemRow';
+          div.innerHTML = `
+            <input class="itemName" placeholder="Item name" />
+            <input class="quantity" type="number" min="0" placeholder="Quantity" />
+            <input class="unit" placeholder="Measurement Unit" />
+            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" />
+            <button type="button" class="removeRow danger smallBtn">X</button>`;
+          itemRows.appendChild(div);
+        });
+
+        itemRows.addEventListener('click', e => {
+          if (e.target.matches('.removeRow')) {
+            e.target.closest('.itemRow').remove();
+          }
+        });
+      }
+
+      const submitItemsBtn = document.getElementById('submitItemsBtn');
+      if (submitItemsBtn) {
+        submitItemsBtn.addEventListener('click', async function(){
+          const procurementId = document.getElementById('procurementId').value;
+          const rows = Array.from(document.querySelectorAll('.itemRow'));
+          const items = rows.map(r => {
+            return {
+              itemName: r.querySelector('.itemName')?.value.trim(),
+              quantity: r.querySelector('.quantity')?.value.trim(),
+              unit: r.querySelector('.unit')?.value.trim(),
+              pricePerUnit: r.querySelector('.pricePerUnit')?.value.trim()
+            };
+          }).filter(it => it.itemName && it.quantity && it.pricePerUnit);
+
+          if (!items.length) return showFlash('err','Please fill at least one item');
+          submitItemsBtn.disabled = true;
+          try {
+            const res = await fetch('/Inventory/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ procurementId, items })
+            });
+            const data = await res.json();
+            if (!res.ok) throw data;
+            showFlash('ok','Items added');
+            setTimeout(()=> location.reload(), 600);
+          } catch (err) {
+            console.error(err); 
+            showFlash('err', (err.error || 'Add failed'));
+            submitItemsBtn.disabled = false;
+          }
+        });
+      }
+
+      document.body.addEventListener('click', async function(e){
+        if (e.target.matches('.consumeBtn')) {
+          const id = e.target.getAttribute('data-id');
+          const qtyInput = document.querySelector(`.consumeQty[data-id="${id}"]`);
+          const qty = qtyInput?.value.trim();
+
+          if (!qty || qty <= 0) return showFlash('err','Enter quantity to consume');
+
+          try {
+            const res = await fetch(`/Inventory/consume/${id}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ quantity: qty })
+            });
+            const data = await res.json();
+            if (!res.ok) throw data;
+            showFlash('ok','Inventory updated');
+            setTimeout(()=> location.reload(), 500);
+          } catch (err) {
+            console.error(err);
+            showFlash('err', (err.error || 'Consume failed'));
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

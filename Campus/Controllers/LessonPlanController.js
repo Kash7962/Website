@@ -234,25 +234,47 @@ async function renderTeacherPage(req, res) {
     const teacherId = req.user?._id;
     const { subject } = req.params;
 
+    // base query: only items where this teacher has progress
     const query = { 'teacherProgress.teacher': teacherId };
     if (subject) query.subject = subject;
 
-    const items = await CurriculumItem.find(query)
+    let items = await CurriculumItem.find(query)
       .populate('teacherProgress.teacher', 'name department')
       .lean();
+
+    // attach only the current teacher's progress as a flat object
+    items = items.map(item => {
+      let progressForThisTeacher = {};
+
+      if (Array.isArray(item.teacherProgress)) {
+        const progress = item.teacherProgress.find(tp =>
+          tp.teacher && tp.teacher._id.toString() === teacherId.toString()
+        );
+        progressForThisTeacher = progress || {};
+      } else if (item.teacherProgress) {
+        // in case schema is not an array
+        progressForThisTeacher = item.teacherProgress;
+      }
+
+      return {
+        ...item,
+        teacherProgressForThisTeacher: progressForThisTeacher
+      };
+    });
 
     return res.render('Staff/teacher_progress', {
       user: req.user,
       pageTitle: 'Curriculum Progress - Teacher',
       subject: subject || null,
       items,
-      teacherId // inject for frontend use
+      teacherId
     });
   } catch (err) {
     console.error('renderTeacherPage:', err);
     return res.status(500).render('error/error', { message: 'Server error' });
   }
 }
+
 
 module.exports = {
   createCurriculumItem,

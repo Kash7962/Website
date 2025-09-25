@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My Procurements</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--muted:#64748b;--accent:#1e40af}
+    body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:#0f172a;padding:20px}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 2px 8px rgba(2,6,23,0.06);margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left}
+    button{cursor:pointer;padding:8px 10px;border-radius:6px;border:0}
+    .primary{background:#bfdbfe}
+    .danger{background:#fecaca}
+    #flashMessageContainer{position:fixed;top:12px;right:12px;z-index:2000}
+    .muted{color:var(--muted);font-size:0.95rem}
+    .small{font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h1>My Procurements</h1>
+
+  <div class="card">
+    <form id="uploadForm">
+      <label class="small muted">Upload PDF or image</label>
+      <div style="height:8px"></div>
+      <input id="fileInput" type="file" name="file" accept="application/pdf,image/*" />
+      <div style="height:8px"></div>
+      <button id="uploadBtn" type="button" class="primary">Upload</button>
+    </form>
+  </div>
+
+  <h2>My Submissions</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>File</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% if (myProcurements && myProcurements.length) { %>
+          <% myProcurements.forEach(function(p){ %>
+            <tr>
+              <td>
+                <% if (p.status === 'pending') { %>
+                  <a href="/uploads/procurements/<%= p.filename %>" target="_blank" rel="noreferrer"><%= p.originalName %></a>
+                <% } else { %>
+                  <%= p.originalName %>
+                <% } %>
+              </td>
+              <td><%= p.status %></td>
+              <td><%= new Date(p.uploadDate).toLocaleString() %></td>
+              <td>
+                <% if (p.status === 'pending') { %>
+                  <button type="button" data-id="<%= p._id %>" class="deleteBtn danger">Delete</button>
+                <% } else { %>
+                  <button type="button" data-id="<%= p._id %>" class="deleteBtn">Delete</button>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="4" class="muted">No procurements yet</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+  (function(){
+    function showFlash(type,msg){const c=document.getElementById('flashMessageContainer');const el=document.createElement('div');el.textContent=msg;el.style.padding='8px 12px';el.style.marginTop='6px';el.style.borderRadius='6px';el.style.boxShadow='0 1px 3px rgba(2,6,23,0.06)';if(type==='err'){el.style.background='#fecaca'}else{el.style.background='#bbf7d0'}c.appendChild(el);setTimeout(()=>el.remove(),4000)}
+    
+    const uploadBtn=document.getElementById('uploadBtn');
+    uploadBtn.addEventListener('click',async function(){
+      const fileInput=document.getElementById('fileInput');
+      if(!fileInput.files.length)return showFlash('err','Select a file');
+      const fd=new FormData();fd.append('file',fileInput.files[0]);
+      uploadBtn.disabled=true;
+      try{
+        const res=await fetch('/Procurement/upload',{method:'POST',body:fd});
+        const data=await res.json();if(!res.ok)throw data;
+        showFlash('ok',data.msg||'Uploaded');setTimeout(()=>location.reload(),700)
+      }catch(err){showFlash('err',(err&&err.error)||'Upload failed')}
+      finally{uploadBtn.disabled=false}
+    });
+
+    document.body.addEventListener('click',async function(e){
+      if(e.target.matches('.deleteBtn')){
+        const id=e.target.getAttribute('data-id');
+        if(!confirm('Delete this procurement?'))return;
+        e.target.disabled=true;
+        try{
+          const res=await fetch(`/Procurement/${id}`,{method:'DELETE'});
+          const data=await res.json();if(!res.ok)throw data;
+          showFlash('ok','Deleted');setTimeout(()=>location.reload(),500)
+        }catch(err){showFlash('err',(err&&err.error)||'Delete failed');e.target.disabled=false}
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

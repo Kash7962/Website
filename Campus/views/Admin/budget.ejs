@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Budget Management</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+    form { display: inline; margin: 5px 0; }
+    input, button, select { padding: 5px; margin-right: 5px; }
+    button { cursor: pointer; }
+    button.delete { color: red; }
+    .budget-table { margin-top: 20px; }
+    .purchase-table { margin-top: 10px; border-collapse: collapse; width: 100%; }
+    .purchase-table th, .purchase-table td { padding: 8px; border: 1px solid #ddd; font-size: 0.9em; }
+    .purchase-header { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Budget Management</h1>
+
+  <!-- Add Budget Form -->
+  <form action="/Budget/budget" method="POST">
+    <label>Department:</label>
+    <input type="text" name="department" required readonly value="Kitchen">
+    <label>Allocated Amount:</label>
+    <input type="number" name="allocatedAmount" required>
+    <button type="submit">Set Budget</button>
+  </form>
+
+  <h2>Existing Budgets</h2>
+  <table class="budget-table">
+    <thead>
+      <tr>
+        <th>Department</th>
+        <th>Allocated</th>
+        <th>Spent</th>
+        <th>Remaining</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (budgets.length > 0) { %>
+        <% budgets.forEach(b => { %>
+          <tr>
+            <td><%= b.department %></td>
+            <td><%= b.allocatedAmount %></td>
+            <td><%= b.spentAmount || 0 %></td>
+            <td><%= b.allocatedAmount - (b.spentAmount || 0) %></td>
+            <td>
+              <!-- Edit Form -->
+              <form action="/Budget/budget/edit/<%= b._id %>" method="POST">
+                <input type="text" name="department" value="<%= b.department %>" required>
+                <input type="number" name="allocatedAmount" value="<%= b.allocatedAmount %>" required>
+                <button type="submit">Update</button>
+              </form>
+
+              <!-- Delete Form -->
+              <form action="/Budget/budget/delete/<%= b._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this budget?');">
+                <button type="submit" class="delete">Delete</button>
+              </form>
+            </td>
+          </tr>
+
+          <!-- Purchase Records -->
+          <% if (b.purchases && b.purchases.length > 0) { %>
+            <tr>
+              <td colspan="5">
+                <div class="purchase-header">Purchase Records for <%= b.department %></div>
+                <table class="purchase-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Procurement ID</th>
+                      <th>Inventory ID</th>
+                      <th>Items</th>
+                      <th>Total Cost</th>
+                      <th>Added By</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% b.purchases.forEach(p => { %>
+                      <tr>
+                        <td><%= new Date(p.date).toLocaleString() %></td>
+                        <td><%= p.procurementId %></td>
+                        <td><%= p.inventoryId %></td>
+                        <td>
+                          <ul>
+                            <% p.items.forEach(it => { %>
+                              <li><strong><%= it.itemName %></strong> — Qty: <%= it.quantity %>, Price: <%= it.pricePerUnit %></li>
+                            <% }); %>
+                          </ul>
+                        </td>
+                        <td><%= p.totalCost %></td>
+                        <td><%= p.addedBy %></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          <% } %>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="5">No budgets added yet</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+</html>

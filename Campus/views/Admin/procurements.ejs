@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Procurement Review</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--muted:#64748b;--accent:#1e40af}
+    body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:#0f172a;padding:20px}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 2px 8px rgba(2,6,23,0.06);margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left}
+    button{cursor:pointer;padding:8px 10px;border-radius:6px;border:0}
+    .primary{background:#bfdbfe}
+    .danger{background:#fecaca}
+    #flashMessageContainer{position:fixed;top:12px;right:12px;z-index:2000}
+    .muted{color:var(--muted);font-size:0.95rem}
+    .small{font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <h1>Procurement Review</h1>
+
+  <h2>Pending</h2>
+  <form id="acceptForm">
+    <div class="card">
+      <table>
+        <thead><tr><th>Select</th><th>File</th><th>Uploader</th><th>Uploaded</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (pending && pending.length) { %>
+            <% pending.forEach(function(p){ %>
+              <tr>
+                <td><input type="checkbox" name="acceptIds" value="<%= p._id %>"/></td>
+                <td><a href="/uploads/procurements/<%= p.filename %>" target="_blank" rel="noreferrer"><%= p.originalName %></a></td>
+                <td><%= p.uploader ? (p.uploader.name || p.uploader.email) : 'Unknown' %></td>
+                <td><%= new Date(p.uploadDate).toLocaleString() %></td>
+                <td><button type="button" data-id="<%= p._id %>" class="denyBtn danger">Deny</button></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="5" class="muted">No pending procurements</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+      <div style="margin-top:10px">
+        <button id="acceptBtn" type="button" class="primary">Accept selected (delete rest)</button>
+      </div>
+    </div>
+  </form>
+
+  <h2>Past</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>File</th><th>Uploader</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% (accepted || []).forEach(function(p){ %>
+          <tr>
+            <td><a href="/uploads/procurements/<%= p.filename %>" target="_blank" rel="noreferrer"><%= p.originalName %></a></td>
+            <td><%= p.uploader ? (p.uploader.name || p.uploader.email) : 'Unknown' %></td>
+            <td>Accepted <% if (p.itemsAdded) { %> - items added <% } %></td>
+            <td><%= new Date(p.uploadDate).toLocaleString() %></td>
+            <td><button data-id="<%= p._id %>" class="deleteBtn" type="button">Delete</button></td>
+          </tr>
+        <% }) %>
+
+        <% (denied || []).forEach(function(p){ %>
+          <tr>
+            <td><%= p.originalName %></td>
+            <td><%= p.uploader ? (p.uploader.name || p.uploader.email) : 'Unknown' %></td>
+            <td>Denied</td>
+            <td><%= new Date(p.uploadDate).toLocaleString() %></td>
+            <td><button data-id="<%= p._id %>" class="deleteBtn" type="button">Delete</button></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+  (function(){
+    function showFlash(type,msg){const c=document.getElementById('flashMessageContainer');const el=document.createElement('div');el.textContent=msg;el.style.padding='8px 12px';el.style.marginTop='6px';el.style.borderRadius='6px';el.style.boxShadow='0 1px 3px rgba(2,6,23,0.06)';if(type==='err'){el.style.background='#fecaca'}else{el.style.background='#bbf7d0'}c.appendChild(el);setTimeout(()=>el.remove(),4000)}
+
+    const acceptBtn=document.getElementById('acceptBtn');
+    if(acceptBtn){
+      acceptBtn.addEventListener('click',async function(){
+        const checked=Array.from(document.querySelectorAll('input[name="acceptIds"]:checked')).map(i=>i.value);
+        if(!checked.length)return showFlash('err','Select at least one to accept');
+        acceptBtn.disabled=true;
+        try{
+          const res=await fetch('/Procurement/accept',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acceptIds:checked})});
+          const data=await res.json();if(!res.ok)throw data;
+          showFlash('ok','Accepted selected; pending deleted');setTimeout(()=>location.reload(),700)
+        }catch(err){showFlash('err',(err&&err.error)||'Accept failed')}finally{acceptBtn.disabled=false}
+      })
+    }
+
+    document.body.addEventListener('click',async function(e){
+      if(e.target.matches('.denyBtn')){
+        const id=e.target.getAttribute('data-id');if(!confirm('Deny (delete) this procurement?'))return;
+        e.target.disabled=true;
+        try{const res=await fetch(`/Procurement/${id}/deny`,{method:'POST'});const data=await res.json();if(!res.ok)throw data;
+          showFlash('ok','Denied and deleted');setTimeout(()=>location.reload(),500)}
+        catch(err){showFlash('err',(err&&err.error)||'Delete failed');e.target.disabled=false}
+      }else if(e.target.matches('.deleteBtn')){
+        const id=e.target.getAttribute('data-id');if(!confirm('Delete this procurement?'))return;
+        e.target.disabled=true;
+        try{const res=await fetch(`/Procurement/${id}`,{method:'DELETE'});const data=await res.json();if(!res.ok)throw data;
+          showFlash('ok','Deleted');setTimeout(()=>location.reload(),500)}
+        catch(err){showFlash('err',(err&&err.error)||'Delete failed');e.target.disabled=false}
+      }
+    })
+  })();
+  </script>
+</body>
+</html>

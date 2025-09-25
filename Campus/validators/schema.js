@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, param } = require('express-validator');
 const { check } = require('express-validator');
 const { SUBJECTS } = require('../models/lessonPlan');
 
@@ -911,5 +911,69 @@ const updatePrincipalReviewValidator = [
   }
 ];
 
+const addInventoryValidators = [
+  body('procurementId')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Procurement id is required'),
 
-module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, addEventValidator, createCurriculumValidator, updateTeacherProgressValidator, updatePrincipalReviewValidator, };
+  // Validate array of items
+  body('items')
+    .isArray({ min: 1 })
+    .withMessage('At least one item is required'),
+
+  body('items.*.itemName')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Item name is required'),
+
+  body('items.*.unit')
+    .trim()
+    .escape()
+    .optional()
+    .isLength({ max: 50 })
+    .withMessage('Unit too long'),
+
+  body('items.*.quantity')
+    .notEmpty()
+    .withMessage('Quantity required')
+    .isInt({ min: 0 })
+    .withMessage('Quantity must be an integer >= 0'),
+
+  body('items.*.pricePerUnit')
+    .notEmpty()
+    .withMessage('Price required')
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a number >= 0'),
+];
+
+const removeItemValidators = [
+  param('inventoryId')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Inventory id is required'),
+
+  param('itemId')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Item id is required')
+];
+
+function uploadFilePresent(req, res, next) {
+  if (!req.file) {
+    return res.status(400).json({ errors: [{ msg: 'File is required' }] });
+  }
+  next();
+}
+
+const budgetValidator = [
+    body('department').notEmpty().trim().escape(),
+    body('allocatedAmount').isNumeric().withMessage('Must be a number'),
+  ]
+
+
+module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, addEventValidator, createCurriculumValidator, updateTeacherProgressValidator, updatePrincipalReviewValidator, addInventoryValidators, removeItemValidators, uploadFilePresent, budgetValidator };

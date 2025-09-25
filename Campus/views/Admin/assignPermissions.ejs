@@ -270,6 +270,18 @@
                             Manage Curriculum
                         </label>
                     </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="manage_inventory" <%= permissions.includes('manage_inventory') ? 'checked' : '' %> />
+                            Manage Inventory
+                        </label>
+                    </div>
+                    <div class="permission-item">
+                        <label>
+                            <input type="checkbox" name="permissions[]" value="create_procurement" <%= permissions.includes('create_procurement') ? 'checked' : '' %> />
+                            Create Procurement
+                        </label>
+                    </div>
                     
                     </div>
             </div>
