@@ -473,6 +473,44 @@ button:active {
                     } catch (err) {
                     showFlashMessage('error', 'An unknown error occurred.');
                     }
+                    try {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                        console.error('No token found');
+                        return;
+                        }
+                        // console.log('Token:', token);
+                        // Decode JWT to get staffId
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const staffId = payload._id;
+                        
+                        const res = await fetch('/Manage/get-permissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ staffId })
+                        });
+
+                        if (!res.ok) {
+                        handleServerError(res);
+                        return;
+                        }
+
+                        const data = await res.json();
+                        const permissions = data.permissions || [];
+                        // console.log('Permissions:', permissions);
+                        // Hide all menu items not in permissions
+                        
+                        if (!permissions.includes('manage_curriculum_teacher')) {
+                            showFlashMessage('error', 'You do not have permission to access this page.');
+                            setTimeout(() => {
+                                window.location.href = '/Staff/dashboard';
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Error fetching permissions:', err);
+                    }
              };  
     const teacherId = "<%= teacherId %>"; // injected from controller
 

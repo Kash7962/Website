@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= pageTitle %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Embedded CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2c3e50;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    section {
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 95%;
+      margin: 1.5rem auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #34495e;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+    .no-data {
+      text-align: center;
+      padding: 2rem;
+      font-size: 1.1rem;
+      color: #777;
+    }
+    tfoot td {
+      font-weight: bold;
+      background: #ecf0f1;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Inventory Records</h1>
+  </header>
+
+  <% if (inventory && inventory.length > 0) { %>
+    <% inventory.forEach(inv => { 
+         let totalAmount = 0; 
+         if (inv.items && inv.items.length > 0) {
+           inv.items.forEach(it => { totalAmount += (it.quantity * it.pricePerUnit); });
+         }
+    %>
+      <section>
+        <h2 style="text-align:center; margin-top:1rem;">
+          Procurement: <%= inv.procurementId ? inv.procurementId.originalName : 'N/A' %> 
+          | Uploaded by: <%= inv.uploader ? inv.uploader.name : 'Unknown' %>
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Price per Unit</th>
+              <th>Last Updated By</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (inv.items && inv.items.length > 0) { %>
+              <% inv.items.forEach(item => { %>
+                <tr>
+                  <td><%= item.itemName %></td>
+                  <td><%= item.quantity %></td>
+                  <td><%= item.unit || '-' %></td>
+                  <td><%= item.pricePerUnit %></td>
+                  <td><%= item.lastUpdatedBy ? item.lastUpdatedBy.name : 'N/A' %></td>
+                  <td><%= (item.quantity * item.pricePerUnit).toFixed(2) %></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="6" class="no-data">No items recorded</td>
+              </tr>
+            <% } %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5">Total Amount</td>
+              <td><%= totalAmount.toFixed(2) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+    <% }) %>
+  <% } else { %>
+    <div class="no-data">No inventory records found.</div>
+  <% } %>
+
+  <!-- Embedded Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Admin Inventory View Loaded");
+    });
+  </script>
+</body>
+</html>

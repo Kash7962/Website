@@ -2,7 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const Procurement = require('../models/procurement');
 const { UPLOAD_DIR } = require('../config/multer_procurement');
-
+const ActivityLog = require('../models/activityLog')
+const { Staff } = require('../models/staff')
+const { Admin } = require('../models/admin')
 /** safely delete file on disk if present */
 function deleteProcurementFile(proc) {
   if (!proc || !proc.filename) return;
@@ -14,13 +16,13 @@ function deleteProcurementFile(proc) {
 /** STAFF: show their own submissions */
 exports.getStaffProcurementPage = async (req, res) => {
   try {
-    const myProcurements = await Procurement.find({ uploader: req.user._id })
+    const myProcurements = await Procurement.find()
       .sort({ uploadDate: -1 })
       .lean();
     return res.render('Staff/procurement', { myProcurements, user: req.user });
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Server error');
+    return res.status(500).render('error/error',{ message:'Server error'});
   }
 };
 
@@ -43,7 +45,7 @@ exports.getAdminProcurementPage = async (req, res) => {
     return res.render('Admin/procurements', { pending, accepted, denied, user: req.user });
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Server error');
+    return res.status(500).render('error/error',{ message:'Server error'});
   }
 };
 
@@ -58,10 +60,24 @@ exports.postUploadProcurement = async (req, res) => {
       status: 'pending'
     });
     await doc.save();
+     const user = await Staff.findById(req.user._id);
+                    await ActivityLog.create({
+                      userId : user._id,
+                      userModel: 'Staff',
+                      name: user.name,
+                      email: user.email,
+                      action: `New kitchen procurement posted : ${file.filename}`,
+                      // targetModel: 'Admin',
+                      // targetId: newAdmin._id,
+                      // targetname: newAdmin.name,
+                      // targetEmail: newAdmin.email ,
+                      // registrationNumber: student.registration_number,
+                      // classAssigned: student.classAssigned
+                    });
     return res.json({ ok: true, msg: 'File uploaded' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };
 
@@ -88,11 +104,24 @@ exports.postAcceptProcurements = async (req, res) => {
       deleteProcurementFile(p);
       await p.deleteOne();
     }
-
+     const user = await Admin.findById(req.user._id);
+                    await ActivityLog.create({
+                      userId : user._id,
+                      userModel: 'Admin',
+                      name: user.name,
+                      email: user.email,
+                      action: `Procurement accepted`,
+                      // targetModel: 'Admin',
+                      // targetId: newAdmin._id,
+                      // targetname: newAdmin.name,
+                      // targetEmail: newAdmin.email ,
+                      // registrationNumber: student.registration_number,
+                      // classAssigned: student.classAssigned
+                    });
     return res.json({ ok: true, accepted: acceptIds.length });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };
 
@@ -101,13 +130,28 @@ exports.postDenyProcurement = async (req, res) => {
   try {
     const id = req.params.id;
     const p = await Procurement.findById(id);
-    if (!p) return res.status(404).json({ error: 'Not found' });
+    if (!p) return res.status(404).render('error/error',{ message: 'Not found' });
+    
+     const user = await Admin.findById(req.user._id);
+                    await ActivityLog.create({
+                      userId : user._id,
+                      userModel: 'Admin',
+                      name: user.name,
+                      email: user.email,
+                      action: `Procurement denied : ${p.filename}`,
+                      // targetModel: 'Admin',
+                      // targetId: newAdmin._id,
+                      // targetname: newAdmin.name,
+                      // targetEmail: newAdmin.email ,
+                      // registrationNumber: student.registration_number,
+                      // classAssigned: student.classAssigned
+                    });
     deleteProcurementFile(p);
     await p.deleteOne();
     return res.json({ ok: true });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };
 
@@ -116,17 +160,31 @@ exports.deleteProcurement = async (req, res) => {
   try {
     const id = req.params.id;
     const p = await Procurement.findById(id);
-    if (!p) return res.status(404).json({ error: 'Not found' });
-
-    if (req.user.role !== 'admin' && p.uploader.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Forbidden' });
+    if (!p) return res.status(404).render('error/error',{ message: 'Not found' });
+    // console.log(req.user.role);
+    if (req.user.role !== 'Super Admin' && req.user.role !== 'Admin') {
+      return res.status(403).render('error/error',{ message: 'Forbidden' });
     }
 
+     const user = await Admin.findById(req.user._id);
+                    await ActivityLog.create({
+                      userId : user._id,
+                      userModel: 'Admin',
+                      name: user.name,
+                      email: user.email,
+                      action: `Procurement deleted : ${p.filename}`,
+                      // targetModel: 'Admin',
+                      // targetId: newAdmin._id,
+                      // targetname: newAdmin.name,
+                      // targetEmail: newAdmin.email ,
+                      // registrationNumber: student.registration_number,
+                      // classAssigned: student.classAssigned
+                    });
     deleteProcurementFile(p);
     await p.deleteOne();
     return res.json({ ok: true });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };

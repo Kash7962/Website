@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 const Budget = require('../models/budget');
-
+const ActivityLog = require('../models/activityLog')
+const { Staff } = require('../models/staff')
+const { Admin } = require('../models/admin')
 /**
  * GET: Render budgets page
  */
@@ -10,7 +12,7 @@ exports.getBudgetPage = async (req, res) => {
     res.render('Admin/budget', { budgets });
   } catch (err) {
     console.error('getBudgetPage error:', err);
-    res.status(500).send('Server Error');
+    res.status(500).render('error/error',{ message: 'Server Error'});
   }
 };
 
@@ -21,14 +23,14 @@ exports.postBudget = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).render('error/error',{ message: errors.array()[0].msg });
     }
 
     const { department, allocatedAmount } = req.body;
 
     const existingBudget = await Budget.findOne({ department: department.trim() });
     if (existingBudget) {
-      return res.status(400).send('Budget already exists for this department.');
+      return res.status(400).render('error/error',{ message:'Budget already exists for this department.'});
     }
 
     const newBudget = new Budget({
@@ -39,10 +41,25 @@ exports.postBudget = async (req, res) => {
     });
 
     await newBudget.save();
+
+     const user = await Admin.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Admin',
+                  name: user.name,
+                  email: user.email,
+                  action: `New kitchen budget created`,
+                  // targetModel: 'Admin',
+                  // targetId: newAdmin._id,
+                  // targetname: newAdmin.name,
+                  // targetEmail: newAdmin.email ,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     res.redirect('/Budget/budget');
   } catch (err) {
     console.error('postBudget error:', err);
-    res.status(500).send('Server Error');
+    res.status(500).render('error/error',{ message:'Server Error'});
   }
 };
 
@@ -59,7 +76,7 @@ exports.updateBudget = async (req, res) => {
       _id: { $ne: id }
     });
     if (duplicate) {
-      return res.status(400).send('Another budget already exists for this department.');
+      return res.status(400).render('error/error',{ message:'Another budget already exists for this department.'});
     }
 
     await Budget.findByIdAndUpdate(
@@ -70,11 +87,24 @@ exports.updateBudget = async (req, res) => {
       },
       { new: true }
     );
-
+     const user = await Admin.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Admin',
+                  name: user.name,
+                  email: user.email,
+                  action: `Kitchen budget updated`,
+                  // targetModel: 'Admin',
+                  // targetId: newAdmin._id,
+                  // targetname: newAdmin.name,
+                  // targetEmail: newAdmin.email ,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     res.redirect('/Budget/budget');
   } catch (err) {
     console.error('updateBudget error:', err);
-    res.status(500).send('Server Error');
+    res.status(500).render('error/error',{ message:'Server Error'});
   }
 };
 
@@ -85,10 +115,24 @@ exports.deleteBudget = async (req, res) => {
   try {
     const { id } = req.params;
     await Budget.findByIdAndDelete(id);
+     const user = await Admin.findById(req.user._id);
+                await ActivityLog.create({
+                  userId : user._id,
+                  userModel: 'Admin',
+                  name: user.name,
+                  email: user.email,
+                  action: `Kitchen budget deleted`,
+                  // targetModel: 'Admin',
+                  // targetId: newAdmin._id,
+                  // targetname: newAdmin.name,
+                  // targetEmail: newAdmin.email ,
+                  // registrationNumber: student.registration_number,
+                  // classAssigned: student.classAssigned
+                });
     res.redirect('/Budget/budget');
   } catch (err) {
     console.error('deleteBudget error:', err);
-    res.status(500).send('Server Error');
+    res.status(500).render('error/error',{ message:'Server Error'});
   }
 };
 
@@ -102,7 +146,7 @@ exports.addPurchaseToBudget = async (department, purchaseData) => {
     const budget = await Budget.findOne({ department });
     if (!budget) {
       console.error(`Budget not found for department: ${department}`);
-      return { ok: false, error: 'Budget not found' };
+      return res.status(404).render('error/error',{ message:'Budget not found for department.'});
     }
 
     if (typeof budget.spentAmount !== 'number') budget.spentAmount = 0;
@@ -119,9 +163,10 @@ exports.addPurchaseToBudget = async (department, purchaseData) => {
     });
 
     await budget.save();
+    
     return { ok: true, budget };
   } catch (err) {
     console.error('addPurchaseToBudget error:', err);
-    return { ok: false, error: err.message };
+    return res.status(500).render('error/error',{ message:'Server Error'});
   }
 };

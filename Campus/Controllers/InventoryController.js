@@ -4,6 +4,7 @@ const Procurement = require('../models/procurement');
 const { Admin } = require('../models/admin');
 const { Staff } = require('../models/staff');
 const Budget = require('../models/budget'); // ✅ import budget model
+const InventoryRecord = require('../models/inventoryRecord');
 
 /** Escape regex special chars for case-insensitive exact match */
 function escapeRegex(str) {
@@ -67,10 +68,29 @@ exports.getInventoryPage = async (req, res) => {
 
   } catch (err) {
     console.error('getInventoryPage error:', err);
-    return res.status(500).send('Server error');
+    return res.status(500).render('error/error', { message: 'Server error' });
   }
 };
 
+exports.getAdminInventory = async (req, res) => {
+  try {
+    const inventoryDocs = await InventoryItem.find()
+      .populate('procurementId', 'originalName')
+      .populate('uploader', 'name')
+      .populate('items.lastUpdatedBy', 'name')
+      .lean();
+
+    res.render('Admin/adminInventory', {
+      pageTitle: 'Admin Inventory View',
+      inventory: inventoryDocs
+    });
+  } catch (err) {
+    console.error('Error fetching inventory:', err);
+    res.status(500).render('error/error', {
+      message: 'Failed to load inventory records.'
+    });
+  }
+};
 
 /**
  * Add multiple items for a procurement
@@ -79,35 +99,26 @@ exports.getInventoryPage = async (req, res) => {
 exports.postAddItems = async (req, res) => {
   try {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    if (!errors.isEmpty()) return res.status(400).render('error/error', { message: errors.array()[0].msg });
 
     const { procurementId, items } = req.body;
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'No items provided' });
+      return res.status(400).render('error/error', { message: 'No items provided' });
     }
 
     const procurement = await Procurement.findById(procurementId);
-    if (!procurement) {
-      return res.status(400).json({ error: 'Procurement not found' });
-    }
-    if (procurement.status !== 'accepted') {
-      return res.status(400).json({ error: 'Procurement not accepted' });
-    }
+    if (!procurement) return res.status(400).json({ error: 'Procurement not found' });
+    if (procurement.status !== 'accepted') return res.status(400).render('error/error',{ message: 'Procurement not accepted' });
     if (procurement.uploader.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Not allowed to add items for this procurement' });
+      return res.status(403).render('error/error',{ message: 'Not allowed to add items for this procurement' });
     }
-    if (procurement.itemsAdded) {
-      return res.status(400).json({ error: 'Items already added from this procurement' });
-    }
+    if (procurement.itemsAdded) return res.status(400).render('error/error',{ message: 'Items already added from this procurement' });
 
     // Get Kitchen budget
     const budget = await Budget.findOne({ department: 'Kitchen' });
-    if (!budget) {
-      return res.status(400).json({ error: "Kitchen budget not found" });
-    }
+    if (!budget) return res.status(400).render('error/error',{ message: "Kitchen budget not found" });
 
+    // NOTE: your original code used findOne() (global inventory doc). Keeping same behavior.
     let inventory = await InventoryItem.findOne();
     if (!inventory) {
       inventory = new InventoryItem({
@@ -118,26 +129,25 @@ exports.postAddItems = async (req, res) => {
     }
 
     let totalSpentNow = 0;
-
+    // 1) compute total
     for (const item of items) {
       const { itemName, quantity, pricePerUnit } = item;
       if (!itemName?.trim() || quantity == null || pricePerUnit == null) continue;
-
       const q = Number(quantity);
       const p = Number(pricePerUnit);
-
       totalSpentNow += q * p;
     }
 
-    // ✅ Check if budget allows this purchase
-    const remainingBudget = budget.allocatedAmount - budget.spentAmount;
+    const remainingBudget = (budget.allocatedAmount || 0) - (budget.spentAmount || 0);
     if (totalSpentNow > remainingBudget) {
-      return res.status(400).json({
-        error: `Budget exceeded. Remaining budget is ${remainingBudget}`
+      return res.status(400).render('error/error',{ message: `Budget exceeded. Remaining budget is ${remainingBudget}`
       });
     }
 
-    // Add/update inventory items
+    // Prepare record items to save to InventoryRecord
+    const recordItems = [];
+
+    // 2) Add/update inventory items
     for (const item of items) {
       const { itemName, quantity, pricePerUnit, unit } = item;
       if (!itemName?.trim() || quantity == null || pricePerUnit == null) continue;
@@ -149,26 +159,52 @@ exports.postAddItems = async (req, res) => {
       const p = Number(pricePerUnit);
 
       if (existingItem) {
-        existingItem.quantity += q;
+        const prevQty = Number(existingItem.quantity || 0);
+        existingItem.quantity = prevQty + q;
         existingItem.pricePerUnit = p;
         existingItem.lastUpdatedBy = req.user._id;
+
+        recordItems.push({
+          itemId: existingItem._id,
+          itemName: existingItem.itemName,
+          quantity: q,
+          unit: unit?.trim() || existingItem.unit || '',
+          pricePerUnit: p,
+          total: q * p,
+          prevQuantity: prevQty,
+          newQuantity: existingItem.quantity
+        });
       } else {
-        inventory.items.push({
+        const newItem = {
           itemName: itemName.trim(),
           quantity: q,
-          unit: unit.trim(),
+          unit: unit?.trim() || '',
           pricePerUnit: p,
           lastUpdatedBy: req.user._id
+        };
+        inventory.items.push(newItem);
+
+        // the new item will have an _id after save; but we can still store itemName and quantities
+        recordItems.push({
+          itemId: null, // will remain null; you can backfill later if needed
+          itemName: itemName.trim(),
+          quantity: q,
+          unit: unit?.trim() || '',
+          pricePerUnit: p,
+          total: q * p,
+          prevQuantity: 0,
+          newQuantity: q
         });
       }
     }
 
     await inventory.save();
 
+    // mark procurement done
     procurement.itemsAdded = true;
     await procurement.save();
 
-    // ✅ Update budget
+    // Update budget
     budget.spentAmount = (budget.spentAmount || 0) + totalSpentNow;
     budget.transactions = budget.transactions || [];
     budget.transactions.push({
@@ -177,7 +213,7 @@ exports.postAddItems = async (req, res) => {
       items: items.map(i => ({
         itemName: i.itemName.trim(),
         quantity: Number(i.quantity),
-        unit: i.unit.trim(),
+        unit: (i.unit || '').trim(),
         pricePerUnit: Number(i.pricePerUnit),
         total: Number(i.quantity) * Number(i.pricePerUnit)
       })),
@@ -187,41 +223,67 @@ exports.postAddItems = async (req, res) => {
     });
     await budget.save();
 
+    // Create InventoryRecord
+    try {
+      await InventoryRecord.create({
+        inventoryId: inventory._id,
+        procurementId,
+        action: 'added',
+        items: recordItems,
+        totalCost: totalSpentNow,
+        performedBy: req.user._id,
+        note: `Added from procurement ${procurementId}`
+      });
+    } catch (recErr) {
+      // Log but don't block final response; record creation failure shouldn't roll back everything here
+      console.error('Failed saving InventoryRecord for add:', recErr);
+    }
+
     return res.json({ ok: true, msg: 'Items added successfully & budget updated' });
   } catch (err) {
     console.error('postAddItems Error:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };
 
 
-
-/**
- * Consume inventory item quantity
- */
 exports.postConsumeItem = async (req, res) => {
   try {
     const { itemId } = req.params;
     const { quantity } = req.body;
 
     if (!quantity || quantity <= 0)
-      return res.status(400).json({ error: 'Quantity must be greater than zero' });
+      return res.status(400).render('error/error',{ message: 'Quantity must be greater than zero' });
 
     const inventoryDoc = await InventoryItem.findOne({ "items._id": itemId });
-    if (!inventoryDoc) return res.status(404).json({ error: 'Item not found' });
+    if (!inventoryDoc) return res.status(404).render('error/error',{ message: 'Item not found' });
 
     const item = inventoryDoc.items.id(itemId);
-    if (!item) return res.status(404).json({ error: 'Item not found' });
+    if (!item) return res.status(404).render('error/error',{ message: 'Item not found' });
 
     if (req.user.role !== 'admin' && item.lastUpdatedBy?.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).render('error/error',{ message: 'Forbidden' });
     }
 
     if (Number(quantity) > item.quantity)
-      return res.status(400).json({ error: 'Cannot consume more than available quantity' });
+      return res.status(400).render('error/error',{ message: 'Cannot consume more than available quantity' });
 
-    item.quantity -= Number(quantity);
+    const prevQty = Number(item.quantity || 0);
+    item.quantity = prevQty - Number(quantity);
     item.lastUpdatedBy = req.user._id;
+
+    // For record
+    const consumedQty = Number(quantity);
+    const recordItem = {
+      itemId: item._id,
+      itemName: item.itemName,
+      quantity: consumedQty,
+      unit: item.unit || '',
+      pricePerUnit: item.pricePerUnit || 0,
+      total: consumedQty * (item.pricePerUnit || 0),
+      prevQuantity: prevQty,
+      newQuantity: Math.max(0, item.quantity)
+    };
 
     if (item.quantity <= 0) {
       item.deleteOne();
@@ -229,9 +291,24 @@ exports.postConsumeItem = async (req, res) => {
 
     await inventoryDoc.save();
 
+    // Create InventoryRecord for consumption
+    try {
+      await InventoryRecord.create({
+        inventoryId: inventoryDoc._id,
+        action: 'consumed',
+        items: [recordItem],
+        totalCost: recordItem.total || 0,
+        performedBy: req.user._id,
+        note: `Consumed ${consumedQty} of ${item.itemName}`
+      });
+    } catch (recErr) {
+      console.error('Failed saving InventoryRecord for consume:', recErr);
+      // don't block final response
+    }
+
     return res.json({ ok: true, msg: 'Inventory updated' });
   } catch (err) {
     console.error('postConsumeItem error:', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).render('error/error',{ message: 'Server error' });
   }
 };

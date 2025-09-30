@@ -1,110 +1,357 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
   <title>Admin Budget Management</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-    form { display: inline; margin: 5px 0; }
-    input, button, select { padding: 5px; margin-right: 5px; }
-    button { cursor: pointer; }
-    button.delete { color: red; }
-    .budget-table { margin-top: 20px; }
-    .purchase-table { margin-top: 10px; border-collapse: collapse; width: 100%; }
-    .purchase-table th, .purchase-table td { padding: 8px; border: 1px solid #ddd; font-size: 0.9em; }
-    .purchase-header { margin-top: 20px; font-weight: bold; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --muted: #64748b;
+      --accent: #1e40af;
+      --accent-dark: #1e3a8a;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      padding: 24px;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2 {
+        margin: 0 0 16px 0;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--accent-dark), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    h2 {
+        font-size: 1.25rem;
+    }
+    
+    form {
+        margin: 0;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #fcfdfe;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .budget-table > tbody > tr:nth-child(odd):not(:has(.purchase-table)) {
+        background-color: #fcfdfe;
+    }
+     .budget-table > tbody > tr:hover:not(:has(.purchase-table)) {
+        background-color: #f7fbff;
+    }
+
+    input, select, button {
+      padding: 8px 12px;
+      margin-right: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+    input {
+        background-color: #fcfdfe;
+    }
+    input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+        background-color: #fff;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      font-weight: 600;
+      color: #fff;
+      background-color: var(--accent);
+      transition: all 0.2s ease;
+    }
+    button:hover {
+        transform: translateY(-1px);
+    }
+    button.delete {
+      background-color: var(--danger);
+    }
+    button.delete:hover {
+        background-color: var(--danger-dark);
+    }
+
+    .purchase-table {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .purchase-table th, .purchase-table td {
+      font-size: 0.9em;
+    }
+    .purchase-header {
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+    .purchase-table ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    td[colspan="5"] {
+        background-color: #f7fbff;
+        padding: 20px;
+    }
+    .budget-table > tbody > tr:has(.purchase-table) {
+        box-shadow: inset 0 1px 0 var(--border), inset 0 -1px 0 var(--border);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+        display: flex; align-items: center; justify-content: center; z-index: 3000;
+        opacity: 0; animation: fadeIn 0.2s ease forwards;
+    }
+    .modal-box {
+        background: var(--card); padding: 24px; border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px;
+        text-align: center; transform: scale(0.95); animation: scaleIn 0.2s ease-out forwards;
+    }
+    .modal-box h3 { margin: 0 0 8px 0; color: var(--text-primary); }
+    .modal-box p { color: var(--muted); line-height: 1.6; margin: 0; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    .modal-actions .secondary { background-color: #f1f5f9; color: var(--text-secondary); }
+    
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes scaleIn { to { transform: scale(1); } }
   </style>
 </head>
 <body>
   <h1>Budget Management</h1>
 
-  <!-- Add Budget Form -->
-  <form action="/Budget/budget" method="POST">
-    <label>Department:</label>
-    <input type="text" name="department" required readonly value="Kitchen">
-    <label>Allocated Amount:</label>
-    <input type="number" name="allocatedAmount" required>
-    <button type="submit">Set Budget</button>
-  </form>
+  <div class="card">
+    <form action="/Budget/budget" method="POST">
+      <label>Department:</label>
+      <input type="text" name="department" required readonly value="Kitchen">
+      <label>Allocated Amount:</label>
+      <input type="number" name="allocatedAmount" required>
+      <button type="submit">Set Budget</button>
+    </form>
+  </div>
 
-  <h2>Existing Budgets</h2>
-  <table class="budget-table">
-    <thead>
-      <tr>
-        <th>Department</th>
-        <th>Allocated</th>
-        <th>Spent</th>
-        <th>Remaining</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (budgets.length > 0) { %>
-        <% budgets.forEach(b => { %>
-          <tr>
-            <td><%= b.department %></td>
-            <td><%= b.allocatedAmount %></td>
-            <td><%= b.spentAmount || 0 %></td>
-            <td><%= b.allocatedAmount - (b.spentAmount || 0) %></td>
-            <td>
-              <!-- Edit Form -->
-              <form action="/Budget/budget/edit/<%= b._id %>" method="POST">
-                <input type="text" name="department" value="<%= b.department %>" required>
-                <input type="number" name="allocatedAmount" value="<%= b.allocatedAmount %>" required>
-                <button type="submit">Update</button>
-              </form>
-
-              <!-- Delete Form -->
-              <form action="/Budget/budget/delete/<%= b._id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this budget?');">
-                <button type="submit" class="delete">Delete</button>
-              </form>
-            </td>
-          </tr>
-
-          <!-- Purchase Records -->
-          <% if (b.purchases && b.purchases.length > 0) { %>
+  <div class="card">
+      <h2>Existing Budgets</h2>
+      <div style="overflow-x:auto;">
+        <table class="budget-table">
+          <thead>
             <tr>
-              <td colspan="5">
-                <div class="purchase-header">Purchase Records for <%= b.department %></div>
-                <table class="purchase-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Procurement ID</th>
-                      <th>Inventory ID</th>
-                      <th>Items</th>
-                      <th>Total Cost</th>
-                      <th>Added By</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% b.purchases.forEach(p => { %>
-                      <tr>
-                        <td><%= new Date(p.date).toLocaleString() %></td>
-                        <td><%= p.procurementId %></td>
-                        <td><%= p.inventoryId %></td>
-                        <td>
-                          <ul>
-                            <% p.items.forEach(it => { %>
-                              <li><strong><%= it.itemName %></strong> — Qty: <%= it.quantity %>, Price: <%= it.pricePerUnit %></li>
-                            <% }); %>
-                          </ul>
-                        </td>
-                        <td><%= p.totalCost %></td>
-                        <td><%= p.addedBy %></td>
-                      </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
-              </td>
+              <th>Department</th>
+              <th>Allocated</th>
+              <th>Spent</th>
+              <th>Remaining</th>
+              <th>Actions</th>
             </tr>
-          <% } %>
-        <% }); %>
-      <% } else { %>
-        <tr><td colspan="5">No budgets added yet</td></tr>
-      <% } %>
-    </tbody>
-  </table>
+          </thead>
+          <tbody>
+            <% if (budgets.length > 0) { %>
+              <% budgets.forEach(b => { %>
+                <tr>
+                  <td><%= b.department %></td>
+                  <td>₹<%= b.allocatedAmount.toLocaleString('en-IN') %></td>
+                  <td>₹<%= (b.spentAmount || 0).toLocaleString('en-IN') %></td>
+                  <td>₹<%= (b.allocatedAmount - (b.spentAmount || 0)).toLocaleString('en-IN') %></td>
+                  <td>
+                    <div style="display:flex; flex-wrap: wrap; gap: 8px;">
+                        <form action="/Budget/budget/edit/<%= b._id %>" method="POST" style="display:flex; align-items:center; gap: 8px;">
+                          <input type="hidden" name="department" value="<%= b.department %>" required>
+                          <input type="number" name="allocatedAmount" value="<%= b.allocatedAmount %>" required style="width: 100px;">
+                          <button type="submit">Update</button>
+                        </form>
+
+                        <form action="/Budget/budget/delete/<%= b._id %>" method="POST" class="delete-form">
+                          <button type="submit" class="delete">Delete</button>
+                        </form>
+                    </div>
+                  </td>
+                </tr>
+
+                <% if (b.purchases && b.purchases.length > 0) { %>
+                  <tr>
+                    <td colspan="5">
+                      <div class="purchase-header">Purchase Records for <%= b.department %></div>
+                      <table class="purchase-table">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Procurement ID</th>
+                            <th>Items</th>
+                            <th>Total Cost</th>
+                            <th>Added By</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% b.purchases.forEach(p => { %>
+                            <tr>
+                              <td><%= new Date(p.date).toLocaleString() %></td>
+                              <td><%= p.procurementId %></td>
+                              <td>
+                                <ul>
+                                  <% p.items.forEach(it => { %>
+                                    <li><strong><%= it.itemName %>:</strong> <%= it.quantity %> <%= it.unit %> @ ₹<%= it.pricePerUnit %></li>
+                                  <% }); %>
+                                </ul>
+                              </td>
+                              <td>₹<%= p.totalCost.toLocaleString('en-IN') %></td>
+                              <td><%= p.addedBy %></td>
+                            </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                <% } %>
+              <% }); %>
+            <% } else { %>
+              <tr><td colspan="5" style="text-align:center; padding: 24px;">No budgets added yet</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+  </div>
+
+  <script>
+
+    window.onload = async () => {
+        const token = localStorage.getItem('token') ;
+        try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+    }
+    function showConfirmModal(message, title = 'Are you sure?', confirmText = 'OK', confirmClass = 'danger') {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-box">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="modal-actions">
+                        <button id="modalCancel" class="secondary">Cancel</button>
+                        <button id="modalConfirm" class="${confirmClass}">${confirmText}</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+            const confirmBtn = document.getElementById('modalConfirm');
+            const cancelBtn = document.getElementById('modalCancel');
+            const closeModal = (result) => {
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
+                resolve(result);
+            };
+            confirmBtn.onclick = () => closeModal(true);
+            cancelBtn.onclick = () => closeModal(false);
+            overlay.onclick = (e) => { if (e.target === overlay) closeModal(false); };
+        });
+    }
+
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const confirmed = await showConfirmModal(
+                'This action cannot be undone.', 
+                'Delete this budget?', 
+                'Delete', 
+                'danger'
+            );
+            if (confirmed) {
+                this.submit();
+            }
+        });
+    });
+  </script>
+
 </body>
 </html>

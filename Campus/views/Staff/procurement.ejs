@@ -5,17 +5,330 @@
   <title>My Procurements</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    :root{--bg:#f8fafc;--card:#fff;--muted:#64748b;--accent:#1e40af}
-    body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:#0f172a;padding:20px}
-    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 2px 8px rgba(2,6,23,0.06);margin-bottom:14px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left}
-    button{cursor:pointer;padding:8px 10px;border-radius:6px;border:0}
-    .primary{background:#bfdbfe}
-    .danger{background:#fecaca}
-    #flashMessageContainer{position:fixed;top:12px;right:12px;z-index:2000}
-    .muted{color:var(--muted);font-size:0.95rem}
-    .small{font-size:0.9rem}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --muted: #64748b;
+      --accent: #1e40af;
+      --accent-dark: #1e3a8a;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+      --success: #16a34a;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      padding: 24px;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    h1, h2 {
+        margin: 0 0 16px 0;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--accent-dark), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #fcfdfe;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr:hover {
+        background-color: #f7fbff;
+    }
+    
+    a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+    }
+    
+    label {
+        font-weight: 500;
+    }
+    
+    /* Modern file input styling */
+    input[type="file"] {
+        font-family: 'Inter', sans-serif;
+    }
+    input[type="file"]::file-selector-button {
+        background: #eef2ff;
+        color: var(--accent);
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.2s ease;
+        margin-right: 16px;
+    }
+    input[type="file"]::file-selector-button:hover {
+        background: #e0e7ff;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 0;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+        transform: translateY(-1px);
+    }
+    button:active {
+        transform: translateY(0);
+    }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .primary:hover {
+        background: var(--accent-dark);
+    }
+    
+    .secondary {
+        background-color: #f1f5f9;
+        color: var(--text-secondary);
+    }
+    .secondary:hover {
+        background-color: #e2e8f0;
+    }
+
+    .danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .danger:hover {
+        background: var(--danger-dark);
+    }
+    
+    .deleteBtn {
+        background: var(--muted);
+        color: #fff;
+    }
+    .deleteBtn:hover {
+        background: var(--text-secondary);
+    }
+
+      #errorPopupContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #errorPopupContainer * {
+      box-sizing: border-box;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #closeErrorPopup:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+      #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    
+    /* === MODAL STYLES === */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+        opacity: 0;
+        animation: fadeIn 0.2s ease forwards;
+    }
+    .modal-box {
+        background: var(--card);
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        transform: scale(0.95);
+        animation: scaleIn 0.2s ease-out forwards;
+    }
+    .modal-box h3 { margin: 0 0 8px 0; color: var(--text-primary); }
+    .modal-box p { color: var(--muted); line-height: 1.6; margin: 0; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes scaleIn { 100% { transform: scale(1); } }
   </style>
 </head>
 <body>
@@ -25,75 +338,259 @@
 
   <div class="card">
     <form id="uploadForm">
-      <label class="small muted">Upload PDF or image</label>
+      <label class="small muted">Upload new procurement file (PDF or Image)</label>
       <div style="height:8px"></div>
-      <input id="fileInput" type="file" name="file" accept="application/pdf,image/*" />
-      <div style="height:8px"></div>
-      <button id="uploadBtn" type="button" class="primary">Upload</button>
+      <div style="display:flex; align-items:center; gap: 8px;">
+        <input id="fileInput" type="file" name="file" accept="application/pdf,image/*" />
+        <button id="uploadBtn" type="button" class="primary">Upload</button>
+      </div>
     </form>
   </div>
 
   <h2>My Submissions</h2>
   <div class="card">
-    <table>
-      <thead><tr><th>File</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
-      <tbody>
-        <% if (myProcurements && myProcurements.length) { %>
-          <% myProcurements.forEach(function(p){ %>
-            <tr>
-              <td>
-                <% if (p.status === 'pending') { %>
-                  <a href="/uploads/procurements/<%= p.filename %>" target="_blank" rel="noreferrer"><%= p.originalName %></a>
-                <% } else { %>
-                  <%= p.originalName %>
-                <% } %>
-              </td>
-              <td><%= p.status %></td>
-              <td><%= new Date(p.uploadDate).toLocaleString() %></td>
-              <td>
-                <% if (p.status === 'pending') { %>
-                  <button type="button" data-id="<%= p._id %>" class="deleteBtn danger">Delete</button>
-                <% } else { %>
-                  <button type="button" data-id="<%= p._id %>" class="deleteBtn">Delete</button>
-                <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } else { %>
-          <tr><td colspan="4" class="muted">No procurements yet</td></tr>
-        <% } %>
-      </tbody>
-    </table>
+    <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>File</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
+          <tbody>
+            <% if (myProcurements && myProcurements.length) { %>
+              <% myProcurements.forEach(function(p){ %>
+                <tr>
+                  <td>
+                    <% if (p.status === 'pending') { %>
+                      <a href="/uploads/procurements/<%= p.filename %>" target="_blank" rel="noreferrer"><%= p.originalName %></a>
+                    <% } else { %>
+                      <%= p.originalName %>
+                    <% } %>
+                  </td>
+                  <td style="text-transform: capitalize;"><%= p.status %></td>
+                  <td><%= new Date(p.uploadDate).toLocaleString() %></td>
+                  <td>
+                    <% if (p.status === 'pending') { %>
+                      <button type="button" data-id="<%= p._id %>" class="deleteBtn danger">Delete</button>
+                    <% } else { %>
+                      <button type="button" data-id="<%= p._id %>" class="deleteBtn">Delete</button>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="4" class="muted" style="text-align:center; padding: 24px;">You have not uploaded any procurements yet.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+    </div>
   </div>
 
   <script>
+    window.onload = async () => {
+        const token = localStorage.getItem('token') ;
+        try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                    try {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                        console.error('No token found');
+                        return;
+                        }
+                        // console.log('Token:', token);
+                        // Decode JWT to get staffId
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const staffId = payload._id;
+                        
+                        const res = await fetch('/Manage/get-permissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ staffId })
+                        });
+
+                        if (!res.ok) {
+                        handleServerError(res);
+                        return;
+                        }
+
+                        const data = await res.json();
+                        const permissions = data.permissions || [];
+                        // console.log('Permissions:', permissions);
+                        // Hide all menu items not in permissions
+                        
+                        if (!permissions.includes('create_procurement')) {
+                            showFlashMessage('error', 'You do not have permission to access this page.');
+                            setTimeout(() => {
+                                window.location.href = '/Staff/dashboard';
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Error fetching permissions:', err);
+                    }
+    }
   (function(){
-    function showFlash(type,msg){const c=document.getElementById('flashMessageContainer');const el=document.createElement('div');el.textContent=msg;el.style.padding='8px 12px';el.style.marginTop='6px';el.style.borderRadius='6px';el.style.boxShadow='0 1px 3px rgba(2,6,23,0.06)';if(type==='err'){el.style.background='#fecaca'}else{el.style.background='#bbf7d0'}c.appendChild(el);setTimeout(()=>el.remove(),4000)}
+        async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+        if (contentType.includes('text/html')) {
+          const html = await res.text();
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const popup = tempDiv.querySelector('#errorPopupContainer');
+          const scripts = tempDiv.querySelectorAll('script');
+
+          if (popup) {
+            document.body.prepend(popup);
+            scripts.forEach((script) => {
+              const newScript = document.createElement('script');
+              if (script.src) newScript.src = script.src;
+              else newScript.textContent = script.textContent;
+              document.body.appendChild(newScript);
+            });
+          } else {
+            showFlashMessage('error', 'An unknown error occurred.');
+          }
+        } else {
+          showFlashMessage('error', 'Server error: unexpected content type.');
+        }
+      } 
+
+    function showFlashMessage(type, message, duration = 4000) {
+        const container = document.getElementById('flashMessageContainer');
+        const msg = document.createElement('div');
+        msg.classList.add('flash-message');
+        msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+        msg.textContent = message;
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateY(-10px)';
+          setTimeout(() => msg.remove(), 500);
+        }, duration);
+      } 
     
+    // === CONFIRM MODAL FUNCTION ===
+    function showConfirmModal(message, title = 'Are you sure?', confirmText = 'OK', confirmClass = 'primary') {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+
+            overlay.innerHTML = `
+                <div class="modal-box">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="modal-actions">
+                        <button id="modalCancel" class="secondary">Cancel</button>
+                        <button id="modalConfirm" class="${confirmClass}">${confirmText}</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            const confirmBtn = document.getElementById('modalConfirm');
+            const cancelBtn = document.getElementById('modalCancel');
+
+            const closeModal = (result) => {
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
+                resolve(result);
+            };
+
+            confirmBtn.onclick = () => closeModal(true);
+            cancelBtn.onclick = () => closeModal(false);
+            overlay.onclick = (e) => {
+                if (e.target === overlay) {
+                    closeModal(false);
+                }
+            };
+        });
+    }
+
     const uploadBtn=document.getElementById('uploadBtn');
     uploadBtn.addEventListener('click',async function(){
       const fileInput=document.getElementById('fileInput');
-      if(!fileInput.files.length)return showFlash('err','Select a file');
+      if(!fileInput.files.length)return showFlash('err','Please select a file to upload.');
       const fd=new FormData();fd.append('file',fileInput.files[0]);
       uploadBtn.disabled=true;
+      uploadBtn.textContent = 'Uploading...';
       try{
         const res=await fetch('/Procurement/upload',{method:'POST',body:fd});
-        const data=await res.json();if(!res.ok)throw data;
-        showFlash('ok',data.msg||'Uploaded');setTimeout(()=>location.reload(),700)
-      }catch(err){showFlash('err',(err&&err.error)||'Upload failed')}
-      finally{uploadBtn.disabled=false}
+        if (!res.ok) return handleServerError(res)
+        const data=await res.json();
+        showFlashMessage('success',data.msg||'File uploaded successfully and is pending review.');setTimeout(()=>location.reload(),1000)
+      }catch(err){showFlashMessage('error',(err&&err.error)||'Upload failed. Please try again.')}
+      finally{uploadBtn.disabled=false; uploadBtn.textContent = 'Upload';}
     });
 
     document.body.addEventListener('click',async function(e){
       if(e.target.matches('.deleteBtn')){
         const id=e.target.getAttribute('data-id');
-        if(!confirm('Delete this procurement?'))return;
+        
+        // MODIFIED: Replaced confirm() with showConfirmModal()
+        const confirmed = await showConfirmModal(
+            'This procurement submission will be permanently deleted.',
+            'Delete Submission?',
+            'Delete',
+            'danger'
+        );
+        if (!confirmed) return;
+
         e.target.disabled=true;
         try{
           const res=await fetch(`/Procurement/${id}`,{method:'DELETE'});
-          const data=await res.json();if(!res.ok)throw data;
-          showFlash('ok','Deleted');setTimeout(()=>location.reload(),500)
-        }catch(err){showFlash('err',(err&&err.error)||'Delete failed');e.target.disabled=false}
+          if (!res.ok) return handleServerError(res)
+          const data=await res.json();
+          showFlashMessage('success','Submission deleted.');setTimeout(()=>location.reload(),1000)
+        }catch(err){showFlashMessage('error',(err&&err.error)||'Delete failed.');e.target.disabled=false}
       }
     });
   })();

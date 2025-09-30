@@ -27,6 +27,7 @@ const LessonPlanRoutes = require('./Routes/LessonPlanRoutes.js');
 const ProcurementRoutes = require('./Routes/ProcurementRoutes.js');
 const InventoryRoutes = require('./Routes/InventoryRoutes.js');
 const BudgetRoutes = require('./Routes/BudgetRoutes.js');
+const InventoryRecordRoutes = require('./Routes/inventoryRecordRoutes.js');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
@@ -153,6 +154,7 @@ app.use('/Curriculum', LessonPlanRoutes);
 app.use('/Procurement', ProcurementRoutes);
 app.use('/Inventory', InventoryRoutes);
 app.use('/Budget', BudgetRoutes);
+app.use('/InventoryRecords', InventoryRecordRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

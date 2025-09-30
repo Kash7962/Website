@@ -5,20 +5,299 @@
   <title>Inventory</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    :root { --bg:#f8fafc; --card:#fff; --muted:#64748b }
-    body { font-family:system-ui,Arial,sans-serif; background:var(--bg); color:#0f172a; padding:20px }
-    .card { background:var(--card); padding:14px; border-radius:10px; box-shadow:0 2px 8px rgba(2,6,23,0.06); margin-bottom:14px }
-    table { width:100%; border-collapse:collapse }
-    th,td { padding:10px; border-bottom:1px solid #eef2f7; text-align:left }
-    input { padding:6px; border-radius:6px; border:1px solid #e6eef6 }
-    button { padding:8px 10px; border-radius:6px; border:0; cursor:pointer }
-    .muted { color:var(--muted); font-size:0.95rem }
-    .rowFlex { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px }
-    .danger { background:#fecaca }
-    .primary { background:#bfdbfe }
-    .smallBtn { padding:4px 6px; font-size:0.85rem; border-radius:4px }
-    .budgetCard { background:#f0f9ff; padding:10px; border-radius:8px; margin-bottom:20px }
-    .budgetCard h3 { margin-top:0; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --muted: #64748b;
+      --accent: #1e40af;
+      --accent-dark: #1e3a8a;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      padding: 24px;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3 {
+        margin: 0 0 16px 0;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--accent-dark), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #fcfdfe;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    tbody tr:hover {
+        background-color: #f7fbff;
+    }
+
+    input {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background-color: #fcfdfe;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+    input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+        background-color: #fff;
+    }
+
+    button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+        transform: translateY(-1px);
+    }
+    button:active {
+        transform: translateY(0);
+    }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .rowFlex {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .danger { background: var(--danger); color: #fff; }
+    .danger:hover { background: var(--danger-dark); }
+    .primary { background: #eef2ff; color: var(--accent); }
+    .primary:hover { background: #e0e7ff; }
+
+    #submitItemsBtn {
+        background: var(--accent);
+        color: #fff;
+    }
+    #submitItemsBtn:hover {
+        background: var(--accent-dark);
+    }
+
+    .smallBtn {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+    }
+    .removeRow {
+        width: 36px;
+        height: 36px;
+        line-height: 1;
+    }
+
+    .budgetCard {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .budgetCard h3 {
+      margin-top: 0;
+      color: #0369a1;
+    }
+    .budgetCard p {
+        margin: 4px 0;
+        color: var(--text-secondary);
+    }
+    
+    #errorPopupContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #errorPopupContainer * {
+      box-sizing: border-box;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+    }
+
+    #errorPopupBox {
+      max-width: 400px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #errorPopupBox h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    #errorPopupBox h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    #errorMessage {
+      font-size: 1rem;
+      color: #666;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #e74c3c;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    #closeErrorPopup {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 24px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    #closeErrorPopup:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+      #flashMessageContainer {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 1rem;
+      pointer-events: none;
+    }
+
+    .flash-message {
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      pointer-events: all;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .flash-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .flash-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    
   </style>
 </head>
 <body>
@@ -26,12 +305,11 @@
 
   <h1>Inventory</h1>
 
-  <!-- Budget Display Card -->
-  <div class="card budgetCard">
+  <div class="budgetCard">
     <h3>Kitchen Department Budget</h3>
-    <p><strong>Allocated:</strong> ₹<%= budget.allocatedAmount %></p>
-    <p><strong>Spent:</strong> ₹<%= budget.spentAmount %></p>
-    <p><strong>Remaining:</strong> ₹<%= budget.allocatedAmount - budget.spentAmount %></p>
+    <p><strong>Allocated:</strong> ₹<%= budget.allocatedAmount.toLocaleString('en-IN') %></p>
+    <p><strong>Spent:</strong> ₹<%= budget.spentAmount.toLocaleString('en-IN') %></p>
+    <p><strong>Remaining:</strong> ₹<%= (budget.allocatedAmount - budget.spentAmount).toLocaleString('en-IN') %></p>
   </div>
 
   <div class="card">
@@ -49,19 +327,17 @@
 
         <div id="itemRows">
           <div class="rowFlex itemRow">
-            <input class="itemName" placeholder="Item name" />
-            <input class="quantity" type="number" min="0" placeholder="Quantity" />
-            <input class="unit" placeholder="Measurement Unit" />
-            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" />
+            <input class="itemName" placeholder="Item name" style="flex: 3;" />
+            <input class="quantity" type="number" min="0" placeholder="Quantity" style="flex: 1;" />
+            <input class="unit" placeholder="Unit (e.g., kg, L, pcs)" style="flex: 1;" />
+            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" style="flex: 1;" />
             <button type="button" class="removeRow danger smallBtn">X</button>
           </div>
         </div>
 
-        <div style="margin-top:10px">
+        <div style="margin-top:16px; border-top: 1px solid var(--border); padding-top: 16px; display:flex; gap: 8px;">
           <button type="button" id="addRowBtn" class="primary">+ Add another item</button>
-        </div>
-        <div style="margin-top:10px">
-          <button id="submitItemsBtn" type="button">Submit all items</button>
+          <button id="submitItemsBtn" type="button">Submit All Items</button>
         </div>
       </form>
     <% } else { %>
@@ -71,53 +347,176 @@
 
   <h2>Current Inventory</h2>
   <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Unit</th>
-          <th>Price per unit</th>
-          <th>Last updated by</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (items && items.length) { %>
-          <% items.forEach(function(it){ %>
+    <div style="overflow-x:auto;">
+        <table>
+          <thead>
             <tr>
-              <td><%= it.itemName %></td>
-              <td><%= it.quantity %></td>
-              <td><%= it.unit %></td>
-              <td>₹<%= it.pricePerUnit %></td>
-              <td><%= it.lastUpdatedBy %></td>
-              <td>
-                <input type="number" min="0" placeholder="Qty to consume" class="consumeQty" data-id="<%= it._id %>" style="width:70px"/>
-                <button data-id="<%= it._id %>" class="consumeBtn smallBtn">Use Items</button>
-              </td>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Price per unit</th>
+              <th>Last updated by</th>
+              <th>Actions</th>
             </tr>
-          <% }); %>
-        <% } else { %>
-          <tr><td colspan="5" class="muted">No items in inventory</td></tr>
-        <% } %>
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <% if (items && items.length) { %>
+              <% items.forEach(function(it){ %>
+                <tr>
+                  <td><%= it.itemName %></td>
+                  <td><%= it.quantity %></td>
+                  <td><%= it.unit %></td>
+                  <td>₹<%= it.pricePerUnit.toLocaleString('en-IN') %></td>
+                  <td><%= it.lastUpdatedBy %></td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap: 8px;">
+                        <input type="number" min="0" placeholder="Qty" class="consumeQty" data-id="<%= it._id %>" style="width:70px"/>
+                        <button data-id="<%= it._id %>" class="consumeBtn smallBtn primary">Use</button>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr><td colspan="6" class="muted" style="text-align:center; padding: 24px;">No items in inventory</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+    </div>
   </div>
 
   <script>
+    window.onload = async () => {
+        const token = localStorage.getItem('token') ;
+        try {
+                    const res = await fetch('/Auth/verify-token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }); 
+                    if (!res.ok){
+
+                        const contentType = res.headers.get('Content-Type') || '';
+
+                    if (contentType.includes('text/html')) {
+                        const html = await res.text();
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+
+                        const popup = tempDiv.querySelector('#errorPopupContainer');
+                        const scripts = tempDiv.querySelectorAll('script');
+
+                        if (popup) {
+                        document.body.prepend(popup);
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            if (script.src) newScript.src = script.src;
+                            else newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                        } else {
+                        showFlashMessage('error', 'An unknown error occurred.');
+                        }
+
+                        // Add redirect after short delay for session errors
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    } else {
+                        showFlashMessage('error', 'Server error: unexpected content type.');
+
+                        // Optional: Redirect for other cases too
+                        setTimeout(() => {
+                        window.location.href = '/Staff/login';
+                        }, 1500);
+                    }
+                    }
+                    } catch (err) {
+                    showFlashMessage('error', 'An unknown error occurred.');
+                    }
+                    try {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                        console.error('No token found');
+                        return;
+                        }
+                        // console.log('Token:', token);
+                        // Decode JWT to get staffId
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        const staffId = payload._id;
+                        
+                        const res = await fetch('/Manage/get-permissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ staffId })
+                        });
+
+                        if (!res.ok) {
+                        handleServerError(res);
+                        return;
+                        }
+
+                        const data = await res.json();
+                        const permissions = data.permissions || [];
+                        // console.log('Permissions:', permissions);
+                        // Hide all menu items not in permissions
+                        
+                        if (!permissions.includes('manage_inventory')) {
+                            showFlashMessage('error', 'You do not have permission to access this page.');
+                            setTimeout(() => {
+                                window.location.href = '/Staff/dashboard';
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Error fetching permissions:', err);
+                    }
+    }
     document.addEventListener('DOMContentLoaded', function(){
-      function showFlash(type, msg) {
+      async function handleServerError(res) {
+        const contentType = res.headers.get('Content-Type') || '';
+
+        if (contentType.includes('text/html')) {
+          const html = await res.text();
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const popup = tempDiv.querySelector('#errorPopupContainer');
+          const scripts = tempDiv.querySelectorAll('script');
+
+          if (popup) {
+            document.body.prepend(popup);
+            scripts.forEach((script) => {
+              const newScript = document.createElement('script');
+              if (script.src) newScript.src = script.src;
+              else newScript.textContent = script.textContent;
+              document.body.appendChild(newScript);
+            });
+          } else {
+            showFlashMessage('error', 'An unknown error occurred.');
+          }
+        } else {
+          showFlashMessage('error', 'Server error: unexpected content type.');
+        }
+      } 
+
+    function showFlashMessage(type, message, duration = 4000) {
         const container = document.getElementById('flashMessageContainer');
-        const el = document.createElement('div');
-        el.textContent = msg;
-        el.style.padding = '8px 12px';
-        el.style.marginTop = '6px';
-        el.style.borderRadius = '6px';
-        el.style.boxShadow = '0 1px 3px rgba(2,6,23,0.06)';
-        el.style.background = type === 'err' ? '#fecaca' : '#bbf7d0';
-        container.appendChild(el);
-        setTimeout(()=> el.remove(), 3500);
-      }
+        const msg = document.createElement('div');
+        msg.classList.add('flash-message');
+        msg.classList.add(type === 'success' ? 'flash-success' : 'flash-error');
+        msg.textContent = message;
+
+        container.appendChild(msg);
+
+        setTimeout(() => {
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateY(-10px)';
+          setTimeout(() => msg.remove(), 500);
+        }, duration);
+      } 
 
       const itemRows = document.getElementById('itemRows');
       const addRowBtn = document.getElementById('addRowBtn');
@@ -126,17 +525,21 @@
           const div = document.createElement('div');
           div.className = 'rowFlex itemRow';
           div.innerHTML = `
-            <input class="itemName" placeholder="Item name" />
-            <input class="quantity" type="number" min="0" placeholder="Quantity" />
-            <input class="unit" placeholder="Measurement Unit" />
-            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" />
+            <input class="itemName" placeholder="Item name" style="flex: 3;" />
+            <input class="quantity" type="number" min="0" placeholder="Quantity" style="flex: 1;" />
+            <input class="unit" placeholder="Unit (e.g., kg, L, pcs)" style="flex: 1;" />
+            <input class="pricePerUnit" type="number" step="0.01" min="0" placeholder="Price per unit" style="flex: 1;" />
             <button type="button" class="removeRow danger smallBtn">X</button>`;
           itemRows.appendChild(div);
         });
 
         itemRows.addEventListener('click', e => {
           if (e.target.matches('.removeRow')) {
-            e.target.closest('.itemRow').remove();
+            if (itemRows.children.length > 1) {
+                e.target.closest('.itemRow').remove();
+            } else {
+                showFlashMessage('error', 'You must have at least one item row.');
+            }
           }
         });
       }
@@ -155,47 +558,53 @@
             };
           }).filter(it => it.itemName && it.quantity && it.pricePerUnit);
 
-          if (!items.length) return showFlash('err','Please fill at least one item');
+          if (!items.length) return showFlashMessage('error','Please fill out at least one complete item row.');
           submitItemsBtn.disabled = true;
+          submitItemsBtn.textContent = 'Submitting...';
           try {
             const res = await fetch('/Inventory/add', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ procurementId, items })
             });
+            if (!res.ok) return handleServerError(res)
             const data = await res.json();
-            if (!res.ok) throw data;
-            showFlash('ok','Items added');
+            showFlashMessage('success','Items added successfully to inventory!');
             setTimeout(()=> location.reload(), 600);
           } catch (err) {
             console.error(err); 
-            showFlash('err', (err.error || 'Add failed'));
+            showFlashMessage('error', (err.error || 'Failed to add items.'));
             submitItemsBtn.disabled = false;
+            submitItemsBtn.textContent = 'Submit All Items';
           }
         });
       }
 
       document.body.addEventListener('click', async function(e){
         if (e.target.matches('.consumeBtn')) {
-          const id = e.target.getAttribute('data-id');
+          const btn = e.target;
+          const id = btn.getAttribute('data-id');
           const qtyInput = document.querySelector(`.consumeQty[data-id="${id}"]`);
           const qty = qtyInput?.value.trim();
 
-          if (!qty || qty <= 0) return showFlash('err','Enter quantity to consume');
+          if (!qty || qty <= 0) return showFlash('error','Please enter a valid quantity to consume.');
 
+          btn.disabled = true;
           try {
             const res = await fetch(`/Inventory/consume/${id}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ quantity: qty })
             });
+            if (!res.ok) return handleServerError(res);
             const data = await res.json();
-            if (!res.ok) throw data;
-            showFlash('ok','Inventory updated');
+            
+            showFlashMessage('success','Inventory updated successfully.');
             setTimeout(()=> location.reload(), 500);
           } catch (err) {
             console.error(err);
-            showFlash('err', (err.error || 'Consume failed'));
+            showFlashMessage('error', (err.error || 'Failed to update inventory.'));
+            btn.disabled = false;
           }
         }
       });
