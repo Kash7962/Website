@@ -13,6 +13,6 @@ router.post('/add', verifyCookieToken, addInventoryValidators, inventoryControll
 // Consume a certain quantity of an inventory item
 router.post('/consume/:itemId', verifyCookieToken, inventoryController.postConsumeItem);
 
-router.get('/admin', inventoryController.getAdminInventory);
+router.get('/admin', verifyCookieToken, inventoryController.getAdminInventory);
 
 module.exports = router;

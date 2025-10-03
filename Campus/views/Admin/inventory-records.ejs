@@ -5,160 +5,344 @@
   <title><%= pageTitle || 'Inventory Records' %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    /* Embedded CSS (not inline attributes) */
-    body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background:#f7f7f8; color:#222; }
-    header { padding: 1rem; background: #fff; border-bottom: 1px solid #e3e3e3; display:flex; justify-content:space-between; align-items:center;}
-    .container { max-width:1100px; margin: 1rem auto; padding: 1rem; background:#fff; border-radius:8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-    .controls { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
-    input, select, button { padding: 0.5rem; border-radius:6px; border:1px solid #ddd; background:#fff; }
-    table { width:100%; border-collapse:collapse; margin-top:0.5rem; font-size:14px; }
-    th, td { padding: 0.6rem; border-bottom: 1px solid #eee; text-align:left; }
-    th { background:#fafafa; position:sticky; top:0; z-index:2; }
-    .summary { display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
-    .summary .card { padding:0.8rem; background:#f6f9ff; border-radius:6px; border:1px solid #e6eefc; }
-      #errorPopupContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      background: rgba(0, 0, 0, 0.4);
-      font-family: 'Montserrat', sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --muted: #64748b;
+      --accent: #1e40af;
+      --accent-dark: #1e3a8a;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+      --success: #16a34a;
     }
 
-    #errorPopupContainer * {
-      box-sizing: border-box;
-      font-family: inherit;
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       margin: 0;
       padding: 0;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
-    #errorPopupBox {
-      max-width: 400px;
-      width: 90%;
-      padding: 30px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    #errorPopupBox h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      color: #e74c3c;
-    }
-
-    #errorPopupBox h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #333;
-      margin: 10px 0;
-    }
-
-    #errorMessage {
-      font-size: 1rem;
-      color: #666;
-      background-color: #ffffff;
-      padding: 15px;
-      border-radius: 5px;
-      margin: 20px 0;
-      border-left: 4px solid #e74c3c;
-      text-align: left;
-      word-wrap: break-word;
-    }
-
-    #closeErrorPopup {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 24px;
-      background-color: #3498db;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      cursor: pointer;
-    }
-
-    #closeErrorPopup:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
-    }
-
-      #flashMessageContainer {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9998;
+    
+    header {
+      padding: 1rem 1.5rem;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      width: 100%;
-      max-width: 420px;
-      padding: 0 1rem;
-      pointer-events: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    header strong {
+        /* MODIFIED: Increased font size */
+        font-size: 1.6rem;
+        color: var(--accent);
+        font-weight: 700;
     }
 
-    .flash-message {
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
+    .container {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 1.5rem;
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    }
+    
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    input, select, button {
+      padding: 0.5rem 0.75rem;
       border-radius: 8px;
-      font-weight: 600;
+      border: 1px solid var(--border);
+      background: #fcfdfe;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+    }
+    
+    button {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--accent);
+        background-color: #eef2ff;
+    }
+    button:hover {
+        background-color: #e0e7ff;
+    }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    #deleteAllBtn {
+        background-color: var(--danger);
+        color: #fff;
+    }
+    #deleteAllBtn:hover {
+        background-color: var(--danger-dark);
+    }
+    
+    #applyBtn {
+        background-color: var(--accent);
+        color: #fff;
+    }
+    #applyBtn:hover {
+        background-color: var(--accent-dark);
+    }
+
+    table {
       width: 100%;
-      text-align: center;
-      pointer-events: all;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      animation: fadeIn 0.4s ease;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 14px;
     }
 
-    .flash-success {
-      background-color: #d1fae5;
-      color: #065f46;
-      border: 1px solid #10b981;
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
     }
 
-    .flash-error {
-      background-color: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #ef4444;
+    th {
+      background: #f0f9ff;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      color: var(--accent-dark);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tbody tr:hover {
+        background-color: #f7fbff;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
-    .pagination { margin-top: 1rem; display:flex; gap: 0.5rem; align-items:center; }
-    .muted { color:#666; font-size:13px; }
+    .summary .card {
+      padding: 1rem;
+      background: #f7f9ff;
+      border: 1px solid var(--accent-dark);
+      border-radius: 8px;
+      margin: 0;
+    }
+    .summary .card strong {
+        display: block;
+        font-size: 1.5rem;
+        color: var(--accent);
+        margin-top: 0.25rem;
+    }
+    
+      #errorPopupContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.4);
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      #errorPopupContainer * {
+        box-sizing: border-box;
+        font-family: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      #errorPopupBox {
+        max-width: 400px;
+        width: 90%;
+        padding: 30px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      #errorPopupBox h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #e74c3c;
+      }
+
+      #errorPopupBox h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin: 10px 0;
+      }
+
+      #errorMessage {
+        font-size: 1rem;
+        color: #666;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #e74c3c;
+        text-align: left;
+        word-wrap: break-word;
+      }
+
+      #closeErrorPopup {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 24px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      #closeErrorPopup:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+
+        #flashMessageContainer {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9998;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 420px;
+        padding: 0 1rem;
+        pointer-events: none;
+      }
+
+      .flash-message {
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+        pointer-events: all;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        animation: fadeIn 0.4s ease;
+      }
+
+      .flash-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border: 1px solid #10b981;
+      }
+
+      .flash-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #ef4444;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+    .pagination {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .pagination button {
+        background-color: var(--accent);
+        color: #fff;
+    }
+    .pagination button:hover {
+        background-color: var(--accent-dark);
+    }
+    
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+        opacity: 0; animation: fadeIn 0.2s ease forwards;
+    }
+    .modal-box {
+        background: var(--card); padding: 24px; border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px;
+        text-align: center; transform: scale(0.95); animation: scaleIn 0.2s ease-out forwards;
+    }
+    .modal-box h3 { margin: 0 0 8px 0; color: var(--text-primary); }
+    .modal-box p { color: var(--muted); line-height: 1.6; margin: 0; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    .modal-actions .secondary { background-color: #f1f5f9; color: var(--text-secondary); border: 1px solid var(--border); }
+    
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes scaleIn { to { transform: scale(1); } }
   </style>
 </head>
 <body>
-  <!-- flash container required at top of body -->
   <div id="flashMessageContainer"></div>
 
   <header>
-    <div><strong>Inventory Records</strong></div>
+    <div><strong>Kitchen Inventory Records</strong></div>
     <div class="muted">Logged in as: <%= user?.name || 'Unknown' %></div>
   </header>
 
   <main class="container" id="app">
     <div class="controls" role="region" aria-label="filters">
-    <button id="deleteAllBtn" style="background:#ff4d4f; color:#fff; border:none;">Delete All</button>
       <input id="searchInput" type="search" placeholder="Search item name..." />
       <select id="actionFilter">
         <option value="">All actions</option>
         <option value="added">Added</option>
         <option value="consumed">Consumed</option>
       </select>
-      <input id="dateFrom" type="date" />
-      <input id="dateTo" type="date" />
+      <input id="dateFrom" type="date" title="Start date"/>
+      <input id="dateTo" type="date" title="End date"/>
       <button id="applyBtn">Apply</button>
       <div style="margin-left:auto; display:flex; gap:.5rem;">
         <select id="perPage">
@@ -166,16 +350,17 @@
           <option value="25" selected>25 / page</option>
           <option value="50">50 / page</option>
         </select>
+        <button id="deleteAllBtn">Delete All Records</button>
       </div>
     </div>
 
     <div class="summary" id="summary">
-      <div class="card">Total spent (page): <strong id="totalSpent">0</strong></div>
-      <div class="card">Added (page): <strong id="addedCount">0</strong></div>
-      <div class="card">Consumed (page): <strong id="consumedCount">0</strong></div>
+      <div class="card">Total Spent (on this page) <strong id="totalSpent">₹0.00</strong></div>
+      <div class="card">"Added" Records (on this page) <strong id="addedCount">0</strong></div>
+      <div class="card">"Consumed" Records (on this page) <strong id="consumedCount">0</strong></div>
     </div>
 
-    <div id="tableWrapper">
+    <div id="tableWrapper" style="overflow-x:auto;">
       <table id="recordsTable" aria-describedby="tableSummary">
         <thead>
           <tr>
@@ -195,14 +380,13 @@
     </div>
 
     <div class="pagination" id="pager">
-      <button id="prevBtn">Prev</button>
-      <span>Page <span id="pageNum">1</span></span>
-      <button id="nextBtn">Next</button>
+      <button id="prevBtn">&larr; Previous</button>
+      <span class="muted">Page <strong id="pageNum">1</strong></span>
+      <button id="nextBtn">Next &rarr;</button>
     </div>
   </main>
 
   <script>
-    // Embedded JS (no inline attributes). Utility UI functions:
     async function handleServerError(res) {
       const contentType = res.headers.get('Content-Type') || '';
 
@@ -244,13 +428,35 @@
         msg.style.transform = 'translateY(-10px)';
         setTimeout(() => msg.remove(), 500);
       }, duration);
-    } 
-
-    // verify token on load (adjust path if necessary)
-   
+    }
+    
+    function showConfirmModal(message, title = 'Are you sure?', confirmText = 'OK', confirmClass = 'danger') {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-box">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="modal-actions">
+                        <button id="modalCancel" class="secondary">Cancel</button>
+                        <button id="modalConfirm" class="${confirmClass}">${confirmText}</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+            const confirmBtn = document.getElementById('modalConfirm');
+            const cancelBtn = document.getElementById('modalCancel');
+            const closeModal = (result) => {
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
+                resolve(result);
+            };
+            confirmBtn.onclick = () => closeModal(true);
+            cancelBtn.onclick = () => closeModal(false);
+            overlay.onclick = (e) => { if (e.target === overlay) closeModal(false); };
+        });
+    }
 
     (function () {
-      // state
       let page = 1;
       const tbody = document.querySelector('#recordsTable tbody');
       const perPageEl = document.getElementById('perPage');
@@ -261,56 +467,54 @@
         const dateFrom = document.getElementById('dateFrom').value;
         const dateTo = document.getElementById('dateTo').value;
         const perPage = perPageEl.value;
+        const params = new URLSearchParams({ page, perPage, q, action, dateFrom, dateTo });
+        
+        tbody.innerHTML = '<tr><td colspan="9" class="muted" style="text-align:center;padding:24px;">Loading...</td></tr>';
 
-        const params = new URLSearchParams();
-        params.set('page', page);
-        params.set('perPage', perPage);
-        if (q) params.set('q', q);
-        if (action) params.set('action', action);
-        if (dateFrom) params.set('dateFrom', dateFrom);
-        if (dateTo) params.set('dateTo', dateTo);
-
-        const url = '/InventoryRecords/api/inventory/records?' + params.toString();
         try {
-          const res = await fetch(url, { credentials: 'same-origin' });
-          if (!res.ok) return await handleServerError(res);
+          const res = await fetch('/InventoryRecords/api/inventory/records?' + params.toString(), { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('Network response was not ok.');
           const data = await res.json();
           renderTable(data.records || []);
           document.getElementById('pageNum').textContent = data.page || page;
-          document.getElementById('totalSpent').textContent = (data.summary?.totalSpent || 0).toFixed(2);
+          document.getElementById('totalSpent').textContent = `₹${(data.summary?.totalSpent || 0).toLocaleString('en-IN')}`;
           document.getElementById('addedCount').textContent = data.summary?.addedCount || 0;
           document.getElementById('consumedCount').textContent = data.summary?.consumedCount || 0;
         } catch (err) {
           console.error(err);
-          showFlashMessage('error', 'Failed to fetch records');
+          showFlashMessage('error', 'Failed to fetch records. Please try again.');
+          tbody.innerHTML = '<tr><td colspan="9" class="muted" style="text-align:center;padding:24px;color:var(--danger);">Error loading data</td></tr>';
         }
       }
 
       function renderTable(records) {
         tbody.innerHTML = '';
         if (!records.length) {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td colspan="9" class="muted">No records found</td>';
-          tbody.appendChild(tr);
+          tbody.innerHTML = '<tr><td colspan="9" class="muted" style="text-align:center;padding:24px;">No records found for the selected filters.</td></tr>';
           return;
         }
-
         for (const r of records) {
-          const baseDate = new Date(r.createdAt).toLocaleString();
-          // each record can contain multiple items -> create multiple rows (one per item)
+          const baseDate = new Date(r.createdAt).toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
           for (const it of r.items) {
             const tr = document.createElement('tr');
+            const changeHtml = `${Number(it.prevQuantity || 0)} &rarr; ${Number(it.newQuantity || 0)} <span class="muted">(Δ ${Number(it.quantity || 0)})</span>`;
             tr.innerHTML = `
               <td>${baseDate}</td>
-              <td>${r.action}</td>
+              <td style="text-transform:capitalize;">${r.action}</td>
               <td>${escapeHtml(it.itemName || '')}</td>
-              <td>${Number(it.prevQuantity || 0)} → ${Number(it.newQuantity || 0)} (Δ ${Number(it.quantity || 0)})</td>
+              <td>${changeHtml}</td>
               <td>${escapeHtml(it.unit || '')}</td>
-              <td>${(Number(it.pricePerUnit) || 0).toFixed(2)}</td>
-              <td>${(Number(it.total) || 0).toFixed(2)}</td>
+              <td>₹${(Number(it.pricePerUnit) || 0).toLocaleString('en-IN')}</td>
+              <td>₹${(Number(it.total) || 0).toLocaleString('en-IN')}</td>
               <td>${escapeHtml(r.performedBy?.name || r.performedBy?.email || '—')}</td>
-              <td>${escapeHtml(r.note || '')}</td>
-            `;
+              <td>${escapeHtml(r.note || '')}</td>`;
             tbody.appendChild(tr);
           }
         }
@@ -318,15 +522,9 @@
 
       function escapeHtml(s) {
         if (!s) return '';
-        return String(s)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
+        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
       }
 
-      // events
       document.getElementById('applyBtn').addEventListener('click', (e) => {
         e.preventDefault();
         page = 1;
@@ -350,82 +548,77 @@
 
       document.getElementById('deleteAllBtn').addEventListener('click', async (e) => {
         e.preventDefault();
-        if (!confirm('Are you sure you want to delete ALL inventory records? This cannot be undone.')) return;
+        
+        const confirmed = await showConfirmModal(
+            'This will permanently delete ALL inventory records and cannot be undone.',
+            'Delete All Records?',
+            'Delete All',
+            'danger'
+        );
+        if (!confirmed) return;
 
         try {
-            const res = await fetch('/InventoryRecords/api/inventory/delete-all', {
+          const res = await fetch('/InventoryRecords/api/inventory/delete-all', {
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json' }
-            });
-
-            if (!res.ok) return await handleServerError(res);
-            const data = await res.json();
-            showFlashMessage('success', data.message || 'All records deleted');
-            // reload table
-            page = 1;
-            fetchRecords();
+          });
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.message || 'Server error');
+          }
+          const data = await res.json();
+          showFlashMessage('success', data.message || 'All records have been deleted.');
+          page = 1;
+          fetchRecords();
         } catch (err) {
-            console.error(err);
-            showFlashMessage('error', 'Failed to delete all records');
+          console.error(err);
+          showFlashMessage('error', err.message || 'Failed to delete all records.');
         }
-        });
-
-
-      // initial actions
-      window.onload = async () => {
-        const token = localStorage.getItem('token') ;
-        try {
-                    const res = await fetch('/Auth/verify-token', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }); 
-                    if (!res.ok){
-
-                        const contentType = res.headers.get('Content-Type') || '';
-
+      });
+       window.onload = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch('/Auth/verify-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!res.ok) {
+                    const contentType = res.headers.get('Content-Type') || '';
                     if (contentType.includes('text/html')) {
                         const html = await res.text();
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
-
                         const popup = tempDiv.querySelector('#errorPopupContainer');
                         const scripts = tempDiv.querySelectorAll('script');
-
                         if (popup) {
-                        document.body.prepend(popup);
-                        scripts.forEach((script) => {
-                            const newScript = document.createElement('script');
-                            if (script.src) newScript.src = script.src;
-                            else newScript.textContent = script.textContent;
-                            document.body.appendChild(newScript);
-                        });
+                            document.body.prepend(popup);
+                            scripts.forEach((script) => {
+                                const newScript = document.createElement('script');
+                                if (script.src) newScript.src = script.src;
+                                else newScript.textContent = script.textContent;
+                                document.body.appendChild(newScript);
+                            });
                         } else {
-                        showFlashMessage('error', 'An unknown error occurred.');
+                            showFlashMessage('error', 'An unknown error occurred.');
                         }
-
-                        // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                            window.location.href = '/Staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
-
-                        // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                            window.location.href = '/Staff/login';
                         }, 1500);
                     }
-                    }
-                    } catch (err) {
-                    showFlashMessage('error', 'An unknown error occurred.');
-                    }
-    
-        fetchRecords();
-      };
+                }
+            } catch (err) {
+                showFlashMessage('error', 'An unknown error occurred.');
+            }
+            fetchRecords();
+          }
     })();
   </script>
 </body>
