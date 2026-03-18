@@ -516,7 +516,7 @@
        window.onload = async function() {
         const token = localStorage.getItem('token');
        try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -549,14 +549,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -574,7 +574,7 @@
                         const payload = JSON.parse(atob(token.split('.')[1]));
                         const staffId = payload._id;
                         
-                        const res = await fetch('/Manage/get-permissions', {
+                        const res = await fetch('/manage/get-permissions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -595,7 +595,7 @@
                         if (!permissions.includes('manage_curriculum')) {
                             showFlashMessage('error', 'You do not have permission to access this page.');
                             setTimeout(() => {
-                                window.location.href = '/Staff/dashboard';
+                                window.location.href = '/staff/dashboard';
                             }, 1500);
                         }
                     } catch (err) {
@@ -721,7 +721,7 @@
         numberOfDays: form.numberOfDays.value
       };
       try {
-        const res = await fetch('/Curriculum/create', {
+        const res = await fetch('/curriculum/create', {
           method: 'POST', credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(d)
@@ -740,7 +740,7 @@
 
     async function reviewRow(id, approved, comment) {
       try {
-        const res = await fetch(`/Curriculum/${id}/review`, {
+        const res = await fetch(`/curriculum/${id}/review`, {
           method: 'PUT', credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ approved, comment })
@@ -768,7 +768,7 @@
     async function confirmDelete() {
       if (!deleteId) return;
       try {
-        const res = await fetch(`/Curriculum/${deleteId}`, {
+        const res = await fetch(`/curriculum/${deleteId}`, {
           method: 'DELETE',
           credentials: 'include'
         });

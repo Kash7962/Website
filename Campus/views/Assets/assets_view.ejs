@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= pageTitle %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin:16px; background:#f8fafc; color:#111; }
+    .card { background:white; padding:12px; border-radius:10px; box-shadow:0 6px 18px rgba(16,24,40,0.06); }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+    .asset { padding:10px; border:1px solid #f0f2f5; border-radius:8px; }
+    .asset h3 { margin:0 0 6px 0; font-size:1rem; }
+    .small { color:#555; font-size:0.9rem; }
+  </style>
+</head>
+<body>
+  <header style="margin-bottom:12px;">
+    <h1>Assets (View only)</h1>
+    <div class="small">This window is read-only — use control window to edit.</div>
+  </header>
+
+  <div class="card">
+    <div id="grid" class="grid">
+      <% assets.forEach(function(a){ %>
+        <div class="asset">
+          <h3><%= a.name %> <span class="small">• <%= a.quantity %></span></h3>
+          <div class="small"><%= a.location || '—' %></div>
+          <div style="margin-top:8px;" class="small"><%= a.description || '' %></div>
+          <div class="small" style="margin-top:8px;"><%= a.tags && a.tags.length ? 'Tags: ' + a.tags.join(', ') : '' %></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <script>
+    // JWT verify on load (non-blocking)
+    // window.addEventListener('load', () => {
+    //   fetch('/Auth/verify-token').catch(()=>{ /* ignore */ });
+    // });
+  </script>
+</body>
+</html>

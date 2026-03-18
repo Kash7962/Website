@@ -1,7 +1,7 @@
 // routes/payments.js
 const express = require('express');
 const router = express.Router();
-const paymentCtrl = require('../Controllers/PaymentController');
+const paymentCtrl = require('../controllers/paymentController');
 const { verifyCookieToken } = require('../middlewares/middleware');
 // Render/manage page (server-side render)
 router.get('/manage/:studentId', verifyCookieToken, paymentCtrl.getPaymentsForStudent);

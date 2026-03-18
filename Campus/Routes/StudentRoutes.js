@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { showRegistrationForm, submitAdmissionForm, loginUser, googleLogin, forgotPassword, resetPassword, changePassword, logout, getAllCourses } = require('../Controllers/StudentController.js');
+const { showRegistrationForm, submitAdmissionForm, loginUser, googleLogin, forgotPassword, resetPassword, changePassword, logout, getAllCourses } = require('../controllers/studentController.js');
 const { studentValidator } = require('../validators/schema.js');
 const { verifyToken } = require('../middlewares/middleware.js');
 

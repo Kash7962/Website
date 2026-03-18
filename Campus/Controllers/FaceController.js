@@ -1,7 +1,7 @@
 const StaffFace = require('../models/staffFace'); // create this model
 // You can import Staff too if needed later
 
-// Save face encoding
+// Save face encoding 
 const saveFace = async (req, res) => {
   try {
     const { name, encoding, email, staffId } = req.body;

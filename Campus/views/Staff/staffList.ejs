@@ -304,7 +304,7 @@
     window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -337,14 +337,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -362,7 +362,7 @@
                         const payload = JSON.parse(atob(token.split('.')[1]));
                         const staffId = payload._id;
                         
-                        const res = await fetch('/Manage/get-permissions', {
+                        const res = await fetch('/manage/get-permissions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -383,7 +383,7 @@
                         if (!permissions.includes('manage_staff_attendance')) {
                             showFlashMessage('error', 'You do not have permission to access this page.');
                             setTimeout(() => {
-                                window.location.href = '/Staff/dashboard';
+                                window.location.href = '/staff/dashboard';
                             }, 1500);
                         }
                     } catch (err) {
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = btn.getAttribute('data-email');
             
             // Redirect to registration page
-            window.location.href = `/Face/register?staffId=${encodeURIComponent(staffId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
+            window.location.href = `/face/register?staffId=${encodeURIComponent(staffId)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
         });
     });
 
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (takeAttendanceBtn) {
         takeAttendanceBtn.addEventListener('click', () => {
             // Redirect to attendance page
-            window.location.href = '/Face/faceAttendance';
+            window.location.href = '/face/faceattendance';
         });
     }
 });

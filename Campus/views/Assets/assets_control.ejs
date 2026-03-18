@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= pageTitle %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- top embedded styles (not inline attributes) -->
+  <style>
+    :root { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    body { margin: 0; padding: 16px; background:#f6f7fb; color:#111; }
+    header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    h1 { margin:0; font-size:1.25rem; }
+    .layout { display:grid; grid-template-columns: 380px 1fr; gap:16px; }
+    .card { background:white; border-radius:10px; box-shadow:0 6px 18px rgba(16,24,40,0.06); padding:12px; }
+    .list { max-height:60vh; overflow:auto; }
+    .asset-row { display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #f0f0f3; align-items:center; }
+    .asset-meta { font-size:0.9rem; color:#333; }
+    .small { font-size:0.85rem; color:#666; }
+    .controls { display:flex; gap:8px; }
+    button { cursor:pointer; padding:8px 10px; border-radius:8px; border:0; background:#2b6ef6; color:white; }
+    button.ghost { background:#eef2ff; color:#2b6ef6; }
+    input, textarea, select { width:100%; padding:8px; border-radius:8px; border:1px solid #e6e9ef; box-sizing:border-box; }
+    label { display:block; margin-bottom:6px; font-weight:600; font-size:0.85rem; }
+    .row { display:flex; gap:8px; }
+    .muted { color:#666; font-size:0.85rem; }
+    #flashMessageContainer { position:fixed; top:12px; right:12px; z-index:9999; }
+  </style>
+</head>
+<body>
+  <div id="flashMessageContainer"></div>
+
+  <header>
+    <h1>Asset Control</h1>
+    <div class="muted">Add, edit, remove, and adjust quantities</div>
+  </header>
+
+  <div class="layout">
+    <!-- left: form -->
+    <div class="card">
+      <form id="assetForm" autocomplete="off">
+        <input type="hidden" id="assetId" name="id" value="" />
+        <div>
+          <label for="name">Name</label>
+          <input id="name" name="name" required maxlength="150" />
+        </div>
+        <div>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="3" maxlength="500"></textarea>
+        </div>
+        <div class="row">
+          <div style="flex:1">
+            <label for="quantity">Quantity</label>
+            <input id="quantity" name="quantity" type="number" min="0" value="0" />
+          </div>
+          <div style="flex:1">
+            <label for="location">Location</label>
+            <input id="location" name="location" />
+          </div>
+        </div>
+        <div>
+          <label for="tags">Tags (comma separated)</label>
+          <input id="tags" name="tags" placeholder="e.g. lab,hardware" />
+        </div>
+
+        <div style="margin-top:10px; display:flex; gap:8px;">
+          <button id="saveBtn" type="submit">Save</button>
+          <button id="resetBtn" type="button" class="ghost">Reset</button>
+          <button id="deleteBtn" type="button" class="ghost" style="display:none">Delete</button>
+        </div>
+      </form>
+
+      <hr style="margin:12px 0" />
+
+      <!-- <div>
+        <label for="adjustDelta">Adjust Quantity</label>
+        <div class="row">
+          <input id="adjustDelta" type="number" placeholder="+1 or -1" />
+          <button id="applyAdjust" class="ghost">Apply</button>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- right: list -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div>
+          <input id="searchInput" placeholder="Search assets..." />
+        </div>
+        <div class="small muted">Double-click an asset to load into the form</div>
+      </div>
+
+      <div class="list" id="assetsList">
+        <% assets.forEach(function(a){ %>
+          <div class="asset-row" data-id="<%= a._id %>">
+            <div>
+              <div class="asset-meta"><strong><%= a.name %></strong> <span class="small">• <%= a.quantity %></span></div>
+              <div class="small"><%= a.location || '' %> <%= a.tags && a.tags.length ? ' • ' + a.tags.join(', ') : '' %></div>
+            </div>
+            <div class="controls">
+              <button class="ghost btn-load">Load</button>
+              <button class="ghost btn-delete">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom embedded scripts (no inline handlers) -->
+  <script>
+  // Minimal helper implementations if your global ones don't exist.
+  function showFlashMessage(type, message, timeout=3500) {
+    const c = document.getElementById('flashMessageContainer');
+    const el = document.createElement('div');
+    el.textContent = message;
+    el.style.padding = '8px 12px';
+    el.style.marginTop = '8px';
+    el.style.borderRadius = '8px';
+    el.style.boxShadow = '0 6px 16px rgba(16,24,40,0.06)';
+    el.style.background = type === 'error' ? '#fee2e2' : '#ecfdf5';
+    el.style.color = type === 'error' ? '#b91c1c' : '#065f46';
+    c.appendChild(el);
+    setTimeout(()=> el.remove(), timeout);
+  }
+
+  function handleServerError(res) {
+    // if HTML error returned, read text; else JSON
+    return res.text().then(txt => {
+      try {
+        const j = JSON.parse(txt);
+        return { ok: false, message: j.message || JSON.stringify(j) };
+      } catch (e) {
+        return { ok: false, message: txt || 'Server error' };
+      }
+    });
+  }
+
+  // JWT verification on load (per your preference)
+  // async function verifyJwt() {
+  //   try {
+  //     const r = await fetch('/Auth/verify-token');
+  //     if (!r.ok) {
+  //       // token invalid: you can redirect to login if you want
+  //       console.warn('JWT verify failed');
+  //     }
+  //   } catch (err) {
+  //     console.warn('JWT verify error', err);
+  //   }
+  // }
+
+  window.addEventListener('load', () => {
+    // verifyJwt();
+    attachHandlers();
+  });
+
+  function attachHandlers() {
+    const assetsList = document.getElementById('assetsList');
+    const form = document.getElementById('assetForm');
+    const resetBtn = document.getElementById('resetBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const applyAdjust = document.getElementById('applyAdjust');
+    const adjustDelta = document.getElementById('adjustDelta');
+    const searchInput = document.getElementById('searchInput');
+
+    // load asset into form
+    assetsList.addEventListener('dblclick', (ev) => {
+      const row = ev.target.closest('.asset-row');
+      if (row) loadAssetToForm(row.dataset.id);
+    });
+
+    assetsList.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('button');
+      if (!btn) return;
+      const row = btn.closest('.asset-row');
+      const id = row.dataset.id;
+      if (btn.classList.contains('btn-load')) {
+        loadAssetToForm(id);
+      } else if (btn.classList.contains('btn-delete')) {
+        if (confirm('Delete this asset?')) deleteAsset(id);
+      }
+    });
+
+    resetBtn.addEventListener('click', resetForm);
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      await saveForm();
+    });
+
+    deleteBtn.addEventListener('click', async () => {
+      const id = document.getElementById('assetId').value;
+      if (!id) return showFlashMessage('error','No asset loaded to delete');
+      if (!confirm('Delete this asset?')) return;
+      await deleteAsset(id);
+    });
+
+    applyAdjust.addEventListener('click', async () => {
+      const id = document.getElementById('assetId').value;
+      if (!id) return showFlashMessage('error','Load an asset first to adjust quantity');
+      const delta = parseInt(adjustDelta.value, 10);
+      if (isNaN(delta) || delta === 0) return showFlashMessage('error','Enter non-zero integer');
+      await adjustQuantity(id, delta);
+    });
+
+    searchInput.addEventListener('input', debounce(async () => {
+      await refreshList(searchInput.value.trim());
+    }, 250));
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(()=> fn(...a), ms); };
+  }
+
+  async function refreshList(search='') {
+    try {
+      const url = '/assets/api/assets' + (search ? '?search=' + encodeURIComponent(search) : '');
+      const r = await fetch(url);
+      if (!r.ok) {
+        const err = await handleServerError(r);
+        return showFlashMessage('error', err.message || 'Could not fetch');
+      }
+      const j = await r.json();
+      const list = document.getElementById('assetsList');
+      list.innerHTML = '';
+      j.assets.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'asset-row';
+        div.dataset.id = a._id;
+        div.innerHTML = `
+          <div>
+            <div class="asset-meta"><strong>${escapeHtml(a.name)}</strong> <span class="small">• ${a.quantity}</span></div>
+            <div class="small">${escapeHtml(a.location||'')} ${a.tags && a.tags.length ? ' • ' + escapeHtml(a.tags.join(', ')) : ''}</div>
+          </div>
+          <div class="controls">
+            <button class="ghost btn-load">Load</button>
+            <button class="ghost btn-delete">Delete</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error','Network error');
+    }
+  }
+
+  async function loadAssetToForm(id) {
+    try {
+      const r = await fetch('/assets/api/assets/' + id);
+      if (!r.ok) {
+        const err = await handleServerError(r);
+        return showFlashMessage('error', err.message || 'Could not load asset');
+      }
+      const j = await r.json();
+      const a = j.asset;
+      document.getElementById('assetId').value = a._id;
+      document.getElementById('name').value = a.name;
+      document.getElementById('description').value = a.description || '';
+      document.getElementById('quantity').value = a.quantity;
+      document.getElementById('location').value = a.location || '';
+      document.getElementById('tags').value = (a.tags || []).join(', ');
+      document.getElementById('deleteBtn').style.display = 'inline-block';
+      showFlashMessage('success', 'Loaded asset');
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error','Network error loading asset');
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('assetId').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('quantity').value = 0;
+    document.getElementById('location').value = '';
+    document.getElementById('tags').value = '';
+    document.getElementById('deleteBtn').style.display = 'none';
+  }
+
+  async function saveForm() {
+    const id = document.getElementById('assetId').value;
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      quantity: parseInt(document.getElementById('quantity').value,10) || 0,
+      location: document.getElementById('location').value.trim(),
+      tags: document.getElementById('tags').value.split(',').map(s => s.trim()).filter(Boolean)
+    };
+
+    try {
+      const url = id ? '/assets/api/assets/' + id : '/assets/api/assets';
+      const method = id ? 'PUT' : 'POST';
+      const r = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) {
+        const err = await handleServerError(r);
+        return showFlashMessage('error', err.message || 'Save failed');
+      }
+      const j = await r.json();
+      showFlashMessage('success', id ? 'Updated' : 'Created');
+      resetForm();
+      await refreshList();
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error','Network error saving asset');
+    }
+  }
+
+  async function deleteAsset(id) {
+    try {
+      const r = await fetch('/assets/api/assets/' + id, { method: 'DELETE' });
+      if (!r.ok) {
+        const err = await handleServerError(r);
+        return showFlashMessage('error', err.message || 'Delete failed');
+      }
+      showFlashMessage('success','Deleted');
+      resetForm();
+      await refreshList();
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error','Network error deleting asset');
+    }
+  }
+
+  async function adjustQuantity(id, delta) {
+    try {
+      const r = await fetch('/assets/api/assets/' + id + '/adjust', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantityDelta: delta })
+      });
+      if (!r.ok) {
+        const err = await handleServerError(r);
+        return showFlashMessage('error', err.message || 'Adjust failed');
+      }
+      showFlashMessage('success','Quantity adjusted');
+      resetForm();
+      await refreshList();
+    } catch (err) {
+      console.error(err);
+      showFlashMessage('error','Network error adjusting quantity');
+    }
+  }
+
+  // small util
+  function escapeHtml(s) {
+    if (!s) return '';
+    return s.replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
+  }
+  </script>
+</body>
+</html>

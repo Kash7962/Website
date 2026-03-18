@@ -288,7 +288,7 @@
 <div class="container">
   <!-- Icon buttons -->
   <div class="icon-buttons">
-    <a href="/" title="Home"><i class="fas fa-home"></i></a>
+    <a href="/mis" title="Home"><i class="fas fa-home"></i></a>
   </div>
 
   <h2>Create Your Account</h2>
@@ -342,7 +342,7 @@
   </form>
 
   <div class="form-footer">
-    Already have an account? <a href="/Staff/login">Log in</a>
+    Already have an account? <a href="/staff/login">Log in</a>
   </div>
 </div>
 
@@ -379,7 +379,7 @@
     };
 
     try {
-      const response = await fetch("/Staff/register", {
+      const response = await fetch("/staff/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -396,7 +396,7 @@
         // alert("Registration successful! Please wait for admin authorization to log in.");
         showFlashMessage('success', 'Registration successful! Please wait for admin authorization to log in.');
         // window.location.href = "/Staff/login";
-        setTimeout(() => window.location.href = '/Staff/login', 1500);
+        setTimeout(() => window.location.href = '/staff/login', 1500);
       } else if (contentType && contentType.includes("application/json")) {
         // JSON error (e.g., duplicate email/phone)
         const result = await response.json();

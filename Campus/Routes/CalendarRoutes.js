@@ -1,7 +1,7 @@
 // routes/calendar.js
 const express = require('express');
 const router = express.Router();
-const calendarController = require('../Controllers/CalendarController');
+const calendarController = require('../controllers/calendarController');
 const { addEventValidator } = require('../validators/schema');
 const { verifyCookieToken } = require('../middlewares/middleware');
 // Page (staff-only) to create calendar

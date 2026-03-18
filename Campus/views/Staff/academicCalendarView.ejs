@@ -372,7 +372,7 @@
       events:async(fetchInfo,success,failure)=>{
         try{
           const batch=batchSelect.value;
-          const url=`/Calendar/view-events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
+          const url=`/calendar/view-events?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}&batch=${encodeURIComponent(batch)}`;
           const res=await fetch(url);
           if(!res.ok) return handleServerError(res);
           const json=await res.json();
@@ -442,7 +442,7 @@ function showFlashMessage(type, message, duration = 4000) {
     window.onload= async ()=>{
       const token = localStorage.getItem('token');
         try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -475,14 +475,14 @@ function showFlashMessage(type, message, duration = 4000) {
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }

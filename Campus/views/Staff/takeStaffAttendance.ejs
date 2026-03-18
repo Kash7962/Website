@@ -200,7 +200,7 @@
     window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -233,14 +233,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -258,7 +258,7 @@
                         const payload = JSON.parse(atob(token.split('.')[1]));
                         const staffId = payload._id;
                         
-                        const res = await fetch('/Manage/get-permissions', {
+                        const res = await fetch('/manage/get-permissions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -279,7 +279,7 @@
                         if (!permissions.includes('manage_staff_attendance')) {
                             showFlashMessage('error', 'You do not have permission to access this page.');
                             setTimeout(() => {
-                                window.location.href = '/Staff/dashboard';
+                                window.location.href = '/staff/dashboard';
                             }, 1500);
                         }
                     } catch (err) {
@@ -374,7 +374,7 @@
         const encoding = Array.from(detection.descriptor);
 
         // Step 1: Match with backend
-        const faceRes = await fetch("/Face/match-face", {
+        const faceRes = await fetch("/face/match-face", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ encoding }),
@@ -385,7 +385,7 @@
         const staffData = await faceRes.json();
 
         // Step 2: Mark attendance
-        const attendanceRes = await fetch("/Manage/attendance/mark", {
+        const attendanceRes = await fetch("/manage/attendance/mark", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ staff: staffData._id }),

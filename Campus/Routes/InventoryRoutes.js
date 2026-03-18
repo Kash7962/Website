@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { verifyCookieToken } = require('../middlewares/middleware');
-const inventoryController = require('../Controllers/InventoryController');
+const inventoryController = require('../controllers/inventoryController');
 const { addInventoryValidators } = require('../validators/schema');
 
 // Inventory main page

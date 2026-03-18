@@ -271,7 +271,7 @@
                 Set Fees Due
                 <span class="student-name">for <%= student.firstName %> <%= student.lastName || '' %></span>
             </h1>
-            <a href="/Staff/dashboard" class="btn btn-secondary">← Back to Students</a>
+            <a href="/staff/dashboard" class="btn btn-secondary">← Back to Students</a>
         </header>
 
         <form id="setFeesDueForm" class="form-card" novalidate>
@@ -295,7 +295,7 @@
         window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -328,14 +328,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -353,7 +353,7 @@
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     const staffId = payload._id;
                     
-                    const res = await fetch('/Manage/get-permissions', {
+                    const res = await fetch('/manage/get-permissions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -374,7 +374,7 @@
                     if (!permissions.includes('students_payment')) {
                         showFlashMessage('error', 'You do not have permission to access this page.');
                         setTimeout(() => {
-                            window.location.href = '/Staff/dashboard';
+                            window.location.href = '/staff/dashboard';
                         }, 1500);
                     }
 
@@ -440,7 +440,7 @@
             const studentId = ev.target.studentId.value;
 
             try {
-                const res = await fetch(`/Payment/set-due/${studentId}`, {
+                const res = await fetch(`/payment/set-due/${studentId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ feesDue })
@@ -453,7 +453,7 @@
                     showFlashMessage('success', data.message || 'Fees Due updated successfully!');
                     setTimeout(() => {
                         // Redirect back to the main student list after success
-                        window.location.href = '/Manage/payment';
+                        window.location.href = '/manage/payment';
                     }, 1500);
                 }
             } catch (err) {

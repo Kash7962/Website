@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { uploadProcurement } = require('../config/multer_procurement');
-const procurementController = require('../Controllers/ProcurementController');
+const procurementController = require('../controllers/procurementController');
 const { uploadFilePresent } = require('../validators/schema');
 const { verifyCookieToken } = require('../middlewares/middleware');
 

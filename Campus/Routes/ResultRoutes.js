@@ -1,7 +1,7 @@
 // routes/resultRoutes.js
 const express = require('express');
 const router = express.Router();
-const resultController = require('../Controllers/ResultController');
+const resultController = require('../controllers/resultController');
 const { verifyCookieToken } = require('../middlewares/middleware');
 
 // Show results management page for a student

@@ -44,7 +44,7 @@ const {
     deleteAllActivityLogs,
     renderAdminAttendancePage,
     deleteAttendance
-} = require('../Controllers/AdminController');
+} = require('../controllers/adminController');
 
 
 
@@ -126,14 +126,14 @@ router.post('/staff/staff-access', verifyCookieToken, assignOrUpdatePermissions)
 // ====================================
 router.get('/:id', verifyCookieToken, getAdminById);   
 
-router.get('/Sessions_Staffs/get', verifyCookieToken, getAllSessions);
-router.delete('/Sessions_Staffs/delete-all', verifyCookieToken, deleteAllSessions);
+router.get('/sessions_staffs/get', verifyCookieToken, getAllSessions);
+router.delete('/sessions_staffs/delete-all', verifyCookieToken, deleteAllSessions);
 
-router.get('/Sessions_Students/get', verifyCookieToken, getStudentSessions);
-router.delete('/Sessions_Students/delete-all', verifyCookieToken, deleteStudentSessions);
+router.get('/sessions_students/get', verifyCookieToken, getStudentSessions);
+router.delete('/sessions_students/delete-all', verifyCookieToken, deleteStudentSessions);
 
-router.get('/Sessions_Admins/get', verifyCookieToken, getAdminSessions);
-router.delete('/Sessions_Admins/delete-all', verifyCookieToken, deleteAdminSessions);
+router.get('/sessions_admins/get', verifyCookieToken, getAdminSessions);
+router.delete('/sessions_admins/delete-all', verifyCookieToken, deleteAdminSessions);
 
 // View logs
 router.get('/activity-logs/get', verifyCookieToken, getActivityLogs);

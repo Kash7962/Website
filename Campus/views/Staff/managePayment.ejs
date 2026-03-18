@@ -320,7 +320,7 @@
                 <div class="sub-header">Current Fees Due: <strong>₹<span id="feesDueDisplay"><%= student.feesDue ? student.feesDue.toLocaleString('en-IN') : 0 %></span></strong></div>
             </div>
             <div>
-                <a href="/Staff/dashboard" class="back-link">← Back to Students</a>
+                <a href="/staff/dashboard" class="back-link">← Back</a>
             </div>
         </header>
 
@@ -399,7 +399,7 @@
         window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -432,14 +432,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -457,7 +457,7 @@
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     const staffId = payload._id;
                     
-                    const res = await fetch('/Manage/get-permissions', {
+                    const res = await fetch('/manage/get-permissions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -478,7 +478,7 @@
                     if (!permissions.includes('students_payment')) {
                         showFlashMessage('error', 'You do not have permission to access this page.');
                         setTimeout(() => {
-                            window.location.href = '/Staff/dashboard';
+                            window.location.href = '/staff/dashboard';
                         }, 1500);
                     }
 
@@ -536,7 +536,7 @@
             const btn = document.getElementById('submitAddPayment');
             btn.disabled = true;
             try {
-                const res = await fetch('/Payment/create', { method: 'POST', body: fd });
+                const res = await fetch('/payment/create', { method: 'POST', body: fd });
                 if (!res.ok) { await handleServerError(res); return; }
                 const data = await res.json();
                 showFlashMessage('success', data.message || 'Payment recorded successfully!');
@@ -582,7 +582,7 @@
             if (target.matches('.deleteBtn')) {
                 if (!confirm('Are you sure you want to delete this payment?\nThis will add the amount back to the student\'s fees due.')) return;
                 try {
-                    const res = await fetch('/Payment/' + paymentId, { method: 'DELETE' });
+                    const res = await fetch('/payment/' + paymentId, { method: 'DELETE' });
                     if (!res.ok) { await handleServerError(res); return; }
                     const j = await res.json();
                     showFlashMessage('success', j.message || 'Payment deleted.');
@@ -612,7 +612,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch('/Payment/' + paymentId, { method: 'PUT', body: fd });
+                const res = await fetch('/payment/' + paymentId, { method: 'PUT', body: fd });
                 if (!res.ok) { await handleServerError(res); return; }
                 const j = await res.json();
                 showFlashMessage('success', j.message || 'Payment updated successfully!');

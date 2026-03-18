@@ -555,28 +555,28 @@
         <div class="sidebar" id="sidebar">
             <div class="brand">Staff Dashboard</div>
             <nav>
-                <a href="/Staff/dashboard/" class="active">🏠 Dashboard</a>
+                <a href="/staff/dashboard/" class="active">🏠 Dashboard</a>
                 <!-- <a href="/Staff/Teaching/profile">👤 Manage Profile</a> -->
                 <!-- <a href="/Staff/Teaching/manage-courses">📚 Manage Courses</a>
                 <a href="/Staff/Teaching/students">👥 Students</a>
                 <a href="/Staff/Teaching/assignments">📝 Assignment</a>
                 <a href="#">💬 Communication Tools</a>
                 <a href="/Staff/Leave/dashboard">✈️ Leave Requests</a> -->
-                <a href="/Manage/pending-enrollment" data-permission="enroll_students" id="sdBtn">🎓 Enroll Students</a>
-                <a href="/Manage/studentsEnrolled" data-permission="edit_students" id="sdBtn">📝 Edit Students</a>
-                <a href="/Manage/payment" data-permission="students_payment" id="sdBtn">💰 Manage Payments</a>
-                <a href="/Manage/documents" data-permission="document_students" id="sdBtn">📂 Manage Documents</a>
-                <a href="/Manage/results" data-permission="result_students" id="sdBtn">📊 Manage Results</a>
-                <a href="/Leaves/all" data-permission="manage_leaves" id="sdBtn">🛌 Manage Leaves</a>
-                <a href="/Manage/staffList" data-permission="manage_staff_attendance" id="sdBtn">🕒 Staff Attendance</a>
-                <a href="/Calendar/create" data-permission="manage_calendar" id="sdBtn">📅 Academic Calendar</a>
-                <a href="/Curriculum/principal" data-permission="manage_curriculum" id="sdBtn">📖 Lesson Plan</a>
-                <a href="/Leaves/apply"  id="normalLeaveBtn">🌴 Apply Leave</a>
-                <a href="/Manage/attendance/get"  id="normalAttendanceBtn">📅 My attendance</a>
-                <a href="/Curriculum/teacher"  id="sdBtn" data-permission="manage_curriculum_teacher">📖 View Lesson Plan</a>
-                <a href="/Calendar/view"  id="normalAcademicCalendarBtn">📅 View Academic Calendar</a>
-                <a href="/Inventory/" data-permission="manage_inventory" id="sdBtn">📦 Inventory</a>
-                <a href="/Procurement/staff" data-permission="create_procurement" id="sdBtn">🛒 Procurement</a>
+                <a href="/manage/pending-enrollment" data-permission="enroll_students" id="sdBtn">🎓 Enroll Students</a>
+                <a href="/manage/studentsEnrolled" data-permission="edit_students" id="sdBtn">📝 Edit Students</a>
+                <a href="/manage/payment" data-permission="students_payment" id="sdBtn">💰 Manage Payments</a>
+                <a href="/manage/documents" data-permission="document_students" id="sdBtn">📂 Manage Documents</a>
+                <a href="/manage/results" data-permission="result_students" id="sdBtn">📊 Manage Results</a>
+                <a href="/leaves/all" data-permission="manage_leaves" id="sdBtn">🛌 Manage Leaves</a>
+                <a href="/manage/staffList" data-permission="manage_staff_attendance" id="sdBtn">🕒 Staff Attendance</a>
+                <a href="/calendar/create" data-permission="manage_calendar" id="sdBtn">📅 Academic Calendar</a>
+                <a href="/curriculum/principal" data-permission="manage_curriculum" id="sdBtn">📖 Lesson Plan</a>
+                <a href="/leaves/apply"  id="normalLeaveBtn">🌴 Apply Leave</a>
+                <a href="/manage/attendance/get"  id="normalAttendanceBtn">📅 My attendance</a>
+                <a href="/curriculum/teacher"  id="sdBtn" data-permission="manage_curriculum_teacher">📖 View Lesson Plan</a>
+                <a href="/calendar/view"  id="normalAcademicCalendarBtn">📅 View Academic Calendar</a>
+                <a href="/inventory/" data-permission="manage_inventory" id="sdBtn">📦 Inventory</a>
+                <a href="/procurement/staff" data-permission="create_procurement" id="sdBtn">🛒 Procurement</a>
 
                 <!-- <a href="/Manage/join" data-permission="direct_join_students">➕🎓 Direct Join Students</a> -->
             </nav>
@@ -741,7 +741,7 @@
             // }
             
                 try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -771,11 +771,11 @@
                         }
                         document.body.appendChild(newScript);
                         });
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     } else {
                         // alert('An unknown error occurred.');
                         showFlashMessage('error', 'An unknown error occurred.');
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     }
 
                     return;
@@ -783,7 +783,7 @@
 
                     // alert('Server error: unexpected content type.');
                     showFlashMessage('error', 'Server error: unexpected content type.');
-                    setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    setTimeout(() =>  window.location.href = '/staff/login', 1500)
                 }
         
                     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -793,7 +793,7 @@
 
                     if (!allowedDepartments.includes(role)) {
                         showFlashMessage('error', 'You are not authorized to access this page.');
-                        setTimeout(() => window.location.href = '/Staff/login', 1500);
+                        setTimeout(() => window.location.href = '/staff/login', 1500);
                         return;
                     }
                     // } else {
@@ -805,7 +805,7 @@
                     showFlashMessage('error', 'Authentication failed. Redirecting to login page.');
                     // alert('Authentication failed. Redirecting to login page.');
                     // window.location.href = '/Staff/login';
-                     setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                     setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     return;
                 }
 
@@ -818,7 +818,7 @@
             logoutBtn.addEventListener('click', async function () {
                 console.log('Logout button clicked');
                 try {
-                    const res = await fetch('/Staff/logout', {
+                    const res = await fetch('/staff/logout', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -862,7 +862,7 @@
                         localStorage.removeItem('token');
                         // alert('Logged out successfully!');
                         showFlashMessage('success', 'Logged out successfully!');
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                         // window.location.href = '/Staff/login';
                     } else {
                         alert('Logout failed. Please try again.');
@@ -883,7 +883,7 @@
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     const staffId = payload._id;
                     
-                    const res = await fetch('/Manage/get-permissions', {
+                    const res = await fetch('/manage/get-permissions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -938,7 +938,7 @@
             //     }
             // });
                 document.getElementById('changePasswordBtn').addEventListener('click', () => {
-                    window.location.href = '/Staff/change-password';
+                    window.location.href = '/staff/change-password';
                 });
 
                 function showFlashMessage(type, message, duration = 4000) {
@@ -958,7 +958,7 @@
             }
 
             document.getElementById('profile').addEventListener('click', () => {
-                    window.location.href = '/Staff/profile';
+                    window.location.href = '/staff/profile';
                 });
 
             async function handleServerError(res) {

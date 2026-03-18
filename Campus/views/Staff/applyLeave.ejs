@@ -445,7 +445,7 @@
         window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -478,14 +478,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -499,7 +499,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const res = await fetch('/Leaves/apply', {
+                const res = await fetch('/leaves/apply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -539,7 +539,7 @@
                 if (!currentId) return;
 
                 try {
-                const res = await fetch(`/Leaves/${currentId}/delete`, { method: 'DELETE' });
+                const res = await fetch(`/leaves/${currentId}/delete`, { method: 'DELETE' });
                 if (!res.ok) return handleServerError(res);
 
                 const result = await res.json();

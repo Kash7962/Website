@@ -300,7 +300,7 @@
     <main class="container">
         <div class="page-header">
             <h1>All Admins</h1>
-            <a href="/Admin/register" class="btn btn-primary">➕ Create New Admin</a>
+            <a href="/admin/register" class="btn btn-primary">➕ Create New Admin</a>
         </div>
 
         <div id="adminList" class="admin-list">
@@ -314,7 +314,7 @@
                         <p><strong>Role:</strong> <%= admin.role %></p>
                     </div>
                     <div class="admin-actions">
-                        <a href="/Admin/update/<%= admin._id %>" class="btn btn-secondary">✏️ Update</a>
+                        <a href="/admin/update/<%= admin._id %>" class="btn btn-secondary">✏️ Update</a>
                         <form class="delete-admin-form" data-id="<%= admin._id %>">
                             <button type="submit" class="btn btn-danger">🗑️ Delete</button>
                         </form>
@@ -339,7 +339,7 @@
          window.onload = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await fetch('/Auth/verify-token', {
+                const res = await fetch('/auth/verify-token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -366,12 +366,12 @@
                             showFlashMessage('error', 'An unknown error occurred.');
                         }
                         setTimeout(() => {
-                            window.location.href = '/Staff/login';
+                            window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
                         setTimeout(() => {
-                            window.location.href = '/Staff/login';
+                            window.location.href = '/staff/login';
                         }, 1500);
                     }
                 }
@@ -383,7 +383,7 @@
                 const role = payload.role;
                 if (role !== 'Super Admin') {
                     showFlashMessage('error', 'Unauthorized access.');
-                    setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                    setTimeout(() => window.location.href = '/admin/dashboard', 1500);
                 }
             } catch (err) {
                 console.error('Failed to decode JWT:', err);
@@ -451,7 +451,7 @@
                 if (!adminIdToDelete) return;
 
                 try {
-                    const res = await fetch(`/Admin/delete/${adminIdToDelete}`, {
+                    const res = await fetch(`/admin/delete/${adminIdToDelete}`, {
                         method: 'DELETE',
                         headers: {'Content-Type': 'application/json'}
                     });

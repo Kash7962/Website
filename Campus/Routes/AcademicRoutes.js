@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const AcademicController = require('../Controllers/AcademicController.js');
+const AcademicController = require('../controllers/academicController.js');
 
-router.get('/Achievements', AcademicController.achievements);
-router.get('/CampusLife', AcademicController.campusLife);
-router.get('/Convocation', AcademicController.convocation);
-router.get('/Courses', AcademicController.courses);
-router.get('/Examination', AcademicController.examination);
-router.get('/Facilities', AcademicController.facilities);
+router.get('/achievements', AcademicController.achievements);
+router.get('/campuslife', AcademicController.campusLife);
+router.get('/convocation', AcademicController.convocation);
+router.get('/courses', AcademicController.courses);
+router.get('/examination', AcademicController.examination);
+router.get('/facilities', AcademicController.facilities);
     
 module.exports = router;

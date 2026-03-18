@@ -250,7 +250,7 @@ const forgotPassword = async (req, res) => {
     );
 
     // Create reset URL
-    const resetUrl = `${CLIENT_URL}/Student/reset-password?token=${token}`;
+    const resetUrl = `${CLIENT_URL}/student/reset-password?token=${token}`;
 
     // Email content
     const html = `

@@ -1,7 +1,7 @@
 // routes/inventoryRoutes.js
 const express = require('express');
 const router = express.Router();
-const inventoryRecordController = require('../Controllers/inventoryRecordController');
+const inventoryRecordController = require('../controllers/inventoryRecordController');
 const { verifyCookieToken } = require('../middlewares/middleware'); // your auth middleware
 
 // page view

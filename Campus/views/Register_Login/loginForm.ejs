@@ -317,7 +317,7 @@
 
 <div class="container">
   <div class="header-with-button">
-    <a href="/" class="home-icon-btn" title="Go Home">
+    <a href="/mis" class="home-icon-btn" title="Go Home">
       <i class="fas fa-home"></i>
     </a>
     <h2>Login to Campus</h2>
@@ -332,7 +332,7 @@
       <label for="password">Password *</label>
       <input type="password" id="password" name="password" required placeholder="Enter your password" />
       <div class="forgot-password">
-        <a href="/Staff/forgot-password">Forgot Password?</a>
+        <a href="/staff/forgot-password">Forgot Password?</a>
       </div>
     </div>
     <button type="submit">Login</button>
@@ -345,7 +345,7 @@
 </div>
 
   <div class="form-footer">
-    Don't have an account? <a href="/Staff/register">Register here</a>
+    Don't have an account? <a href="/staff/register">Register here</a>
   </div>
 </div>
 
@@ -361,7 +361,7 @@
       const ip = await getClientIP();
       const userAgent = navigator.userAgent;
 
-      const res = await fetch('/Staff/login', {
+      const res = await fetch('/staff/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -422,7 +422,7 @@ let googleClient;
           try {
             const ip = await getClientIP();
             const userAgent = navigator.userAgent;
-            const res = await fetch('/Staff/google-login', {
+            const res = await fetch('/staff/google-login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'x-forwarded-for': ip, 'user-agent': userAgent },
               body: JSON.stringify({ tokenId: response.access_token }) // Matches backend key
@@ -445,7 +445,7 @@ let googleClient;
             } else {
               // alert(data.message || 'Login failed.');
               showFlashMessage('error', 'Login failed!!');
-              setTimeout(() => window.location.href = '/Staff/login', 1500);
+              setTimeout(() => window.location.href = '/staff/login', 1500);
               // window.location.href = '/Staff/login';
             }
 
@@ -515,11 +515,11 @@ let googleClient;
 
   function redirectToDashboard(payload) {
     if (payload.role === 'Admin' || payload.role === 'Super Admin') {
-      window.location.href = '/Admin/dashboard';
+      window.location.href = '/admin/dashboard';
     } else if (payload.department) {
-      window.location.href = '/Staff/dashboard';
+      window.location.href = '/staff/dashboard';
     } else {
-      window.location.href = '/Staff/login';
+      window.location.href = '/staff/login';
     }
   }
 

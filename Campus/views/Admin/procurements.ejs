@@ -383,7 +383,7 @@
     window.onload = async () => {
         const token = localStorage.getItem('token') ;
         try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -416,20 +416,32 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
                     } catch (err) {
                     showFlashMessage('error', 'An unknown error occurred.');
                     }
+                    try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const role = payload.role;
+
+                    if (role !== 'Super Admin' && role !== 'Admin') {
+                    showFlashMessage('error', 'Unauthorized access.');
+                    setTimeout(() => window.location.href = '/admin/dashboard', 1500);
+                    }
+                } catch (err) {
+                    console.error('Failed to decode JWT:', err);
+                    showFlashMessage('error', 'Invalid token.');
+                }
     }
   (function(){
     async function handleServerError(res) {
@@ -526,7 +538,7 @@
 
         acceptBtn.disabled=true;
         try{
-          const res=await fetch('/Procurement/accept',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acceptIds:checked})});
+          const res=await fetch('/procurement/accept',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acceptIds:checked})});
           if (!res.ok) return handleServerError(res)
           const data=await res.json();
           showFlashMessage('success','Accepted selected; pending deleted');setTimeout(()=>location.reload(),1000)
@@ -543,7 +555,7 @@
         if (!confirmed) return;
 
         e.target.disabled=true;
-        try{const res=await fetch(`/Procurement/${id}/deny`,{method:'POST'}); if (!res.ok) return handleServerError (res); data=await res.json();
+        try{const res=await fetch(`/procurement/${id}/deny`,{method:'POST'}); if (!res.ok) return handleServerError (res); data=await res.json();
           showFlashMessage('success','Denied and deleted');setTimeout(()=>location.reload(),1000)}
         catch(err){showFlashMessage('error',(err&&err.error)||'Delete failed');e.target.disabled=false}
       }else if(e.target.matches('.deleteBtn')){
@@ -554,7 +566,7 @@
         if (!confirmed) return;
 
         e.target.disabled=true;
-        try{const res=await fetch(`/Procurement/${id}`,{method:'DELETE'}); if (!res.ok) return handleServerError(res); data=await res.json();
+        try{const res=await fetch(`/procurement/${id}`,{method:'DELETE'}); if (!res.ok) return handleServerError(res); data=await res.json();
           showFlashMessage('success','Deleted');setTimeout(()=>location.reload(),1000)}
         catch(err){showFlashMessage('error',(err&&err.error)||'Delete failed');e.target.disabled=false}
       }

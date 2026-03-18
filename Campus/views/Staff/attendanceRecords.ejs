@@ -236,7 +236,7 @@
     window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -269,14 +269,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -304,7 +304,7 @@
         const payload = JSON.parse(atob(token.split(".")[1]));
         const staffId = payload._id;
 
-        const res = await fetch(`/Manage/attendance/get/${staffId}`, {
+        const res = await fetch(`/manage/attendance/get/${staffId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

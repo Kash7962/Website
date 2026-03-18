@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, uploadDocument, deleteDocument, getResult, getStaffList, getAttendanceByStaff, markAttendance, manualAttendance, renderStaffAttendancePage, } = require('../Controllers/StaffManageController');
+const {  getAllCourses, uploadCourse, deleteCourse, viewAssignments, uploadAssignment, deleteAssignment, getStaffPermissions, getPendingEnrollment, deleteEnrollment, postFinalizeForm, getFinalizeForm, getEditForm, getStudents, getPaymentPage, getDocument, getDocumentsByStudent, uploadDocument, deleteDocument, getResult, getStaffList, getAttendanceByStaff, markAttendance, manualAttendance, renderStaffAttendancePage, } = require('../controllers/staffManageController');
 const upload = require('../config/multer_course');
 const upload2 = require('../config/multer_assignment');
 const { validateCourseUpload, staffValidator, assignmentValidator, studentValidator, documentValidator, staffAttendanceValidator,  } = require('../validators/schema')
@@ -53,9 +53,9 @@ router.post(
   postFinalizeForm
 );
 
-router.get('/studentsEnrolled', verifyCookieToken, getStudents)
+router.get('/studentsenrolled', verifyCookieToken, getStudents)
 
-router.get('/editStudents/:id', verifyCookieToken, getEditForm);
+router.get('/editstudents/:id', verifyCookieToken, getEditForm);
 
 router.get('/payment', verifyCookieToken, getPaymentPage)
 // // GET direct join form

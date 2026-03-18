@@ -975,5 +975,47 @@ const budgetValidator = [
     body('allocatedAmount').isNumeric().withMessage('Must be a number'),
   ]
 
+const createOrUpdateAsset = [
+  body('name')
+    .trim()
+    .escape()
+    .notEmpty().withMessage('Asset name is required')
+    .isLength({ max: 150 }).withMessage('Name max 150 chars'),
+  body('description')
+    .optional({ checkFalsy: true })
+    .trim()
+    .escape()
+    .isLength({ max: 500 }).withMessage('Description too long'),
+  body('quantity')
+    .optional()
+    .toInt()
+    .isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
+  body('location')
+    .optional({ checkFalsy: true })
+    .trim()
+    .escape(),
+  body('tags')
+    .optional()
+    .customSanitizer(val => {
+      // allow comma-separated string or array from frontend
+      if (!val) return [];
+      if (Array.isArray(val)) return val.map(s => (typeof s === 'string' ? s.trim() : '')).filter(Boolean);
+      if (typeof val === 'string') return val.split(',').map(s => s.trim()).filter(Boolean);
+      return [];
+    })
+];
 
-module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, addEventValidator, createCurriculumValidator, updateTeacherProgressValidator, updatePrincipalReviewValidator, addInventoryValidators, removeItemValidators, uploadFilePresent, budgetValidator };
+const idParam = [
+  param('id').isMongoId().withMessage('Invalid asset id')
+];
+
+const adjustQuantity = [
+  param('id').isMongoId().withMessage('Invalid asset id'),
+  body('quantityDelta')
+    .exists().withMessage('quantityDelta required')
+    .toInt()
+    .isInt().withMessage('quantityDelta must be integer (positive to add, negative to remove)')
+];
+
+
+module.exports = { studentValidator, attendanceValidator, documentValidator, resultValidator, staffValidator, validateStaffAccess, validateLogin, adminValidator, validateCourseUpload, leaveValidator, assignmentValidator, validateNotice, validateClassSchedule, staffFaceValidator, staffAttendanceValidator, addEventValidator, createCurriculumValidator, updateTeacherProgressValidator, updatePrincipalReviewValidator, addInventoryValidators, removeItemValidators, uploadFilePresent, budgetValidator, createOrUpdateAsset, idParam, adjustQuantity, };

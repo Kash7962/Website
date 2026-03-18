@@ -586,18 +586,20 @@
         <div class="sidebar" id="sidebar">
             <div class="brand">Admin Panel</div>
             <nav>
-                <a href="/Admin/dashboard/" class="active">🏠 Dashboard</a>
-                <a href="/Admin/get" id="restrictButton" class="admin-button hidden">👤 Admins</a>
-                <a href="/Admin/staff/get">👨‍💼 Staff</a>
-                <a href="/Procurement/admin">🛒 Procurement</a>
-                <a href="/Budget/budget">💰 Budget</a>
-                <a href="/InventoryRecords/inventory/records">🗂️ Inventory Records</a>
-                <a href="/Inventory/admin">📦 Inventory</a>
-                <a href="/Admin/Sessions_Admins/get" id="restrictBtn" class="hidden">📋 Admin Sessions</a>
-                <a href="/Admin/Sessions_Staffs/get" id="restrictBtn2" class="hidden">📋 Staff Sessions</a>
-                <a href="/Admin/Sessions_Students/get" id="restrictBtn3" class="hidden">📋 Student Sessions</a>
-                <a href="/Admin/activity-logs/get" id="restrictBtn4" class="hidden">📊 Activity Logs</a>
-                <a href="/Admin/attendance/get-all" id="restrictBtn5" class="hidden">📊 Staff Attendance</a>
+                <a href="/admin/dashboard/" class="active">🏠 Dashboard</a>
+                <a href="/admin/get" id="restrictButton" class="admin-button hidden">👤 Admins</a>
+                <a href="/admin/staff/get">👨‍💼 Staff</a>
+                <a href="/procurement/admin">🛒 Procurement</a>
+                <a href="/budget/kitchen">💰 Budget</a>
+                <a href="/inventoryrecords/inventory/records">🗂️ Inventory Records</a>
+                <a href="/inventory/admin">📦 Inventory</a>
+                <a href="/admin/sessions_admins/get" id="restrictBtn" class="hidden">📋 Admin Sessions</a>
+                <a href="/admin/sessions_staffs/get" id="restrictBtn2" class="hidden">📋 Staff Sessions</a>
+                <a href="/admin/sessions_students/get" id="restrictBtn3" class="hidden">📋 Student Sessions</a>
+                <a href="/admin/activity-logs/get" id="restrictBtn4" class="hidden">📊 Activity Logs</a>
+                <a href="/admin/attendance/get-all" id="restrictBtn5" class="hidden">📊 Staff Attendance</a>
+                <a href="/assets/control">📊 Asset Management</a>
+                <a href="/assets/view">📊 Asset View</a>
 
                 <!-- <a href="/Staff/Management/students/get">👥 Students</a>
                 <a href="/Staff/Management/notices">📢 Notices</a>
@@ -796,7 +798,7 @@
             // }
             
                 try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -826,11 +828,11 @@
                         }
                         document.body.appendChild(newScript);
                         });
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     } else {
                         // alert('An unknown error occurred.');
                         showFlashMessage('error', 'An unknown error occurred.');
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     }
 
                     return;
@@ -838,7 +840,7 @@
 
                     // alert('Server error: unexpected content type.');
                     showFlashMessage('error', 'Server error: unexpected content type.');
-                    setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                    setTimeout(() =>  window.location.href = '/staff/login', 1500)
                 }
         
                     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -847,7 +849,7 @@
                     if(role !== 'Admin' && role !== 'Super Admin') {
                         // alert('You are not authorized to access this page.');
                         showFlashMessage('error', 'You are not authorized to access this page.');
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                         // window.location.href = '/Staff/login'
                         return;
                     }
@@ -860,7 +862,7 @@
                     showFlashMessage('error', 'Authentication failed. Redirecting to login page.');
                     // alert('Authentication failed. Redirecting to login page.');
                     // window.location.href = '/Staff/login';
-                     setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                     setTimeout(() =>  window.location.href = '/staff/login', 1500)
                     return;
                 }
              
@@ -915,7 +917,7 @@
             logoutBtn.addEventListener('click', async function () {
                 console.log('Logout button clicked');
                 try {
-                    const res = await fetch('/Staff/logout', {
+                    const res = await fetch('/staff/logout', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -959,7 +961,7 @@
                         localStorage.removeItem('token');
                         // alert('Logged out successfully!');
                         showFlashMessage('success', 'Logged out successfully!');
-                        setTimeout(() =>  window.location.href = '/Staff/login', 1500)
+                        setTimeout(() =>  window.location.href = '/staff/login', 1500)
                         // window.location.href = '/Staff/login';
                     } else {
                         alert('Logout failed. Please try again.');
@@ -1001,10 +1003,10 @@
         }
 
         document.getElementById('changePasswordBtn').addEventListener('click', () => {
-            window.location.href = '/Staff/change-password';
+            window.location.href = '/staff/change-password';
         });
         document.getElementById('profile').addEventListener('click', () => {
-            window.location.href = '/Admin/profile';
+            window.location.href = '/admin/profile';
         });
         
     </script>

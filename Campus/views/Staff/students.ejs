@@ -351,7 +351,7 @@
         window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -384,14 +384,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -409,7 +409,7 @@
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     const staffId = payload._id;
                     
-                    const res = await fetch('/Manage/get-permissions', {
+                    const res = await fetch('/manage/get-permissions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -430,7 +430,7 @@
                     if (!permissions.includes('edit_students')) {
                         showFlashMessage('error', 'You do not have permission to access this page.');
                         setTimeout(() => {
-                            window.location.href = '/Staff/dashboard';
+                            window.location.href = '/staff/dashboard';
                         }, 1500);
                     }
 
@@ -492,7 +492,7 @@
             document.querySelectorAll('.btn-edit').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.id;
-                    window.location.href = `/Manage/editStudents/${id}`;
+                    window.location.href = `/manage/editstudents/${id}`;
                 });
             });
 
@@ -515,7 +515,7 @@
                 if (!studentIdToDelete) return;
 
                 try {
-                    const res = await fetch(`/Manage/delete/${studentIdToDelete}`, { method: 'DELETE' });
+                    const res = await fetch(`/manage/delete/${studentIdToDelete}`, { method: 'DELETE' });
                     if (!res.ok) return handleServerError(res);
                     if (res.ok) {
                         showFlashMessage('success', 'Student deleted successfully.');

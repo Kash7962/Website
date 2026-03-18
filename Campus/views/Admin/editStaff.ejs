@@ -475,7 +475,7 @@
       // }
 
        try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -508,14 +508,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -528,23 +528,12 @@
 
                     if (role !== 'Super Admin' && role !== 'Admin') {
                     showFlashMessage('error', 'Unauthorized access.');
-                    setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
+                    setTimeout(() => window.location.href = '/admin/dashboard', 1500);
                     }
                 } catch (err) {
                     console.error('Failed to decode JWT:', err);
                     showFlashMessage('error', 'Invalid token.');
                 }
-                 try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const role = payload.role;
-                if (role !== 'Super Admin' && role !== 'Admin') {
-                    showFlashMessage('error', 'Unauthorized access.');
-                    setTimeout(() => window.location.href = '/Admin/dashboard', 1500);
-                }
-            } catch (err) {
-                console.error('Failed to decode JWT:', err);
-                showFlashMessage('error', 'Invalid token.');
-            }
                  
         };
          async function handleServerError(res) {
@@ -633,7 +622,7 @@
             delete data['researchScholars[continuingMPhil]'];
 
             try {
-                const res = await fetch('/Admin/staff/update/<%= staff._id %>', {
+                const res = await fetch('/admin/staff/update/<%= staff._id %>', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
@@ -665,10 +654,10 @@
         // Handle confirm delete
         confirmDelete.addEventListener('click', async () => {
             try {
-                const res = await fetch('/Admin/staff/delete/<%= staff._id %>', { method: 'DELETE' });
+                const res = await fetch('/admin/staff/delete/<%= staff._id %>', { method: 'DELETE' });
                 if (!res.ok) throw new Error('Delete failed');
                 showFlashMessage('success', 'Staff deleted.');
-                setTimeout(() => window.location.href = '/Admin/staff/get', 1500);
+                setTimeout(() => window.location.href = '/admin/staff/get', 1500);
             } catch (err) {
                 showFlashMessage('error', 'Failed to delete staff.');
             }

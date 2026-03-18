@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require('../Controllers/LessonPlanController');
+const controller = require('../controllers/lessonPlanController');
 const {
   createCurriculumValidator,
   updatePrincipalReviewValidator,

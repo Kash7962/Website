@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const leaveController = require('../Controllers/LeaveController');
+const leaveController = require('../controllers/leaveController');
 const  {leaveValidator}  = require('../validators/schema');
 const { verifyCookieToken } = require('../middlewares/middleware');
 

@@ -49,7 +49,7 @@ const createNotice = async (req, res) => {
 
   const newNotice = new Notice({ description, file });
   await newNotice.save();
-  res.redirect('/Staff/Management/notices');
+  res.redirect('/staff/management/notices');
 };
 
 const deleteNotice = async (req, res) => {
@@ -59,7 +59,7 @@ const deleteNotice = async (req, res) => {
     fs.unlink(path.join(__dirname, '../uploads/notices/', notice.file), () => {});
   }
   await Notice.findByIdAndDelete(req.params.id);
-  res.redirect('/Staff/Management/notices');
+  res.redirect('/staff/management/notices');
 } catch (err) {
    return res.status(500).render('error/error', {message: 'Server error' });
 }
@@ -94,7 +94,7 @@ const createPrograms = async (req, res) => {
 
   const newProgram = new Program({ description, file });
   await newProgram.save();
-  res.redirect('/Staff/Management/programs');
+  res.redirect('/staff/management/programs');
 };
 
 const deletePrograms = async (req, res) => {
@@ -104,7 +104,7 @@ const deletePrograms = async (req, res) => {
     fs.unlink(path.join(__dirname, '../uploads/programs/', program.file), () => {});
   }
   await Program.findByIdAndDelete(req.params.id);
-  res.redirect('/Staff/Management/programs');
+  res.redirect('/staff/management/programs');
 } catch (error) {
   return res.status(500).render('error/error', {message: 'Server error' });
 } 
@@ -140,7 +140,7 @@ const createEvents = async (req, res) => {
 
   const newEvent = new Event({ description, file });
   await newEvent.save();
-  res.redirect('/Staff/Management/events');
+  res.redirect('/staff/management/events');
 };
 
 const deleteEvents = async (req, res) => {
@@ -150,7 +150,7 @@ const deleteEvents = async (req, res) => {
     fs.unlink(path.join(__dirname, '../uploads/events/', event.file), () => {});
   }
   await Notice.findByIdAndDelete(req.params.id);
-  res.redirect('/Staff/Management/events');
+  res.redirect('/staff/management/events');
 } catch (err){
    return res.status(500).render('error/error', {message: 'Server error' });
 }
@@ -193,7 +193,7 @@ const uploadSchedule = async (req, res) => {
       fileType
     });
     await newSchedule.save();
-    res.redirect('/Staff/Management/schedules');
+    res.redirect('/staff/management/schedules');
   } catch (err) {
      return res.status(500).render('error/error', {message: 'Server error' });
   }
@@ -218,7 +218,7 @@ const deleteSchedule = async (req, res) => {
     }
 
     await schedule.deleteOne(); // Use deleteOne() instead of deprecated remove()
-    res.redirect('/Staff/Management/schedules');
+    res.redirect('/staff/management/schedules');
 
   } catch (err) {
     console.error('Error deleting schedule:', err.message);

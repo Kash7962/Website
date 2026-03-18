@@ -733,7 +733,7 @@
     window.onload = async function() {
             const token = localStorage.getItem('token');
             try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -766,14 +766,14 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -791,7 +791,7 @@
                         const payload = JSON.parse(atob(token.split('.')[1]));
                         const staffId = payload._id;
                         
-                        const res = await fetch('/Manage/get-permissions', {
+                        const res = await fetch('/manage/get-permissions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -812,7 +812,7 @@
                         if (!permissions.includes('result_students')) {
                             showFlashMessage('error', 'You do not have permission to access this page.');
                             setTimeout(() => {
-                                window.location.href = '/Staff/dashboard';
+                                window.location.href = '/staff/dashboard';
                             }, 1500);
                         }
                     } catch (err) {
@@ -1041,7 +1041,7 @@
           subjects: buildSubjectsArray(addContainer)
         };
 
-        const res = await fetch(`/Result/${studentId}/add`, {
+        const res = await fetch(`/result/${studentId}/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1077,7 +1077,7 @@
       document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
         if (!pendingDeleteId) return;
 
-        const res = await fetch(`/Result/${studentId}/delete/${pendingDeleteId}`, { method: 'DELETE' });
+        const res = await fetch(`/result/${studentId}/delete/${pendingDeleteId}`, { method: 'DELETE' });
 
         if (!res.ok) {
           await handleServerError(res);
@@ -1172,7 +1172,7 @@
           cgpa: document.getElementById('editCGPA').value || undefined,
           subjects: buildSubjectsArray(editContainer)
         };
-        const res = await fetch(`/Result/${studentId}/edit/${resultId}`, {
+        const res = await fetch(`/result/${studentId}/edit/${resultId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

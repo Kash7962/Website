@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getNotices, getEvents, getPrograms } = require('../Controllers/AdminController');
+const { getNotices, getEvents, getPrograms } = require('../controllers/adminController');
 
 // Public route
-router.get('/getNotices', getNotices);
+router.get('/getnotices', getNotices);
 
-router.get('/getEvents', getEvents);
+router.get('/getevents', getEvents);
 
-router.get('/getPrograms', getPrograms);
+router.get('/getprograms', getPrograms);
 
 module.exports = router;

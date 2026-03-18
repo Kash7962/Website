@@ -426,7 +426,7 @@ button:active {
     window.onload = async function() {
       const token = localStorage.getItem('token');
        try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -459,14 +459,14 @@ button:active {
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
@@ -484,7 +484,7 @@ button:active {
                         const payload = JSON.parse(atob(token.split('.')[1]));
                         const staffId = payload._id;
                         
-                        const res = await fetch('/Manage/get-permissions', {
+                        const res = await fetch('/manage/get-permissions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -505,7 +505,7 @@ button:active {
                         if (!permissions.includes('manage_curriculum_teacher')) {
                             showFlashMessage('error', 'You do not have permission to access this page.');
                             setTimeout(() => {
-                                window.location.href = '/Staff/dashboard';
+                                window.location.href = '/staff/dashboard';
                             }, 1500);
                         }
                     } catch (err) {
@@ -592,7 +592,7 @@ button:active {
       }
       tbody.innerHTML='<tr><td colspan="11" class="muted" style="text-align:center; padding: 40px;">Loading...</td></tr>';
       try{
-        const res=await fetch(`/Curriculum/subject/${encodeURIComponent(subject)}/teacher/${encodeURIComponent(teacherId)}`,{credentials:'include'});
+        const res=await fetch(`/curriculum/subject/${encodeURIComponent(subject)}/teacher/${encodeURIComponent(teacherId)}`,{credentials:'include'});
         if(!res.ok) {
             return handleServerError(res);
         }
@@ -628,7 +628,7 @@ button:active {
       btn.disabled = true;
 
       try{
-        const res=await fetch(`/Curriculum/${id}/progress`,{
+        const res=await fetch(`/curriculum/${id}/progress`,{
           method:'PUT',credentials:'include',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({percentComplete:Number(percent),completed,notes})

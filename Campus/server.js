@@ -8,26 +8,27 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const app = express();
 
-const Academic = require('./Routes/AcademicRoutes.js');
-const WhoWeAre = require('./Routes/WhoWeAreRoutes.js');
-const StudentRoutes = require('./Routes/StudentRoutes.js');
-const StaffRoutes = require('./Routes/StaffRoutes.js');
-const AuthRoutes = require('./Routes/AuthRoute.js');
-const StaffManageRoutes = require('./Routes/StaffManageRoutes.js');
-const LeaveRoutes = require('./Routes/LeaveRoutes.js');
-const AdminRoutes = require('./Routes/AdminRoutes.js');
+const Academic = require('./routes/academicRoutes.js');
+const WhoWeAre = require('./routes/whoWeAreRoutes.js');
+const StudentRoutes = require('./routes/studentRoutes.js');
+const StaffRoutes = require('./routes/staffRoutes.js');
+const AuthRoutes = require('./routes/authRoute.js');
+const StaffManageRoutes = require('./routes/staffManageRoutes.js');
+const LeaveRoutes = require('./routes/leaveRoutes.js');
+const AdminRoutes = require('./routes/adminRoutes.js');
 const cron = require('node-cron');
 // const { deleteExpiredLeaves } = require('./Controllers/LeaveController');
-const NoticeRoutes = require('./Routes/NoticeRoutes.js');
-const PaymentRoutes = require('./Routes/PaymentRoutes.js');
-const ResultRoutes = require('./Routes/ResultRoutes.js');
-const FaceRoutes = require('./Routes/FaceRoutes.js');
-const calendarRoutes = require('./Routes/CalendarRoutes.js');
-const LessonPlanRoutes = require('./Routes/LessonPlanRoutes.js');
-const ProcurementRoutes = require('./Routes/ProcurementRoutes.js');
-const InventoryRoutes = require('./Routes/InventoryRoutes.js');
-const BudgetRoutes = require('./Routes/BudgetRoutes.js');
-const InventoryRecordRoutes = require('./Routes/inventoryRecordRoutes.js');
+const NoticeRoutes = require('./routes/noticeRoutes.js');
+const PaymentRoutes = require('./routes/paymentRoutes.js');
+const ResultRoutes = require('./routes/resultRoutes.js');
+const FaceRoutes = require('./routes/faceRoutes.js');
+const calendarRoutes = require('./routes/calendarRoutes.js');
+const LessonPlanRoutes = require('./routes/lessonPlanRoutes.js');
+const ProcurementRoutes = require('./routes/procurementRoutes.js');
+const InventoryRoutes = require('./routes/InventoryRoutes.js');
+const BudgetRoutes = require('./routes/budgetRoutes.js');
+const InventoryRecordRoutes = require('./routes/inventoryRecordRoutes.js');
+const AssetRoutes = require('./routes/assetsRoutes.js');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {});
@@ -134,27 +135,32 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cookieParser());
 // Routes
 app.get('/', (req, res) => {
-  res.render('Home/Home');
+  res.render('Home/Home'), { title: 'Home' };
 });
 
-app.use('/Academic', Academic);
-app.use('/WhoWeAre', WhoWeAre);
-app.use('/Student', StudentRoutes);
-app.use('/Staff', StaffRoutes);
-app.use('/Auth', AuthRoutes);
-app.use('/Manage', StaffManageRoutes);
-app.use('/Leaves', LeaveRoutes);
-app.use('/Admin', AdminRoutes);
-app.use('/Notices', NoticeRoutes);
-app.use('/Payment', PaymentRoutes);
-app.use('/Result', ResultRoutes);
-app.use('/Face', FaceRoutes);
-app.use('/Calendar', calendarRoutes);
-app.use('/Curriculum', LessonPlanRoutes);
-app.use('/Procurement', ProcurementRoutes);
-app.use('/Inventory', InventoryRoutes);
-app.use('/Budget', BudgetRoutes);
-app.use('/InventoryRecords', InventoryRecordRoutes);
+app.get('/mis', (req, res) => {
+  res.render('Home/Mis_homepage', { title: 'MIS Home' });
+});
+
+app.use('/academic', Academic);
+app.use('/whoweare', WhoWeAre);
+app.use('/student', StudentRoutes);
+app.use('/staff', StaffRoutes);
+app.use('/auth', AuthRoutes);
+app.use('/manage', StaffManageRoutes);
+app.use('/leaves', LeaveRoutes);
+app.use('/admin', AdminRoutes);
+app.use('/notices', NoticeRoutes);
+app.use('/payment', PaymentRoutes);
+app.use('/result', ResultRoutes);
+app.use('/face', FaceRoutes);
+app.use('/calendar', calendarRoutes);
+app.use('/curriculum', LessonPlanRoutes);
+app.use('/procurement', ProcurementRoutes);
+app.use('/inventory', InventoryRoutes);
+app.use('/budget', BudgetRoutes);
+app.use('/inventoryrecords', InventoryRecordRoutes);
+app.use('/assets', AssetRoutes);
 // cron.schedule('0 0 * * *', async () => {
 //   await deleteExpiredLeaves(); // Runs daily at midnight
 // });

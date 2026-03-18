@@ -472,7 +472,7 @@
         tbody.innerHTML = '<tr><td colspan="9" class="muted" style="text-align:center;padding:24px;">Loading...</td></tr>';
 
         try {
-          const res = await fetch('/InventoryRecords/api/inventory/records?' + params.toString(), { credentials: 'same-origin' });
+          const res = await fetch('/inventoryrecords/api/inventory/records?' + params.toString(), { credentials: 'same-origin' });
           if (!res.ok) throw new Error('Network response was not ok.');
           const data = await res.json();
           renderTable(data.records || []);
@@ -558,7 +558,7 @@
         if (!confirmed) return;
 
         try {
-          const res = await fetch('/InventoryRecords/api/inventory/delete-all', {
+          const res = await fetch('/inventoryrecords/api/inventory/delete-all', {
             method: 'DELETE',
             credentials: 'same-origin',
           });
@@ -578,7 +578,7 @@
        window.onload = async () => {
             const token = localStorage.getItem('token');
             try {
-                const res = await fetch('/Auth/verify-token', {
+                const res = await fetch('/auth/verify-token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -605,18 +605,30 @@
                             showFlashMessage('error', 'An unknown error occurred.');
                         }
                         setTimeout(() => {
-                            window.location.href = '/Staff/login';
+                            window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
                         setTimeout(() => {
-                            window.location.href = '/Staff/login';
+                            window.location.href = '/staff/login';
                         }, 1500);
                     }
                 }
             } catch (err) {
                 showFlashMessage('error', 'An unknown error occurred.');
             }
+            try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const role = payload.role;
+
+                    if (role !== 'Super Admin' && role !== 'Admin') {
+                    showFlashMessage('error', 'Unauthorized access.');
+                    setTimeout(() => window.location.href = '/admin/dashboard', 1500);
+                    }
+                } catch (err) {
+                    console.error('Failed to decode JWT:', err);
+                    showFlashMessage('error', 'Invalid token.');
+                }
             fetchRecords();
           }
     })();

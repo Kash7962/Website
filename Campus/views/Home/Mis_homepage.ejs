@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KASH CAMPUS</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      background: linear-gradient(to right, #001f3f, #004080, #0066cc);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      font-size: 0.95rem;
+      color: #cce6ff;
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1.2s ease;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      color: #e6f2ff;
+      animation: fadeInUp 1.4s ease;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 20px;
+      animation: fadeIn 2s ease;
+    }
+
+    .btn {
+      background-color: #ff6600;
+      color: white;
+      padding: 14px 36px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #ff8533;
+      transform: translateY(-3px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.2);
+      font-size: 0.9rem;
+      color: #e6e6e6;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">KASH CAMPUS</div>
+    <div class="tagline">Knowledge • Ambition • Success • Harmony</div>
+  </header>
+
+  <section class="hero">
+    <h1>Welcome to KASH CAMPUS</h1>
+    <p>
+      KASH College is dedicated to nurturing young minds with quality education, innovation, 
+      and values that empower students to shape a better future for themselves and society.
+    </p>
+    <div class="btn-container">
+      <a href="/staff/login" class="btn">Staff Login</a>
+      <a href="/staff/register" class="btn">Staff Register</a>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 KASH CAMPUS | Empowering Education for a Brighter Tomorrow
+  </footer>
+</body>
+</html>

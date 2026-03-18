@@ -428,7 +428,7 @@ const forgotPassword = async (req, res) => {
     );
 
     // Create reset URL (route depends on role)
-    const resetUrl = `${process.env.CLIENT_URL}/Staff/reset-password?token=${token}`;
+    const resetUrl = `${process.env.CLIENT_URL}/staff/reset-password?token=${token}`;
 
     // Email content
     const html = `

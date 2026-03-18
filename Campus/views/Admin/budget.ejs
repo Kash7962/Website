@@ -169,7 +169,7 @@
   <h1>Budget Management</h1>
 
   <div class="card">
-    <form action="/Budget/budget" method="POST">
+    <form action="/budget/kitchen" method="POST">
       <label>Department:</label>
       <input type="text" name="department" required readonly value="Kitchen">
       <label>Allocated Amount:</label>
@@ -201,13 +201,13 @@
                   <td>₹<%= (b.allocatedAmount - (b.spentAmount || 0)).toLocaleString('en-IN') %></td>
                   <td>
                     <div style="display:flex; flex-wrap: wrap; gap: 8px;">
-                        <form action="/Budget/budget/edit/<%= b._id %>" method="POST" style="display:flex; align-items:center; gap: 8px;">
+                        <form action="/budget/kitchen/edit/<%= b._id %>" method="POST" style="display:flex; align-items:center; gap: 8px;">
                           <input type="hidden" name="department" value="<%= b.department %>" required>
                           <input type="number" name="allocatedAmount" value="<%= b.allocatedAmount %>" required style="width: 100px;">
                           <button type="submit">Update</button>
                         </form>
 
-                        <form action="/Budget/budget/delete/<%= b._id %>" method="POST" class="delete-form">
+                        <form action="/Budget/kitchen/delete/<%= b._id %>" method="POST" class="delete-form">
                           <button type="submit" class="delete">Delete</button>
                         </form>
                     </div>
@@ -263,7 +263,7 @@
     window.onload = async () => {
         const token = localStorage.getItem('token') ;
         try {
-                    const res = await fetch('/Auth/verify-token', {
+                    const res = await fetch('/auth/verify-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -296,20 +296,32 @@
 
                         // Add redirect after short delay for session errors
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     } else {
                         showFlashMessage('error', 'Server error: unexpected content type.');
 
                         // Optional: Redirect for other cases too
                         setTimeout(() => {
-                        window.location.href = '/Staff/login';
+                        window.location.href = '/staff/login';
                         }, 1500);
                     }
                     }
                     } catch (err) {
                     showFlashMessage('error', 'An unknown error occurred.');
                     }
+                    try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const role = payload.role;
+
+                    if (role !== 'Super Admin' && role !== 'Admin') {
+                    showFlashMessage('error', 'Unauthorized access.');
+                    setTimeout(() => window.location.href = '/admin/dashboard', 1500);
+                    }
+                } catch (err) {
+                    console.error('Failed to decode JWT:', err);
+                    showFlashMessage('error', 'Invalid token.');
+                }
     }
     function showConfirmModal(message, title = 'Are you sure?', confirmText = 'OK', confirmClass = 'danger') {
         return new Promise(resolve => {

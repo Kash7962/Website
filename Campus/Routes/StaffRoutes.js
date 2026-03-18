@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword, getStaffProfile, } = require('../Controllers/StaffController');
+const { registerUser, loginUser, logout, googleLogin, forgotPassword, resetPassword, changePassword, getStaffProfile, } = require('../controllers/staffController');
 const { validateLogin, staffValidator } = require('../validators/schema');
 const { validationResult } = require('express-validator');
 const { verifyCookieToken } = require('../middlewares/middleware');

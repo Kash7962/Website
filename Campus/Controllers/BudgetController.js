@@ -5,7 +5,7 @@ const { Staff } = require('../models/staff')
 const { Admin } = require('../models/admin')
 /**
  * GET: Render budgets page
- */
+ */ 
 exports.getBudgetPage = async (req, res) => {
   try {
     const budgets = await Budget.find().lean();
@@ -56,7 +56,7 @@ exports.postBudget = async (req, res) => {
                   // registrationNumber: student.registration_number,
                   // classAssigned: student.classAssigned
                 });
-    res.redirect('/Budget/budget');
+    res.redirect('/budget/kitchen');
   } catch (err) {
     console.error('postBudget error:', err);
     res.status(500).render('error/error',{ message:'Server Error'});
@@ -101,7 +101,7 @@ exports.updateBudget = async (req, res) => {
                   // registrationNumber: student.registration_number,
                   // classAssigned: student.classAssigned
                 });
-    res.redirect('/Budget/budget');
+    res.redirect('/budget/kitchen');
   } catch (err) {
     console.error('updateBudget error:', err);
     res.status(500).render('error/error',{ message:'Server Error'});
@@ -129,7 +129,7 @@ exports.deleteBudget = async (req, res) => {
                   // registrationNumber: student.registration_number,
                   // classAssigned: student.classAssigned
                 });
-    res.redirect('/Budget/budget');
+    res.redirect('/budget/kitchen');
   } catch (err) {
     console.error('deleteBudget error:', err);
     res.status(500).render('error/error',{ message:'Server Error'});

@@ -14,7 +14,6 @@ const ActivityLog = require('../models/activityLog');
 const StaffAttendance = require('../models/staffAttendance');
 // const jwt = require('jsonwebtoken');
 
-
 const uploadCourse = async (req, res) => {
   try {
     const { courseName, userId, name, email } = req.body;
